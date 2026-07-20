@@ -76,7 +76,7 @@ class Instantaneous_Rate_of_Change(Scene):
         self.show_title()
         function = self.show_function()
         self.explain_variables(function) 
-
+        # self.show_second_point()
 
     def show_title(self):
         # ---------------- Title ----------------
@@ -129,6 +129,7 @@ class Instantaneous_Rate_of_Change(Scene):
         return function
     
     def explain_variables(self, function):
+        # pass
 
         # ---------------- Highlight x ----------------
 
@@ -262,3 +263,91 @@ class Instantaneous_Rate_of_Change(Scene):
         )
 
         self.wait(2)
+
+        self.show_second_point()
+
+        start_x = x_line.n2p(0)
+        start_y = y_line.n2p(0) 
+
+        x_brace = always_redraw(
+            lambda: BraceBetweenPoints(
+                start_x,
+                x_dot.get_center(),
+                direction=LEFT
+            )
+        )
+
+        y_brace = always_redraw(
+            lambda: BraceBetweenPoints(
+                start_y,
+                y_dot.get_center(),
+                direction=RIGHT
+            )
+        )
+
+        x_distance = always_redraw(
+            lambda: MathTex(
+                f"{abs(tracker.get_value()):.1f}"
+            ).next_to(
+                x_brace,
+                LEFT
+            )
+        )
+
+        y_distance = always_redraw(
+            lambda: MathTex(
+                f"{abs(-1.8*tracker.get_value()):.1f}"
+            ).next_to(
+                y_brace,
+                RIGHT
+            )
+        )
+
+        self.add(x_brace, y_brace, x_distance, y_distance)
+
+        self.play(
+            tracker.animate.set_value(4),
+            run_time=2,
+        )
+
+        self.wait(3)
+
+    def show_second_point(self):
+
+        # Large function in the center
+        second_point = Text("How much the function changes?").scale(.6).to_edge(LEFT)
+        # function = MathTex("y", "=", "f(","x", ")").scale(2)
+
+        self.play(Write(second_point))
+        self.wait(2)
+
+        # Create the bullet
+        bullet = Dot(radius=0.08)
+
+        # Create the smaller version of the function
+        second_point_target = Text("Calculate Change").scale(0.4)
+
+        # Create the final bullet line
+        line = VGroup(bullet, second_point_target)
+        line.arrange(RIGHT, buff=0.3)
+
+        # Move the entire line to the left side of the screen
+        line.to_edge(LEFT, buff=1)
+        line.shift(UP * 1)
+
+        # Animate the function to its final position
+        self.play(
+            FadeIn(bullet),
+            Transform(second_point, second_point_target),
+            run_time=1.5
+        )
+
+        # Move the transformed function beside the bullet
+        self.play(
+            second_point.animate.move_to(second_point_target),
+            run_time=1
+        )
+
+        self.wait()
+
+        return second_point
