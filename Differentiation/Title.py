@@ -153,19 +153,19 @@ class Instantaneous_Rate_of_Change(Scene):
         # ---------------- Number Lines ----------------
 
         x_line = NumberLine(
-            x_range=[0, 10, 1],
+            x_range=[-10, 10, 1],
             length=4,
             include_numbers=False,
         ).rotate(PI / 2)
 
         y_line = NumberLine(
-            x_range=[0, 10, 1],
+            x_range=[-10, 10, 1],
             length=4,
             include_numbers=False,
         ).rotate(PI / 2)
 
-        x_line.shift(RIGHT * 2)
-        y_line.shift(RIGHT * 5)
+        x_line.shift(RIGHT * .5)
+        y_line.shift(RIGHT * 3)
 
         x_label = MathTex("x").next_to(x_line, UP)
         y_label = MathTex("y").next_to(y_line, UP)
@@ -180,6 +180,56 @@ class Instantaneous_Rate_of_Change(Scene):
             ReplacementTransform(function[0].copy(), y_label),
             Create(y_line),
             run_time=1.5
+        )
+
+        self.wait(2)
+
+        # ---------------- Dots ----------------
+
+        tracker = ValueTracker(0)
+
+        x_dot = Dot(color=BLUE, radius=0.15)
+        x_dot.move_to(x_line.n2p(tracker.get_value()))
+
+
+        y_dot = Dot(color=GREEN, radius=0.15)
+        y_dot.move_to(y_line.n2p(-1.8 * tracker.get_value()))
+
+        # x moves exactly with the tracker
+        x_dot.add_updater(
+            lambda d: d.move_to(
+                x_line.n2p(tracker.get_value())
+            )
+        )
+
+        # Example relationship:
+        # y = 0.8x + 1
+        # (Change this later to whatever function you want.)
+        y_dot.add_updater(
+            lambda d: d.move_to(
+                y_line.n2p(-1.8 * tracker.get_value())
+            )
+        )
+
+        self.add(x_dot, y_dot)
+
+        self.wait(1)
+
+        # ---------------- Animate ----------------
+
+        self.play(
+            tracker.animate.set_value(4),
+            run_time=2,
+        )
+
+        self.play(
+            tracker.animate.set_value(-4),
+            run_time=2,
+        )
+
+        self.play(
+            tracker.animate.set_value(0),
+            run_time=2,
         )
 
         self.wait(2)
