@@ -164,49 +164,78 @@ class Instantaneous_Rate_of_Change(Scene):
             include_numbers=False,
         ).rotate(PI / 2)
 
-        x_line.shift(RIGHT * .5)
+        x_line.shift(RIGHT * 0.5)
         y_line.shift(RIGHT * 3)
 
-        x_label = MathTex("x").next_to(x_line, UP)
-        y_label = MathTex("y").next_to(y_line, UP)
+        # Labels
+        x_label = MathTex("x")
+        y_label = MathTex("y")
 
+        # Variables
+        x_var = Variable(
+            0,
+            x_label,
+            num_decimal_places=1,
+        )
+
+        y_var = Variable(
+            0,
+            y_label,
+            num_decimal_places=1,
+        )
+
+        x_var.next_to(x_line, UP)
+        y_var.next_to(y_line, UP)
+
+        # Create axes and transform labels
         self.play(
-            ReplacementTransform(function[3].copy(), x_label),
+            ReplacementTransform(function[3].copy(), x_var.label),
             Create(x_line),
             run_time=1.5
         )
 
         self.play(
-            ReplacementTransform(function[0].copy(), y_label),
+            ReplacementTransform(function[0].copy(), y_var.label),
             Create(y_line),
             run_time=1.5
         )
 
-        self.wait(2)
+        self.play(
+            Create(x_var.value),
+            Create(y_var.value),
+            run_time=1.5)
 
-        # ---------------- Dots ----------------
+        self.wait(3)
+
+        # ---------------- Tracker ----------------
 
         tracker = ValueTracker(0)
 
-        x_dot = Dot(color=BLUE, radius=0.15)
-        x_dot.move_to(x_line.n2p(tracker.get_value()))
+        # Keep the displayed values synchronized
+        x_var.value.add_updater(
+            lambda m: m.set_value(tracker.get_value())
+        )
 
+        y_var.value.add_updater(
+            lambda m: m.set_value(-1.8 * tracker.get_value())
+        )
 
-        y_dot = Dot(color=GREEN, radius=0.15)
-        y_dot.move_to(y_line.n2p(-1.8 * tracker.get_value()))
+        # ---------------- Dots ----------------
 
-        # x moves exactly with the tracker
-        x_dot.add_updater(
-            lambda d: d.move_to(
+        x_dot = always_redraw(
+            lambda: Dot(
+                color=BLUE,
+                radius=0.15
+            ).move_to(
                 x_line.n2p(tracker.get_value())
             )
         )
 
-        # Example relationship:
-        # y = 0.8x + 1
-        # (Change this later to whatever function you want.)
-        y_dot.add_updater(
-            lambda d: d.move_to(
+        y_dot = always_redraw(
+            lambda: Dot(
+                color=GREEN,
+                radius=0.15
+            ).move_to(
                 y_line.n2p(-1.8 * tracker.get_value())
             )
         )
