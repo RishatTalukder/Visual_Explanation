@@ -391,7 +391,15 @@ class Instantaneous_Rate_of_Change(Scene):
 
         self.wait(2)
 
+        self.play(
+            *[
+                FadeOut(mob)
+                for mob in self.mobjects
+                if mob not in (x_line, y_line)
+            ],
+        )
 
+        self.wait()
 
 
     def show_second_point(self):
