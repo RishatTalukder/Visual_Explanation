@@ -194,6 +194,7 @@ class Instantaneous_Rate_of_Change(Scene):
             Create(x_line),
             run_time=1.5
         )
+        self.wait()
 
         self.play(
             ReplacementTransform(function[0].copy(), y_var.label),
@@ -201,12 +202,14 @@ class Instantaneous_Rate_of_Change(Scene):
             run_time=1.5
         )
 
+        self.wait()
+
         self.play(
             Create(x_var.value),
             Create(y_var.value),
             run_time=1.5)
 
-        self.wait(3)
+        self.wait()
 
         # ---------------- Tracker ----------------
 
@@ -252,10 +255,14 @@ class Instantaneous_Rate_of_Change(Scene):
             run_time=2,
         )
 
+        self.wait()
+
         self.play(
             tracker.animate.set_value(-4),
             run_time=2,
         )
+
+        self.wait()
 
         self.play(
             tracker.animate.set_value(0),
@@ -287,7 +294,7 @@ class Instantaneous_Rate_of_Change(Scene):
 
         x_distance = always_redraw(
             lambda: MathTex(
-                f"{abs(tracker.get_value()):.1f}"
+                f"{(tracker.get_value()):.1f}"
             ).next_to(
                 x_brace,
                 LEFT
@@ -296,7 +303,7 @@ class Instantaneous_Rate_of_Change(Scene):
 
         y_distance = always_redraw(
             lambda: MathTex(
-                f"{abs(-1.8*tracker.get_value()):.1f}"
+                f"{-1.8*tracker.get_value():.1f}"
             ).next_to(
                 y_brace,
                 RIGHT
@@ -310,7 +317,82 @@ class Instantaneous_Rate_of_Change(Scene):
             run_time=2,
         )
 
-        self.wait(3)
+        self.wait()
+
+        delta_x = MathTex(r"\Delta x =")
+        delta_y = MathTex(r"\Delta y =")
+
+        delta_x.to_edge(LEFT, buff=1)
+        delta_x.shift(DOWN * 0.8)
+
+        delta_y.next_to(delta_x, DOWN, buff=0.6)
+
+        self.play(
+            ReplacementTransform(x_brace.copy(), delta_x),
+            ReplacementTransform(y_brace.copy(), delta_y),
+        )
+        self.wait()
+        
+        delta_x_value = always_redraw(
+            lambda: DecimalNumber(
+                (tracker.get_value()),
+                num_decimal_places=1
+            ).next_to(delta_x, RIGHT)
+        )
+
+        delta_y_value = always_redraw(
+            lambda: DecimalNumber(
+                -1.8 * tracker.get_value(),
+                num_decimal_places=1
+            ).next_to(delta_y, RIGHT)
+        )
+
+        self.play(
+            ReplacementTransform(x_distance.copy(), delta_x_value),
+            ReplacementTransform(y_distance.copy(), delta_y_value),
+        )
+        self.wait()
+
+        x_val = tracker.get_value()
+        y_val = -1.8 * tracker.get_value()
+
+        ratio = MathTex(
+            r"\frac{\Delta y}{\Delta x}", 
+            "=", 
+            rf"\frac{{{abs(y_val):.1f}}}{{{abs(x_val):.1f}}}"
+        )
+
+        ratio.to_edge(LEFT, buff=1)
+        ratio.shift(DOWN * 1, RIGHT * 0.5)
+
+        self.play(
+            ReplacementTransform(VGroup(delta_x, delta_y), ratio[0]),
+            ReplacementTransform(VGroup(delta_x_value, delta_y_value), ratio[2]),
+            Write(ratio[1]),
+            run_time=2,
+        )
+        self.wait(2)
+
+        result = MathTex(
+            r"\frac{\Delta y}{\Delta x}",
+            "=",
+            f"{y_val/x_val:.1f}"
+        )
+
+        result.move_to(ratio)
+
+        self.play(
+            TransformMatchingTex(
+                ratio,
+                result
+            ),
+            run_time=2
+        )
+
+        self.wait(2)
+
+
+
 
     def show_second_point(self):
 
