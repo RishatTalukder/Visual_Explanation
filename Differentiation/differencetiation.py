@@ -5,6 +5,8 @@ class Graph_Version(Scene):
         self.lines()
         self.show_graph()
         self.plotting()
+        self.animate_position()
+        self.animate_position_x2()
 
     def lines(self):
         self.x_line = NumberLine(
@@ -82,3 +84,234 @@ class Graph_Version(Scene):
         )
 
         self.play(Create(graph), run_time=3)
+
+    def animate_position(self):
+        tracker = ValueTracker(3)
+
+        x_dot = always_redraw(
+            lambda: Dot(
+                self.axes.c2p(tracker.get_value(), 0),
+                radius=0.08,
+                color=BLUE
+            )
+        )
+
+        y_dot = always_redraw(
+            lambda: Dot(
+                self.axes.c2p(0, 0.05*tracker.get_value()**2 + 4),
+                radius=0.08,
+                color=GREEN
+            )
+        )
+
+        self.play(
+            FadeIn(x_dot)
+        )
+        self.wait()
+
+        graph_dot = always_redraw(
+            lambda: Dot(
+                self.axes.c2p(
+                    tracker.get_value(),
+                    0.05*tracker.get_value()**2 + 4,
+                ),
+                color=YELLOW,
+                radius=0.09,
+            )
+        )
+
+        vertical_line_x = always_redraw(
+            lambda: DashedLine(
+                x_dot.get_center(),
+                graph_dot.get_center(),
+                color=GRAY,
+            )
+        )
+
+        vertical_line_y = always_redraw(
+            lambda: DashedLine(
+                graph_dot.get_center(),
+                y_dot.get_center(),
+                color=GRAY,
+            )
+        )
+
+        self.play(Create(vertical_line_x))
+        self.play(FadeIn(graph_dot))
+        self.wait()
+        # self.wait()
+
+        self.play(Create(vertical_line_y))
+        self.play(
+            FadeIn(y_dot)
+        )
+        self.wait()
+        
+
+        trail = TracedPath(
+            graph_dot.get_center,
+            stroke_color=YELLOW,
+            stroke_width=4,
+            dissipating_time=0.5,
+        )
+
+        self.add(trail)
+
+
+        self.play(
+            tracker.animate.set_value(8),
+            run_time=1.5,
+            rate_func=smooth,
+        )
+
+        # self.wait()
+
+        self.play(
+            tracker.animate.set_value(2),
+            run_time=1.5,
+            rate_func=smooth,
+        )
+
+        # self.wait()
+
+        self.play(
+            tracker.animate.set_value(3),
+            run_time=2,
+            rate_func=smooth,
+        )
+
+        self.wait()
+
+
+        x1_label = always_redraw(
+            lambda: MathTex("x_1")
+            .scale(0.8)
+            .next_to(
+                x_dot,
+                DOWN,
+                buff=0.15
+            )
+        )
+
+        y1_label = always_redraw(
+            lambda: MathTex("y_1")
+            .scale(0.8)
+            .next_to(
+                y_dot,
+                LEFT,
+                buff=0.15
+            )
+        )
+
+        self.play(Write(x1_label))
+        self.play(Write(y1_label))
+        self.wait()
+
+        x1_dot = x_dot.copy()
+        y1_dot = y_dot.copy()
+        graph_dot_1 = graph_dot.copy()
+
+        vertical_line_x_1 = vertical_line_x.copy()
+        vertical_line_y_1 = vertical_line_y.copy()
+
+        self.add(
+            x1_label,
+            y1_label,
+            x_dot,
+            y_dot,
+            graph_dot,
+            vertical_line_x,
+            vertical_line_y
+        )
+
+    def animate_position_x2(self):
+        tracker = ValueTracker(3)
+
+        x2_dot = always_redraw(
+            lambda: Dot(
+                self.axes.c2p(tracker.get_value(), 0),
+                radius=0.08,
+                color=BLUE_D
+            )
+        )
+
+        y2_dot = always_redraw(
+            lambda: Dot(
+                self.axes.c2p(0, 0.05*tracker.get_value()**2 + 4),
+                radius=0.08,
+                color=GREEN_D
+            )
+        )
+
+        graph_dot2 = always_redraw(
+            lambda: Dot(
+                self.axes.c2p(
+                    tracker.get_value(),
+                    0.05*tracker.get_value()**2 + 4,
+                ),
+                color=YELLOW_D,
+                radius=0.09,
+            )
+        )
+
+        vertical_line_x = always_redraw(
+            lambda: DashedLine(
+                x2_dot.get_center(),
+                graph_dot2.get_center(),
+                color=GRAY,
+            )
+        )
+
+        vertical_line_y = always_redraw(
+            lambda: DashedLine(
+                graph_dot2.get_center(),
+                y2_dot.get_center(),
+                color=GRAY,
+            )
+        )
+
+        self.add(
+            x2_dot,
+            y2_dot,
+            graph_dot2,
+            vertical_line_x,
+            vertical_line_y
+        )
+
+
+
+        self.play(
+            tracker.animate.set_value(8),
+            run_time=1.5,
+            rate_func=smooth,
+        )
+        self.wait()
+
+
+        x2_label = always_redraw(
+            lambda: MathTex("x_2")
+            .scale(0.8)
+            .next_to(
+                x2_dot,
+                DOWN,
+                buff=0.15
+            )
+        )
+
+        y2_label = always_redraw(
+            lambda: MathTex("y_2")
+            .scale(0.8)
+            .next_to(
+                y2_dot,
+                LEFT,
+                buff=0.15
+            )
+        )
+
+        self.play(Write(x2_label))
+        self.play(Write(y2_label))
+        self.wait()
+
+    
+    def f(x):
+        return .05*x**2 + 4
