@@ -319,7 +319,7 @@ class Graph_Version(Scene):
         )
 
     
-    def f(x):
+    def function(self, x):
         return .05*x**2 + 4
 
 
@@ -332,10 +332,100 @@ class Graph_Version(Scene):
             self.x2_group,
         )
 
-        self.play(
+        self.play(  
             graph_group.animate.shift(RIGHT * 2),
             self.x_label.animate.shift(RIGHT * 2),
             self.y_label.animate.shift(RIGHT * 2),
+            run_time=2,
+        )
+
+        self.wait()
+
+        # Δx brace
+        x_brace = always_redraw(
+            lambda: BraceBetweenPoints(
+                self.axes.c2p(3, 0),      # x1
+                self.axes.c2p(8, 0),      # x2
+                direction=DOWN,
+            ).shift(DOWN * 0.40)
+        )
+
+        # Δy brace
+        y_brace = always_redraw(
+            lambda: BraceBetweenPoints(
+                self.axes.c2p(
+                    0,
+                    self.function(3),
+                ),
+                self.axes.c2p(
+                    0,
+                    self.function(8),
+                ),
+                direction=LEFT,
+            ).shift(LEFT * 0.40)
+        )
+
+        delta_x = always_redraw(
+            lambda: MathTex(r"\Delta x")
+            .scale(0.8)
+            .next_to(x_brace, DOWN, buff=0.15)
+        )
+
+        delta_y = always_redraw(
+            lambda: MathTex(r"\Delta y")
+            .scale(0.8)
+            .next_to(y_brace, LEFT, buff=0.15)
+        )
+
+        self.play(
+            GrowFromEdge(x_brace, edge=LEFT),
+            GrowFromEdge(y_brace, edge=DOWN),
+        )
+
+        self.play(
+            Write(delta_x),
+            Write(delta_y),
+        )
+
+        self.wait()
+
+        delta_y_tex = MathTex(r"\Delta y").to_edge(LEFT)
+        delta_x_tex = MathTex(r"\Delta x").next_to(delta_y_tex, DOWN)
+
+        frac = MathTex(r"\frac{\Delta y}{\Delta x}")
+
+        equals = MathTex("=")
+
+        difference = MathTex(
+            r"\frac{y_2-y_1}{x_2-x_1}"
+        )
+
+        equation = VGroup(
+            frac,
+            equals,
+            difference,
+        ).arrange(RIGHT, buff=0.3)
+
+        equation.to_edge(LEFT, buff=0.6)
+        equation.shift(UP * 0.5)
+
+        self.play(
+            ReplacementTransform(delta_y.copy(), delta_y_tex),
+            ReplacementTransform(delta_x.copy(), delta_x_tex),
+        )
+        self.wait()
+
+        self.play(
+            ReplacementTransform(
+                VGroup(delta_y_tex, delta_x_tex),
+                frac,
+            ),
+            Write(equals),
+            run_time=1.5,
+        )
+
+        self.play(
+            Write(difference),
             run_time=2,
         )
 
