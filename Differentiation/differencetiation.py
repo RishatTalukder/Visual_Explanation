@@ -7,6 +7,7 @@ class Graph_Version(Scene):
         self.plotting()
         self.animate_position()
         self.animate_position_x2()
+        self.rate_of_change()
 
     def lines(self):
         self.x_line = NumberLine(
@@ -48,11 +49,11 @@ class Graph_Version(Scene):
 
         self.axes.shift(RIGHT * .5, UP * .5)
 
-        x_label = MathTex("x")
-        y_label = MathTex("y")
+        self.x_label = MathTex("x")
+        self.y_label = MathTex("y")
 
-        x_label.next_to(self.axes.x_axis.get_end(), RIGHT, buff=0.2)
-        y_label.next_to(self.axes.y_axis.get_end(), UP, buff=0.2)
+        self.x_label.next_to(self.axes.x_axis.get_end(), RIGHT, buff=0.2)
+        self.y_label.next_to(self.axes.y_axis.get_end(), UP, buff=0.2)
 
         # Animate the old lines into the new axes
         self.play(
@@ -71,19 +72,19 @@ class Graph_Version(Scene):
         # so add it back to the scene.
         # self.add(self.axes)
         self.play(
-            Write(x_label),
-            Write(y_label),
+            Write(self.y_label),
+            Write(self.x_label),
         )
 
         self.wait()
 
     def plotting(self):
-        graph = self.axes.plot(
+        self.graph = self.axes.plot(
             lambda x:.05*x**2 + 4,
             color=BLUE,
         )
 
-        self.play(Create(graph), run_time=3)
+        self.play(Create(self.graph), run_time=3)
 
     def animate_position(self):
         tracker = ValueTracker(3)
@@ -182,6 +183,8 @@ class Graph_Version(Scene):
 
         self.wait()
 
+        self.remove(trail)
+
 
         x1_label = always_redraw(
             lambda: MathTex("x_1")
@@ -207,21 +210,14 @@ class Graph_Version(Scene):
         self.play(Write(y1_label))
         self.wait()
 
-        x1_dot = x_dot.copy()
-        y1_dot = y_dot.copy()
-        graph_dot_1 = graph_dot.copy()
-
-        vertical_line_x_1 = vertical_line_x.copy()
-        vertical_line_y_1 = vertical_line_y.copy()
-
-        self.add(
-            x1_label,
-            y1_label,
+        self.x1_group = VGroup(
             x_dot,
             y_dot,
             graph_dot,
             vertical_line_x,
-            vertical_line_y
+            vertical_line_y,
+            x1_label,
+            y1_label,
         )
 
     def animate_position_x2(self):
@@ -312,6 +308,35 @@ class Graph_Version(Scene):
         self.play(Write(y2_label))
         self.wait()
 
+        self.x2_group = VGroup(
+            x2_dot,
+            y2_dot,
+            graph_dot2,
+            vertical_line_x,
+            vertical_line_y,
+            x2_label,
+            y2_label,
+        )
+
     
     def f(x):
         return .05*x**2 + 4
+
+
+    def rate_of_change(self):
+
+        graph_group = VGroup(
+            self.axes,
+            self.graph,
+            self.x1_group,
+            self.x2_group,
+        )
+
+        self.play(
+            graph_group.animate.shift(RIGHT * 2),
+            self.x_label.animate.shift(RIGHT * 2),
+            self.y_label.animate.shift(RIGHT * 2),
+            run_time=2,
+        )
+
+        self.wait()
