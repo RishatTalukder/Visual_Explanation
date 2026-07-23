@@ -461,6 +461,84 @@ class Graph_Version(Scene):
 
         self.wait()
 
+        TransformMatchingTex(
+            equation,
+            school_formula
+        )
+
+        
+
+        graph_group = VGroup(
+            self.axes,
+            self.graph,
+            self.x1_group,
+            self.x2_group,
+            self.x_label,
+            self.y_label,
+        )
+
+        self.play(
+            graph_group.animate.shift(LEFT * 0.8),
+
+            FadeOut(
+                x_brace,
+                y_brace,
+                delta_x,
+                delta_y,
+            ),
+
+            run_time=2,
+        )
+
+        p1 = self.axes.c2p(3, self.function(3))
+        p2 = self.axes.c2p(8, self.function(8))
+
+        secant = Line(
+            p1,
+            p2,
+            color=RED,
+        )
+
+        # Make it extend beyond the points
+        secant.scale(2.8, about_point=secant.get_center())
+
+        self.play(
+            Create(secant),
+            run_time=1.5
+        )
+
+        m_copy = school_formula[0].copy()
+
+        m_target = MathTex("m").scale(1)
+
+        m_target.move_to(
+            secant.get_center()
+        )
+
+        m_target.shift(UP * 0.45)
+
+        self.play(
+            ReplacementTransform(
+                m_copy,
+                m_target,
+            ),
+            run_time=1.5,
+        )
+
+        slope_text = Text(
+            "Slope of the Line",
+            font_size=28,
+        )
+
+        slope_text.next_to(
+            m_target,
+            UP,
+            buff=0.2,
+        )
+
+        self.play(FadeIn(slope_text))
+
+        self.wait()
 
         # function = MathTex(
         #     "y", "=",
