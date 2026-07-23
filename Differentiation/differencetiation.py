@@ -404,10 +404,10 @@ class Graph_Version(Scene):
             frac,
             equals,
             difference,
-        ).arrange(RIGHT, buff=0.3)
+        ).arrange(RIGHT)
 
-        equation.to_edge(LEFT, buff=0.6)
-        equation.shift(UP * 0.5)
+        equation.to_edge(LEFT)
+        # equation.shift(UP * 0.5)
 
         self.play(
             ReplacementTransform(delta_y.copy(), delta_y_tex),
@@ -430,3 +430,57 @@ class Graph_Version(Scene):
         )
 
         self.wait()
+
+        slope_title = Text("Slope", weight=BOLD).scale(0.6)
+        slope_title.to_edge(LEFT)
+        slope_title.shift(UP * 2)
+
+        self.play(Write(slope_title))
+
+
+        school_formula = MathTex(
+            "m",
+            "=",
+            r"\frac{y_2-y_1}{x_2-x_1}"
+        )
+
+        school_formula.next_to(
+            slope_title,
+            DOWN,
+            buff=0.5,
+            aligned_edge=LEFT
+        )
+
+        self.play(
+            TransformMatchingTex(
+                equation,
+                school_formula
+            ),
+            run_time=2,
+        )
+
+        self.wait()
+
+
+        # function = MathTex(
+        #     "y", "=",
+        #     "f", "(", "x", ")"
+        # ).scale(1.3)
+
+        # # function.to_edge(RIGHT)
+
+        # self.play(
+        #     ReplacementTransform(
+        #         graph_group,
+        #         function
+        #     ),
+        #     FadeOut(self.x_label),
+        #     FadeOut(self.y_label),
+        #     FadeOut(x_brace),
+        #     FadeOut(y_brace),
+        #     FadeOut(delta_x),
+        #     FadeOut(delta_y),
+        #     run_time=2
+        # )
+
+        # self.wait()
