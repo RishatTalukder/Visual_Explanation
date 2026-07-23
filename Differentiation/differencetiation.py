@@ -110,7 +110,7 @@ class Graph_Version(Scene):
         )
         self.wait()
 
-        graph_dot = always_redraw(
+        self.graph_dot = always_redraw(
             lambda: Dot(
                 self.axes.c2p(
                     tracker.get_value(),
@@ -124,21 +124,21 @@ class Graph_Version(Scene):
         vertical_line_x = always_redraw(
             lambda: DashedLine(
                 x_dot.get_center(),
-                graph_dot.get_center(),
+                self.graph_dot.get_center(),
                 color=GRAY,
             )
         )
 
         vertical_line_y = always_redraw(
             lambda: DashedLine(
-                graph_dot.get_center(),
+                self.graph_dot.get_center(),
                 y_dot.get_center(),
                 color=GRAY,
             )
         )
 
         self.play(Create(vertical_line_x))
-        self.play(FadeIn(graph_dot))
+        self.play(FadeIn(self.graph_dot))
         self.wait()
         # self.wait()
 
@@ -150,7 +150,7 @@ class Graph_Version(Scene):
         
 
         trail = TracedPath(
-            graph_dot.get_center,
+            self.graph_dot.get_center,
             stroke_color=YELLOW,
             stroke_width=4,
             dissipating_time=0.5,
@@ -186,7 +186,7 @@ class Graph_Version(Scene):
         self.remove(trail)
 
 
-        x1_label = always_redraw(
+        self.x1_label = always_redraw(
             lambda: MathTex("x_1")
             .scale(0.8)
             .next_to(
@@ -196,7 +196,7 @@ class Graph_Version(Scene):
             )
         )
 
-        y1_label = always_redraw(
+        self.y1_label = always_redraw(
             lambda: MathTex("y_1")
             .scale(0.8)
             .next_to(
@@ -206,26 +206,26 @@ class Graph_Version(Scene):
             )
         )
 
-        self.play(Write(x1_label))
-        self.play(Write(y1_label))
+        self.play(Write(self.x1_label))
+        self.play(Write(self.y1_label))
         self.wait()
 
         self.x1_group = VGroup(
             x_dot,
             y_dot,
-            graph_dot,
+            self.graph_dot,
             vertical_line_x,
             vertical_line_y,
-            x1_label,
-            y1_label,
+            self.x1_label,
+            self.y1_label,
         )
 
     def animate_position_x2(self):
-        tracker = ValueTracker(3)
+        self.tracker2 = ValueTracker(3)
 
         x2_dot = always_redraw(
             lambda: Dot(
-                self.axes.c2p(tracker.get_value(), 0),
+                self.axes.c2p(self.tracker2.get_value(), 0),
                 radius=0.08,
                 color=BLUE_D
             )
@@ -233,17 +233,17 @@ class Graph_Version(Scene):
 
         y2_dot = always_redraw(
             lambda: Dot(
-                self.axes.c2p(0, 0.05*tracker.get_value()**2 + 4),
+                self.axes.c2p(0, 0.05*self.tracker2.get_value()**2 + 4),
                 radius=0.08,
                 color=GREEN_D
             )
         )
 
-        graph_dot2 = always_redraw(
+        self.graph_dot2 = always_redraw(
             lambda: Dot(
                 self.axes.c2p(
-                    tracker.get_value(),
-                    0.05*tracker.get_value()**2 + 4,
+                    self.tracker2.get_value(),
+                    0.05*self.tracker2.get_value()**2 + 4,
                 ),
                 color=YELLOW_D,
                 radius=0.09,
@@ -253,14 +253,14 @@ class Graph_Version(Scene):
         vertical_line_x = always_redraw(
             lambda: DashedLine(
                 x2_dot.get_center(),
-                graph_dot2.get_center(),
+                self.graph_dot2.get_center(),
                 color=GRAY,
             )
         )
 
         vertical_line_y = always_redraw(
             lambda: DashedLine(
-                graph_dot2.get_center(),
+                self.graph_dot2.get_center(),
                 y2_dot.get_center(),
                 color=GRAY,
             )
@@ -269,7 +269,7 @@ class Graph_Version(Scene):
         self.add(
             x2_dot,
             y2_dot,
-            graph_dot2,
+            self.graph_dot2,
             vertical_line_x,
             vertical_line_y
         )
@@ -277,14 +277,14 @@ class Graph_Version(Scene):
 
 
         self.play(
-            tracker.animate.set_value(8),
+            self.tracker2.animate.set_value(8),
             run_time=1.5,
             rate_func=smooth,
         )
         self.wait()
 
 
-        x2_label = always_redraw(
+        self.x2_label = always_redraw(
             lambda: MathTex("x_2")
             .scale(0.8)
             .next_to(
@@ -294,7 +294,7 @@ class Graph_Version(Scene):
             )
         )
 
-        y2_label = always_redraw(
+        self.y2_label = always_redraw(
             lambda: MathTex("y_2")
             .scale(0.8)
             .next_to(
@@ -304,18 +304,18 @@ class Graph_Version(Scene):
             )
         )
 
-        self.play(Write(x2_label))
-        self.play(Write(y2_label))
+        self.play(Write(self.x2_label))
+        self.play(Write(self.y2_label))
         self.wait()
 
         self.x2_group = VGroup(
             x2_dot,
             y2_dot,
-            graph_dot2,
+            self.graph_dot2,
             vertical_line_x,
             vertical_line_y,
-            x2_label,
-            y2_label,
+            self.x2_label,
+            self.y2_label,
         )
 
     
@@ -490,20 +490,16 @@ class Graph_Version(Scene):
             run_time=2,
         )
 
-        p1 = self.axes.c2p(3, self.function(3))
-        p2 = self.axes.c2p(8, self.function(8))
-
-        secant = Line(
-            p1,
-            p2,
-            color=RED,
+        self.secant = always_redraw(
+            lambda: self.make_secant_line()
         )
 
         # Make it extend beyond the points
-        secant.scale(2.8, about_point=secant.get_center())
+        # self.secant.scale(2.8, about_point=self.secant.get_center())
+        # self.secant.set_length(5)
 
         self.play(
-            Create(secant),
+            Create(self.secant),
             run_time=1.5
         )
 
@@ -512,7 +508,7 @@ class Graph_Version(Scene):
         m_target = MathTex("m").scale(1)
 
         m_target.move_to(
-            secant.get_center()
+            self.secant.get_center()
         )
 
         m_target.shift(UP * 0.45)
@@ -536,9 +532,59 @@ class Graph_Version(Scene):
             buff=0.2,
         )
 
+        instant_change = Text(
+            "What is Instant Change?",
+        )
+
+        instant_change.scale(.5)
+
+        instant_change.next_to(
+            school_formula,
+            DOWN,
+            buff=0.5,
+            aligned_edge=LEFT
+        )
+
+
         self.play(FadeIn(slope_text))
 
         self.wait()
+
+        self.play(
+            Write(instant_change),
+        )
+
+        self.wait()
+
+        self.play(
+            FadeOut(slope_text, m_target, self.x1_label, self.x2_label, self.y1_label, self.y2_label),
+        )
+
+        self.play(
+            self.tracker2.animate.set_value(6),
+            # run_time=2,
+        )
+        self.wait()
+
+        self.play(
+            self.tracker2.animate.set_value(5),
+            # run_time=2,
+        )
+        self.wait()
+
+        self.play(
+            self.tracker2.animate.set_value(4),
+            # run_time=2,
+        )
+
+        self.wait()
+
+        self.play(
+            self.tracker2.animate.set_value(3.0001),
+            # run_time=2,
+        )
+        self.wait()
+
 
         # function = MathTex(
         #     "y", "=",
@@ -562,3 +608,22 @@ class Graph_Version(Scene):
         # )
 
         # self.wait()
+
+    def make_secant_line(self):
+        p1 = self.graph_dot.get_center()
+        p2 = self.graph_dot2.get_center()
+
+        direction = p2 - p1
+        direction /= np.linalg.norm(direction)   # unit vector
+
+        extension = 2
+
+        start = p1 - direction * extension
+        end   = p2 + direction * extension
+
+        return Line(
+            start,
+            end,
+            color=RED,
+            stroke_width=5,
+        )
