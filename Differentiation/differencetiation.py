@@ -461,10 +461,10 @@ class Graph_Version(Scene):
 
         self.wait()
 
-        TransformMatchingTex(
-            equation,
-            school_formula
-        )
+        # TransformMatchingTex(
+        #     equation,
+        #     school_formula
+        # )
 
         
 
@@ -585,29 +585,124 @@ class Graph_Version(Scene):
         )
         self.wait()
 
+        new_formula = MathTex(
+            "m",
+            "=",
+            r"\frac{y_2-y_1}{h}",
+        )
 
-        # function = MathTex(
-        #     "y", "=",
-        #     "f", "(", "x", ")"
-        # ).scale(1.3)
+        new_formula.next_to(
+            slope_title,
+            DOWN,
+            buff=0.5,
+            aligned_edge=LEFT
+        )
 
-        # # function.to_edge(RIGHT)
+        
+
+        self.play(
+            TransformMatchingTex(
+                school_formula,
+                new_formula
+            )
+        )
+
+        self.wait()
+
+        h = MathTex(
+            "h",
+            "=",
+            "x_2-x_1"
+        )
+
+        h.next_to(
+            new_formula,
+            DOWN,
+            buff=0.5,
+            aligned_edge=LEFT
+        )
+
+        self.play(
+            ReplacementTransform(
+                instant_change,
+                h
+            )
+            # Write(h)
+        )
+
+        self.wait()
 
         # self.play(
-        #     ReplacementTransform(
-        #         graph_group,
-        #         function
-        #     ),
-        #     FadeOut(self.x_label),
-        #     FadeOut(self.y_label),
-        #     FadeOut(x_brace),
-        #     FadeOut(y_brace),
-        #     FadeOut(delta_x),
-        #     FadeOut(delta_y),
-        #     run_time=2
+        #     FadeOut(instant_change),
         # )
 
-        # self.wait()
+
+        final_formula = MathTex(
+            r"\frac{\Delta y}{\Delta x}",
+            '=',
+            r"\frac{y_2-y_1}{h}"
+        )
+
+        final_formula.next_to(
+            slope_title,
+            DOWN,
+            buff=0.5,
+            aligned_edge=LEFT
+        )
+
+        limited_formula = MathTex(
+            
+            r"\frac{\Delta y}{\Delta x}",
+            '=',
+            r"\lim_{h \to 0}",
+            r"\frac{y_2-y_1}{h}"
+        )
+
+        limited_formula.next_to(
+            slope_title,
+            DOWN,
+            buff=0.5,
+            aligned_edge=LEFT
+        )
+
+        self.play(
+            Transform(
+                new_formula,
+                final_formula
+            )
+        )
+
+        self.wait()
+
+        self.play(
+            Transform(
+                new_formula,
+                limited_formula
+            )
+        )
+
+        self.wait()
+
+
+
+        function = MathTex(
+            "y", 
+            "=",
+            "f(x)"
+        ).scale(1.5)
+
+        function.shift(RIGHT * 2)
+
+        self.play(
+            ReplacementTransform(
+                graph_group,
+                function
+            ),
+            FadeOut(self.secant),
+            run_time=2
+        )
+
+        self.wait()
 
     def make_secant_line(self):
         p1 = self.graph_dot.get_center()
