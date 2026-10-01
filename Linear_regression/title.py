@@ -14,5 +14,5 @@ class TitleScene(Scene):
         self.play(FadeIn(self.title))
         self.wait(3)
 
-        # self.play(self.title.animate.to_edge(UP))
-        # self.wait(1) 
+        self.play(self.title.animate.to_edge(UP))
+        self.wait(1) 
