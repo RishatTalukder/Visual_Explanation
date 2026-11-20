@@ -213,6 +213,19 @@ class scene1_intro(Scene):
             run_time=1.0
         )
 
+        self.wait(1)
+
+        self.play(
+            Flash(
+                seven.get_center(),
+                color=YELLOW,
+                flash_radius=0.45,
+                line_length=0.18,
+                num_lines=8,
+            ),
+            run_time=0.5,
+        )
+
         self.wait(2)
 
 
