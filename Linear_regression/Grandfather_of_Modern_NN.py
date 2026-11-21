@@ -20,6 +20,356 @@ LAVENDER = "#A99BCB"
 ## Storyboard Interpretation
 
 
+class scene2_pattern_visual2(Scene):
+    def construct(self):
+        # ----------------------------------
+        # Setup from Scene 1
+        # ----------------------------------
+        LEFT_X = -1.65
+        RIGHT_X = 1.65
+        HEADER_Y = 1.35
+        ROW_YS = [0.55, -0.25, -1.05, -1.85]
+        FONT_SIZE = 54
+
+        def make_value(value, position, color=GREEN):
+            return MathTex(
+                str(value),
+                font_size=FONT_SIZE,
+                color=color
+            ).move_to(position)
+
+        def make_arrow(y_position):
+            return Arrow(
+                start=[-0.75, y_position, 0],
+                end=[0.75, y_position, 0],
+                color=GREEN,
+                stroke_width=2.5,
+                buff=0,
+                max_tip_length_to_length_ratio=0.18,
+            )
+
+        def make_row(x, y, row_index):
+            ypos = ROW_YS[row_index]
+            x_value = make_value(x, [LEFT_X, ypos, 0])
+            arrow = make_arrow(ypos)
+            y_value = make_value(y, [RIGHT_X, ypos, 0])
+            return VGroup(x_value, arrow, y_value)
+
+        # Recreate Scene 1's final table
+        x_header = make_value("x", [LEFT_X, HEADER_Y, 0], CYAN)
+        y_header = make_value("y", [RIGHT_X, HEADER_Y, 0], PINK)
+        zero = make_value("0", [LEFT_X, ROW_YS[0], 0])
+        arrow_0 = make_arrow(ROW_YS[0])
+        one = make_value("1", [RIGHT_X, ROW_YS[0], 0])
+        row_1 = make_row(1, 3, 1)
+        row_2 = make_row(2, 5, 2)
+        row_3 = make_row(3, "7", 3)
+
+        table = VGroup(
+            x_header, y_header,
+            zero, arrow_0, one,
+            row_1, row_2, row_3
+        )
+        table.scale(0.48)
+        table.move_to([-4.15, 0, 0])
+
+        equation = MathTex(
+            r"y = 2x + 1",
+            font_size=58,
+            color=GREEN
+        ).move_to([1.6, 0.55, 0])
+
+        substitution_3 = MathTex(
+            r"y = 1",
+            font_size=52,
+            color=YELLOW
+        ).move_to([1.6, -0.85, 0])
+
+        repeat_note = Text(
+            "Now repeat for x = 1, 2, 3",
+            font_size=27,
+            color=GREEN
+        ).move_to([1.6, -2.0, 0])
+
+        self.add(table, equation, substitution_3, repeat_note)
+        self.wait(1)
+
+        # ==================================================
+        # STEP 2 (Panel 2): Clear intermediate notes, reposition equation
+        # ==================================================
+        eq_header_pos = [2.2, 2.7, 0]
+
+        self.play(
+            FadeOut(substitution_3),
+            FadeOut(repeat_note),
+            equation.animate.scale(0.9).move_to(eq_header_pos),
+            run_time=1.0,
+        )
+        self.wait(0.5)
+
+        # ==================================================
+        # STEP 3 (Panel 3): Create Coordinate Axes
+        # ==================================================
+        axes = Axes(
+            x_range=[0, 3.8, 1],
+            y_range=[0, 8.5, 1],
+            x_length=4.4,
+            y_length=4.2,
+            axis_config={
+                "color": LAVENDER,
+                "stroke_width": 2.5,
+                "include_tip": True,
+                "tip_width": 0.16,
+                "tip_height": 0.16,
+            },
+        ).move_to([2.2, -0.6, 0])
+
+        x_axis_label = MathTex("x", color=CYAN, font_size=38).next_to(
+            axes.x_axis.get_end(), RIGHT, buff=0.15
+        )
+        y_axis_label = MathTex("y", color=PINK, font_size=38).next_to(
+            axes.y_axis.get_end(), UP, buff=0.15
+        )
+        axes_group = VGroup(axes, x_axis_label, y_axis_label)
+
+        self.play(
+            Create(axes),
+            Write(x_axis_label),
+            Write(y_axis_label),
+            run_time=1.2,
+        )
+        self.wait(0.5)
+
+        # ==================================================
+        # STEP 4 (Panel 4): Draw the Line y = 2x + 1
+        # ==================================================
+        line = axes.plot(
+            lambda x: 2 * x + 1,
+            x_range=[0, 3.4],
+            color=CYAN,
+            stroke_width=3.5,
+        )
+
+        self.play(Create(line), run_time=1.2)
+        self.wait(0.6)
+
+        # ==================================================
+        # STEP 5 - 7 (Panels 5, 6, 7): Plot Points & Projections
+        # ==================================================
+        points_data = [(0, 1), (1, 3), (2, 5), (3, 7)]
+        dots = VGroup()
+        projections = VGroup()
+        tick_labels = VGroup()
+
+        for x_val, y_val in points_data:
+            pt_coords = axes.c2p(x_val, y_val)
+            dot = Dot(pt_coords, radius=0.08, color=YELLOW)
+            dots.add(dot)
+
+            # Axis tick labels
+            y_tick = MathTex(str(y_val), font_size=28, color=PINK).next_to(
+                axes.c2p(0, y_val), LEFT, buff=0.12
+            )
+            tick_labels.add(y_tick)
+
+            if x_val > 0:
+                x_tick = MathTex(str(x_val), font_size=28, color=CYAN).next_to(
+                    axes.c2p(x_val, 0), DOWN, buff=0.12
+                )
+                tick_labels.add(x_tick)
+
+                # Dashed projection lines
+                v_line = DashedLine(
+                    axes.c2p(x_val, 0), pt_coords,
+                    dash_length=0.08, color=LAVENDER, stroke_width=1.8
+                )
+                h_line = DashedLine(
+                    axes.c2p(0, y_val), pt_coords,
+                    dash_length=0.08, color=LAVENDER, stroke_width=1.8
+                )
+                projections.add(v_line, h_line)
+            else:
+                x_tick = MathTex("0", font_size=28, color=CYAN).next_to(
+                    axes.c2p(0, 0), DOWN + LEFT, buff=0.08
+                )
+                tick_labels.add(x_tick)
+
+        # Panel 5: Points (0,1) and (1,3)
+        self.play(
+            FadeIn(dots[0], scale=1.5),
+            Write(tick_labels[0]),  # y=1
+            Write(tick_labels[1]),  # x=0
+            run_time=0.7,
+        )
+        self.play(
+            Create(projections[0]),  # v_line 1
+            Create(projections[1]),  # h_line 1
+            FadeIn(dots[1], scale=1.5),
+            Write(tick_labels[2]),  # y=3
+            Write(tick_labels[3]),  # x=1
+            run_time=0.9,
+        )
+        self.wait(0.5)
+
+        # Panel 6: Point (2,5)
+        self.play(
+            Create(projections[2]),
+            Create(projections[3]),
+            FadeIn(dots[2], scale=1.5),
+            Write(tick_labels[4]),  # y=5
+            Write(tick_labels[5]),  # x=2
+            run_time=0.9,
+        )
+        self.wait(0.5)
+
+        # Panel 7: Point (3,7)
+        self.play(
+            Create(projections[4]),
+            Create(projections[5]),
+            FadeIn(dots[3], scale=1.5),
+            Write(tick_labels[6]),  # y=7
+            Write(tick_labels[7]),  # x=3
+            run_time=0.9,
+        )
+        self.wait(1.2)
+
+        # ==================================================
+        # STEP 8 (Panel 8): Replace Table with "Linear Relationship"
+        # ==================================================
+        linear_title = Text(
+            "Linear Relationship",
+            font_size=32,
+            color=CYAN
+        ).move_to([-3.85, 1.4, 0])
+
+        self.play(
+            FadeOut(table),
+            Write(linear_title),
+            run_time=1.2,
+        )
+        self.wait(0.6)
+
+        # ==================================================
+        # STEP 9 (Panel 9): Introduce y = mx + c
+        # ==================================================
+        gen_eq = MathTex(
+            "y", "=", "m", "x", "+", "c",
+            font_size=52
+        ).move_to([-3.85, 0.2, 0])
+
+        gen_eq[0].set_color(WHITE)
+        gen_eq[1].set_color(WHITE)
+        gen_eq[2].set_color(YELLOW)  # m
+        gen_eq[3].set_color(WHITE)
+        gen_eq[4].set_color(WHITE)
+        gen_eq[5].set_color(CORAL)   # c
+
+        self.play(Write(gen_eq), run_time=1.0)
+        self.wait(1.0)
+
+        # ==================================================
+        # STEP 10 (Panel 10): Animate Slope (m)
+        # ==================================================
+        # Set up dynamic line trackers
+        slope_tracker = ValueTracker(2.0)
+        intercept_tracker = ValueTracker(1.0)
+
+        # Replace static line with dynamic line
+        self.remove(line)
+        dynamic_line = always_redraw(
+            lambda: axes.plot(
+                lambda x: slope_tracker.get_value() * x + intercept_tracker.get_value(),
+                x_range=[0, min(3.5, max(0.1, (8.2 - intercept_tracker.get_value()) / max(0.01, slope_tracker.get_value())))],
+                color=CYAN,
+                stroke_width=3.5,
+            )
+        )
+        self.add(dynamic_line)
+
+        # Arrow under m
+        m_char = gen_eq[2]
+        arrow_m = Arrow(
+            start=m_char.get_bottom() + DOWN * 0.1,
+            end=m_char.get_bottom() + DOWN * 0.85 + LEFT * 0.4,
+            color=YELLOW,
+            stroke_width=2.5,
+            max_tip_length_to_length_ratio=0.22,
+            buff=0,
+        )
+        m_val_text = MathTex("m = 2", font_size=38, color=YELLOW).next_to(
+            arrow_m.get_end(), DOWN, buff=0.15
+        )
+
+        # Highlight m and animate slope variation
+        self.play(
+            m_char.animate.scale(1.2),
+            run_time=0.6,
+        )
+        self.play(m_char.animate.scale(1 / 1.2), run_time=0.3)
+
+        # Tilt slope back and forth to show steepness
+        self.play(slope_tracker.animate.set_value(0.7), run_time=0.9, rate_func=rate_functions.ease_in_out_sine)
+        self.play(slope_tracker.animate.set_value(2.8), run_time=0.9, rate_func=rate_functions.ease_in_out_sine)
+        self.play(slope_tracker.animate.set_value(2.0), run_time=0.8, rate_func=rate_functions.ease_in_out_sine)
+
+        self.play(Create(arrow_m), run_time=0.5)
+        self.play(Write(m_val_text), run_time=0.6)
+        self.wait(0.8)
+
+        # ==================================================
+        # STEP 11 (Panel 11): Animate Intercept (c)
+        # ==================================================
+        c_char = gen_eq[5]
+        arrow_c = Arrow(
+            start=c_char.get_bottom() + DOWN * 0.1,
+            end=c_char.get_bottom() + DOWN * 0.85 + RIGHT * 0.4,
+            color=CORAL,
+            stroke_width=2.5,
+            max_tip_length_to_length_ratio=0.22,
+            buff=0,
+        )
+        c_val_text = MathTex("c = 1", font_size=38, color=CORAL).next_to(
+            arrow_c.get_end(), DOWN, buff=0.15
+        )
+
+        # Highlight c and animate vertical shift
+        self.play(
+            c_char.animate.scale(1.2),
+            # Create(arrow_c),
+            run_time=0.6,
+        )
+        self.play(c_char.animate.scale(1 / 1.2), run_time=0.3)
+
+        # Shift line up and down to show intercept shift
+        self.play(intercept_tracker.animate.set_value(3.0), run_time=0.9, rate_func=rate_functions.ease_in_out_sine)
+        self.play(intercept_tracker.animate.set_value(-0.5), run_time=0.9, rate_func=rate_functions.ease_in_out_sine)
+        self.play(intercept_tracker.animate.set_value(1.0), run_time=0.8, rate_func=rate_functions.ease_in_out_sine)
+
+        self.play(Create(arrow_c), run_time=0.5)
+        self.play(Write(c_val_text), run_time=0.6)
+        self.wait(0.8)
+
+        # ==================================================
+        # STEP 12 (Panel 12): Final Visual Emphasis
+        # ==================================================
+        # Highlight intercept point (0, 1) and lock final view
+        intercept_flash_dot = Dot(axes.c2p(3, 7), radius=0.12, color=CORAL)
+        self.play(
+            Flash(
+                axes.c2p(3, 7),
+                color=CORAL,
+                flash_radius=0.4,
+                line_length=0.15,
+                num_lines=8,
+            ),
+            FadeIn(intercept_flash_dot),
+            run_time=0.6,
+        )
+        self.play(FadeOut(intercept_flash_dot), run_time=0.4)
+
+        self.wait(3.0)
+
+
 class scene1_intro(Scene):
 
     def construct(self):
