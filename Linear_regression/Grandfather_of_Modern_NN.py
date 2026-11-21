@@ -392,7 +392,102 @@ class scene1_intro(Scene):
 
         self.wait(3)
 
+class scene2_pattern_visual(Scene):
+    def construct(self):
 
+        LEFT_X = -1.65
+        RIGHT_X = 1.65
+
+        HEADER_Y = 1.35
+        ROW_YS = [0.55, -0.25, -1.05, -1.85]
+
+        FONT_SIZE = 54
+
+        def make_value(value, position, color=GREEN):
+            return MathTex(
+                str(value),
+                font_size=FONT_SIZE,
+                color=color
+            ).move_to(position)
+
+        def make_arrow(y_position):
+            return Arrow(
+                start=[-0.75, y_position, 0],
+                end=[0.75, y_position, 0],
+                color=GREEN,
+                stroke_width=2.5,
+                buff=0,
+                max_tip_length_to_length_ratio=0.18,
+            )
+
+        def make_row(x, y, row_index):
+            ypos = ROW_YS[row_index]
+
+            x_value = make_value(x, [LEFT_X, ypos, 0])
+            arrow = make_arrow(ypos)
+            y_value = make_value(y, [RIGHT_X, ypos, 0])
+
+            return VGroup(x_value, arrow, y_value)
+
+        # ==================================
+        # Recreate Scene 1's final table
+        # ==================================
+
+        x_header = make_value("x", [LEFT_X, HEADER_Y, 0], CYAN)
+        y_header = make_value("y", [RIGHT_X, HEADER_Y, 0], PINK)
+
+        zero = make_value("0", [LEFT_X, ROW_YS[0], 0])
+        arrow_0 = make_arrow(ROW_YS[0])
+        one = make_value("1", [RIGHT_X, ROW_YS[0], 0])
+
+        row_1 = make_row(1, 3, 1)
+        row_2 = make_row(2, 5, 2)
+        row_3 = make_row(3, "7", 3)
+
+        table = VGroup(
+            x_header,
+            y_header,
+            zero,
+            arrow_0,
+            one,
+            row_1,
+            row_2,
+            row_3
+        )
+
+        table.scale(0.48)
+        table.move_to([-4.15, 0, 0])
+
+        # ==================================
+        # Recreate Scene 1's final equations
+        # ==================================
+
+        equation = MathTex(
+            r"y = 2x + 1",
+            font_size=58,
+            color=GREEN
+        ).move_to([1.6, 0.55, 0])
+
+        substitution_3 = MathTex(
+            r"y = 1",
+            font_size=52,
+            color=YELLOW
+        ).move_to([1.6, -0.85, 0])
+
+        repeat_note = Text(
+            "Now repeat for x = 1, 2, 3",
+            font_size=27,
+            color=GREEN
+        ).move_to([1.6, -2.0, 0])
+
+        self.add(
+            table,
+            equation,
+            substitution_3,
+            repeat_note
+        )
+
+        self.wait(1)
 
 class NeonLabDemo(Scene):
     def construct(self):
