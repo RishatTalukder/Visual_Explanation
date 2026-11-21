@@ -155,7 +155,7 @@ class scene3_intuition(Scene):
             arrow_c, c_val_text
         )
 
-        self.wait(1.0)
+        self.wait(1)
 
         # ==================================================
         # STEP 2 (Panel 2): Replace parameters with "?"
@@ -168,7 +168,7 @@ class scene3_intuition(Scene):
             ReplacementTransform(c_val_text, c_q),
             run_time=0.8,
         )
-        self.wait(0.6)
+        self.wait(1)
 
         # ==================================================
         # STEP 3 (Panel 3): Clear line & Set m=0, c=0
@@ -183,7 +183,7 @@ class scene3_intuition(Scene):
             ReplacementTransform(c_q, c_0),
             run_time=1.0,
         )
-        self.wait(0.6)
+        self.wait(1)
 
         # ==================================================
         # STEP 4 (Panel 4): Draw Candidate Line y = 0
@@ -202,7 +202,7 @@ class scene3_intuition(Scene):
         )
 
         self.play(Create(test_line), run_time=0.9)
-        self.wait(0.5)
+        self.wait(1)
 
         # ==================================================
         # STEP 5 & 6 (Panels 5 & 6): Residual Bars & "Error" Label
@@ -243,7 +243,7 @@ class scene3_intuition(Scene):
             Create(error_arrow),
             run_time=0.8,
         )
-        self.wait(1.0)
+        self.wait(1)
 
         # ==================================================
         # STEP 7 & 8 (Panels 7 & 8): Total Absolute Error = 16
@@ -267,13 +267,13 @@ class scene3_intuition(Scene):
             Write(err_calc_full),
             run_time=1.0,
         )
-        self.wait(1.0)
+        self.wait(1)
 
         self.play(
             ReplacementTransform(err_calc_full, err_res_16),
             run_time=0.8,
         )
-        self.wait(0.8)
+        self.wait(1)
 
         # ==================================================
         # STEP 9 & 10 (Panels 9 & 10): Continuous c sweep with Absolute Error
@@ -303,16 +303,16 @@ class scene3_intuition(Scene):
 
         # Sweep c: 0 -> 1 -> 3 -> 6 -> 0
         self.play(c_tracker.animate.set_value(1.0), run_time=1.4, rate_func=smooth)
-        self.wait(0.8)
+        self.wait(1)
 
         self.play(c_tracker.animate.set_value(3.0), run_time=1.6, rate_func=smooth)
-        self.wait(0.8)
+        self.wait(1)
 
         self.play(c_tracker.animate.set_value(8.0), run_time=1.8, rate_func=smooth)
-        self.wait(0.8)
+        self.wait(1)
 
         self.play(c_tracker.animate.set_value(0.0), run_time=1.6, rate_func=smooth)
-        self.wait(0.8)
+        self.wait(1)
 
         # ==================================================
         # NEW STATE (Between 10 & 11): Error Squared (Squares + Sweep)
@@ -371,7 +371,7 @@ class scene3_intuition(Scene):
             run_time=3.0,
         )
 
-        self.wait(1.0)
+        self.wait(1)
 
         self.play(
             
@@ -379,7 +379,7 @@ class scene3_intuition(Scene):
             Create(err_sq_arrow),
             run_time=1.0,
         )
-        self.wait(1.0)
+        self.wait(1)
 
 
         # 2) Mirror Steps 7 & 8: Show expanded Total Error^2 = 84
@@ -401,13 +401,13 @@ class scene3_intuition(Scene):
             Write(err_sq_calc_full),
             run_time=1.0,
         )
-        self.wait(1.0)
+        self.wait(1)
 
         self.play(
             ReplacementTransform(err_sq_calc_full, err_sq_res_84),
             run_time=0.8,
         )
-        self.wait(0.8)
+        self.wait(1)
 
         # 3) Mirror Steps 9 & 10: Dynamic squares + Total Error^2 sweep (0 -> 1 -> 3 -> 6 -> 0)
         self.remove(initial_squares, err_sq_res_84)
@@ -431,16 +431,16 @@ class scene3_intuition(Scene):
 
         # Sweep c: 0 -> 1 -> 3 -> 6 -> 0
         self.play(c_tracker.animate.set_value(1.0), run_time=1.4, rate_func=smooth)
-        self.wait(0.8)
+        self.wait(1)
 
         self.play(c_tracker.animate.set_value(3.0), run_time=1.6, rate_func=smooth)
-        self.wait(0.8)
+        self.wait(1)
 
         self.play(c_tracker.animate.set_value(8.0), run_time=1.8, rate_func=smooth)
-        self.wait(0.8)
+        self.wait(1)
 
         self.play(c_tracker.animate.set_value(0.0), run_time=1.6, rate_func=smooth)
-        self.wait(0.8)
+        self.wait(1)
 
         # Clean up bottom readout before scaling into dual layout
         self.play(FadeOut(err_sq_text_dynamic), run_time=0.5)
@@ -537,7 +537,7 @@ class scene3_intuition(Scene):
 
         lower_graph_group = VGroup(error_axes, error_c_label, error_y_label, origin_0)
         self.play(Create(lower_graph_group), run_time=1.0)
-        self.wait(0.5)
+        self.wait(1)
 
         # Dynamic Tracer dot on Lower Error graph
         err_dot = always_redraw(
@@ -583,7 +583,7 @@ class scene3_intuition(Scene):
             rate_func=linear
         )
         err_dot.remove_updater(drop_milestone_dots)
-        self.wait(0.6)
+        self.wait(1)
 
         # Highlight optimal minimum at c = 4 (Error^2 = 20)
         min_point = error_axes.c2p(4, 20)
@@ -605,7 +605,7 @@ class scene3_intuition(Scene):
             run_time=0.8,
         )
 
-        self.wait(3.0)
+        self.wait(1)
 
 
 class scene2_pattern_visual(Scene):
@@ -696,7 +696,7 @@ class scene2_pattern_visual(Scene):
             equation.animate.scale(0.9).move_to(eq_header_pos),
             run_time=1.0,
         )
-        self.wait(0.5)
+        self.wait(1)
 
         # ==================================================
         # STEP 3 (Panel 3): Create Coordinate Axes
@@ -729,7 +729,7 @@ class scene2_pattern_visual(Scene):
             Write(y_axis_label),
             run_time=1.2,
         )
-        self.wait(0.5)
+        self.wait(1)
 
         # ==================================================
         # STEP 4 (Panel 4): Draw the Line y = 2x + 1
@@ -742,7 +742,7 @@ class scene2_pattern_visual(Scene):
         )
 
         self.play(Create(line), run_time=1.2)
-        self.wait(0.6)
+        self.wait(1)
 
         # ==================================================
         # STEP 5 - 7 (Panels 5, 6, 7): Plot Points & Projections
@@ -800,7 +800,7 @@ class scene2_pattern_visual(Scene):
             Write(tick_labels[3]),  # x=1
             run_time=0.9,
         )
-        self.wait(0.5)
+        self.wait(1)
 
         # Panel 6: Point (2,5)
         self.play(
@@ -811,7 +811,7 @@ class scene2_pattern_visual(Scene):
             Write(tick_labels[5]),  # x=2
             run_time=0.9,
         )
-        self.wait(0.5)
+        self.wait(1)
 
         # Panel 7: Point (3,7)
         self.play(
@@ -822,7 +822,7 @@ class scene2_pattern_visual(Scene):
             Write(tick_labels[7]),  # x=3
             run_time=0.9,
         )
-        self.wait(1.2)
+        self.wait(1)
 
         # ==================================================
         # STEP 8 (Panel 8): Replace Table with "Linear Relationship"
@@ -838,7 +838,7 @@ class scene2_pattern_visual(Scene):
             Write(linear_title),
             run_time=1.2,
         )
-        self.wait(0.6)
+        self.wait(1)
 
         # ==================================================
         # STEP 9 (Panel 9): Introduce y = mx + c
@@ -856,7 +856,7 @@ class scene2_pattern_visual(Scene):
         gen_eq[5].set_color(CORAL)   # c
 
         self.play(Write(gen_eq), run_time=1.0)
-        self.wait(1.0)
+        self.wait(1)
 
         # ==================================================
         # STEP 10 (Panel 10): Animate Slope (m)
@@ -905,7 +905,7 @@ class scene2_pattern_visual(Scene):
 
         self.play(Create(arrow_m), run_time=0.5)
         self.play(Write(m_val_text), run_time=0.6)
-        self.wait(0.8)
+        self.wait(1)
 
         # ==================================================
         # STEP 11 (Panel 11): Animate Intercept (c)
@@ -938,7 +938,7 @@ class scene2_pattern_visual(Scene):
 
         self.play(Create(arrow_c), run_time=0.5)
         self.play(Write(c_val_text), run_time=0.6)
-        self.wait(0.8)
+        self.wait(1)
 
         # ==================================================
         # STEP 12 (Panel 12): Final Visual Emphasis
@@ -958,7 +958,7 @@ class scene2_pattern_visual(Scene):
         )
         self.play(FadeOut(intercept_flash_dot), run_time=0.4)
 
-        self.wait(3.0)
+        self.wait(1)
 
 
 class scene1_intro(Scene):
@@ -1049,7 +1049,7 @@ class scene1_intro(Scene):
             run_time=0.8
         )
 
-        self.wait(0.6)
+        self.wait(1)
 
         # ==================================
         # STEP 2
@@ -1086,7 +1086,7 @@ class scene1_intro(Scene):
             run_time=1.0
         )
 
-        self.wait(0.7)
+        self.wait(1)
 
         # ==================================
         # STEP 3
@@ -1097,7 +1097,7 @@ class scene1_intro(Scene):
 
         reveal_row(row_1)
 
-        self.wait(0.7)
+        self.wait(1)
 
         # ==================================
         # STEP 4
@@ -1108,14 +1108,14 @@ class scene1_intro(Scene):
 
         reveal_row(row_2)
 
-        self.wait(0.7)
+        self.wait(1)
 
         # ==================================
         # STEP 5
         # Hold the completed table
         # ==================================
 
-        self.wait(1.5)
+        self.wait(1)
 
         # ==================================
         # STEP 6
@@ -1131,7 +1131,7 @@ class scene1_intro(Scene):
             run_time=1.2
         )
 
-        self.wait(1.0)
+        self.wait(1)
 
         # ==================================
         # STEP 7
@@ -1165,7 +1165,7 @@ class scene1_intro(Scene):
             run_time=0.5,
         )
 
-        self.wait(2)
+        self.wait(1)
 
 
         
@@ -1212,7 +1212,7 @@ class scene1_intro(Scene):
             run_time=1.2
         )
 
-        self.wait(1.2)
+        self.wait(1)
 
         # ==================================
         # STEP 10
@@ -1232,7 +1232,7 @@ class scene1_intro(Scene):
             run_time=1.3
         )
 
-        self.wait(1.5)
+        self.wait(1)
 
         # ==================================
         # STEP 11
@@ -1291,7 +1291,7 @@ class scene1_intro(Scene):
             run_time=1.2
         )
 
-        self.wait(0.8)
+        self.wait(1)
 
         self.play(
             ReplacementTransform(
@@ -1301,7 +1301,7 @@ class scene1_intro(Scene):
             run_time=1
         )
 
-        self.wait(0.8)
+        self.wait(1)
 
         self.play(
             ReplacementTransform(
@@ -1311,7 +1311,7 @@ class scene1_intro(Scene):
             run_time=1
         )
 
-        self.wait(1.2)
+        self.wait(1)
 
         # ==================================
         # STEP 13
@@ -1331,7 +1331,7 @@ class scene1_intro(Scene):
             run_time=1
         )
 
-        self.wait(3)
+        self.wait(1)
 
 
 class NeonLabDemo(Scene):
@@ -1454,7 +1454,7 @@ class NeonLabDemo(Scene):
             run_time=2
         )
 
-        self.wait(0.5)
+        self.wait(1)
 
         # ----------------------------------
         # 4. REGRESSION LINE
@@ -1529,5 +1529,5 @@ class NeonLabDemo(Scene):
             FadeIn(annotation, shift=UP)
         )
 
-        self.wait(3)
+        self.wait(1)
 
