@@ -147,7 +147,7 @@ class scene3_intuition(Scene):
             arrow_c.get_end(), DOWN, buff=0.15
         )
 
-        # Add everything to the screen initially
+        # Add everything initially
         self.add(
             equation,
             axes, x_axis_label, y_axis_label,
@@ -173,19 +173,14 @@ class scene3_intuition(Scene):
         self.wait(0.6)
 
         # ==================================================
-        # STEP 3 (Panel 3): Clear 4th point & Set m=0, c=0
+        # STEP 3 (Panel 3): Clear line & Set m=0, c=0
         # ==================================================
         m_0 = MathTex("m = 0", font_size=38, color=YELLOW).move_to(m_q.get_center())
         c_0 = MathTex("c = 0", font_size=38, color=CORAL).move_to(c_q.get_center())
 
-        # Keep first 3 points: (0,1), (1,3), (2,5)
-        # Fade out line, dashed projections, dot 3, and tick labels for x=3, y=7
         self.play(
-            FadeOut(line), 
+            FadeOut(line),
             FadeOut(projections),
-            # FadeOut(dots[3]),
-            # FadeOut(tick_labels[6]),  # y=7
-            # FadeOut(tick_labels[7]),  # x=3
             ReplacementTransform(m_q, m_0),
             ReplacementTransform(c_q, c_0),
             run_time=1.0,
@@ -196,7 +191,6 @@ class scene3_intuition(Scene):
         # STEP 4 (Panel 4): Draw Candidate Line y = 0
         # ==================================================
         active_points = [(0, 1), (1, 3), (2, 5), (3, 7)]
-
         c_tracker = ValueTracker(0.0)
 
         # Dynamic candidate line: y = 0*x + c
@@ -254,15 +248,15 @@ class scene3_intuition(Scene):
         self.wait(1.0)
 
         # ==================================================
-        # STEP 7 & 8 (Panels 7 & 8): Calculate Total Error = 9
+        # STEP 7 & 8 (Panels 7 & 8): Total Error Calculation = 16
         # ==================================================
         err_calc_full = MathTex(
             r"\text{Total Error} = (1 - 0) + (3 - 0) + (5 - 0) + (7 - 0)",
-            font_size=28,
+            font_size=26,
             color=WHITE
         ).move_to([2.2, -3.5, 0])
 
-        err_res_9 = MathTex(
+        err_res_16 = MathTex(
             r"\text{Total Error} = 16",
             font_size=32,
             color=WHITE
@@ -278,15 +272,15 @@ class scene3_intuition(Scene):
         self.wait(1.0)
 
         self.play(
-            ReplacementTransform(err_calc_full, err_res_9),
+            ReplacementTransform(err_calc_full, err_res_16),
             run_time=0.8,
         )
         self.wait(0.8)
 
         # ==================================================
-        # STEP 9 & 10 (Panels 9 & 10): Continuous c sweep from 0 -> 6
+        # STEP 9 & 10 (Panels 9 & 10): Continuous c sweep from 0 -> 6 -> 0
         # ==================================================
-        self.remove(err_res_9, c_0)
+        self.remove(err_res_16, c_0)
 
         # Dynamic c and error text updaters
         c_text_dynamic = always_redraw(
@@ -310,47 +304,54 @@ class scene3_intuition(Scene):
         )
         self.add(err_text_dynamic)
 
-        # Sweep c: 0 -> 1 (pause: Panel 9), 1 -> 3 (pause: Panel 10), 3 -> 6, and back to 0
-        self.play(c_tracker.animate.set_value(1.0), run_time=1.5, rate_func=smooth)
+        # Sweep c: 0 -> 1 -> 3 -> 6 -> 0
+        self.play(c_tracker.animate.set_value(1.0), run_time=1.4, rate_func=smooth)
         self.wait(0.8)
 
-        self.play(c_tracker.animate.set_value(3.0), run_time=1.8, rate_func=smooth)
+        self.play(c_tracker.animate.set_value(3.0), run_time=1.6, rate_func=smooth)
         self.wait(0.8)
 
-        self.play(c_tracker.animate.set_value(6.0), run_time=2.0, rate_func=smooth)
-        self.wait(0.6)
+        self.play(c_tracker.animate.set_value(6.0), run_time=1.8, rate_func=smooth)
+        self.wait(0.8)
 
-        self.play(c_tracker.animate.set_value(0.0), run_time=1.8, rate_func=smooth)
-        self.wait(0.6)
+        self.play(c_tracker.animate.set_value(0.0), run_time=1.6, rate_func=smooth)
+        self.wait(0.8)
 
         # ==================================================
-        # STEP 11 & 12 (Panels 11 & 12): Dual Layout + Error Graph
+        # STEP 11 & 12 (Panels 11 & 12): Dual Layout + Real-Time Graph
         # ==================================================
-        self.remove(c_text_dynamic, err_text_dynamic, test_line, error_bars)
+        self.remove(err_text_dynamic, test_line, error_bars)
 
-        # Scale and move top data graph to upper-right quadrant
+        # Static upper elements to scale
         top_group_static = VGroup(
             axes, x_axis_label, y_axis_label,
             dots[0], dots[1], dots[2], dots[3],
             tick_labels[0], tick_labels[1], tick_labels[2],
-            tick_labels[3], tick_labels[4], tick_labels[5], tick_labels[6], tick_labels[7],
+            tick_labels[3], tick_labels[4], tick_labels[5],
+            tick_labels[6], tick_labels[7],
         )
 
-        # Create a group before self.play()
-        eq_group = VGroup(gen_eq, arrow_m, m_0, arrow_c)
+        eq_group = VGroup(c_text_dynamic,gen_eq, arrow_m, m_0, arrow_c)
 
         self.play(
             top_group_static.animate.scale(0.58).move_to([2.7, 1.8, 0]),
             linear_title.animate.scale(0.9).move_to([-4.1, 1.8, 0]),
-            eq_group.animate.scale(0.85).move_to([-4.1, 0.2, 0]), # Adjust Y slightly to account for the taller group
+            eq_group.animate.scale(0.85).move_to([-4.1, 0.4, 0]),
             run_time=1.2,
         )
 
+        self.remove(c_text_dynamic)
 
-        c_0_left = MathTex("c = 0", font_size=32, color=CORAL).next_to(arrow_c, DOWN, buff=0.1)
-        self.add(c_0_left)
+        # Re-attach dynamic elements for upper plot and left formula
+        c_text_left = always_redraw(
+            lambda: MathTex(
+                f"c = {c_tracker.get_value():.1f}" if abs(c_tracker.get_value() - round(c_tracker.get_value())) > 0.05 else f"c = {int(round(c_tracker.get_value()))}",
+                font_size=32,
+                color=CORAL
+            ).next_to(arrow_c, DOWN, buff=0.1)
+        )
+        self.add(c_text_left)
 
-        # Re-attach scaled dynamic line & error bars to upper axes
         test_line_scaled = always_redraw(
             lambda: axes.plot(
                 lambda x: c_tracker.get_value(),
@@ -372,10 +373,10 @@ class scene3_intuition(Scene):
         )
         self.add(test_line_scaled, error_bars_scaled)
 
-        # Create Lower Graph (Total Error vs c)
+        # Lower Graph: Total Error vs c
         error_axes = Axes(
-            x_range=[0, 6.5, 1],
-            y_range=[0, 10.5, 3],
+            x_range=[0, 7.5, 1],
+            y_range=[0, 18, 4],
             x_length=4.4,
             y_length=2.5,
             axis_config={
@@ -394,20 +395,18 @@ class scene3_intuition(Scene):
             error_axes.y_axis.get_end(), UP, buff=0.12
         )
 
-        # Tick 0 on lower axes
         origin_0 = MathTex("0", font_size=22, color=LAVENDER).next_to(
             error_axes.c2p(0, 0), DOWN + LEFT, buff=0.06
         )
-        # Tick 9 on error axes
-        tick_9 = MathTex("9", font_size=22, color=YELLOW).next_to(
-            error_axes.c2p(0, 9), LEFT, buff=0.08
+        tick_16 = MathTex("16", font_size=22, color=YELLOW).next_to(
+            error_axes.c2p(0, 16), LEFT, buff=0.08
         )
 
-        lower_graph_group = VGroup(error_axes, error_c_label, error_y_label, origin_0, tick_9)
+        lower_graph_group = VGroup(error_axes, error_c_label, error_y_label, origin_0, tick_16)
         self.play(Create(lower_graph_group), run_time=1.0)
         self.wait(0.5)
 
-        # Continuous Tracer dot on Error graph
+        # Dynamic Tracer dot on Lower Error graph
         err_dot = always_redraw(
             lambda: Dot(
                 error_axes.c2p(c_tracker.get_value(), calc_total_error(c_tracker.get_value())),
@@ -417,26 +416,26 @@ class scene3_intuition(Scene):
         )
         self.add(err_dot)
 
-        # Loss curve path: smooth convex curve through calculated points
+        # Continuous Loss curve: smooth convex function fitting calculated errors
         def loss_curve_func(c):
-            return 5/9 * (c - 3)**2 + 4
+            return 0.65 * (c - 3.5)**2 + 8.0
 
         loss_curve = error_axes.plot(
             loss_curve_func,
-            x_range=[0, 6.0],
+            x_range=[0, 7.0],
             color=CORAL,
             stroke_width=3.2
         )
 
-        # Sweep c from 0 to 6 slowly while plotting key dots
-        discrete_points_c = [0, 1, 2, 3, 4, 5, 6]
+        # Sweep c smoothly from 0 to 7: top line rises, c updates, dots are placed on error graph
+        discrete_points_c = [0, 1, 2, 3, 4, 5, 6, 7]
         plotted_dots = VGroup()
 
         for target_c in discrete_points_c:
             if target_c > 0:
                 self.play(
                     c_tracker.animate.set_value(target_c),
-                    run_time=0.6,
+                    run_time=0.55,
                     rate_func=linear
                 )
             p_dot = Dot(
@@ -450,14 +449,14 @@ class scene3_intuition(Scene):
         self.wait(0.5)
 
         # Draw the continuous Parabolic Loss Curve
-        self.play(Create(loss_curve), run_time=1.5)
+        self.play(Create(loss_curve), run_time=1.4)
         self.wait(0.5)
 
-        # Highlight optimal minimum at c = 3
-        min_dot = Dot(error_axes.c2p(3, 4), radius=0.1, color=GREEN)
+        # Highlight optimal minimum at c = 3.5 (Error = 8)
+        min_dot = Dot(error_axes.c2p(3.5, 8), radius=0.1, color=GREEN)
         self.play(
             Flash(
-                error_axes.c2p(3, 4),
+                error_axes.c2p(3.5, 8),
                 color=GREEN,
                 flash_radius=0.4,
                 line_length=0.15,
