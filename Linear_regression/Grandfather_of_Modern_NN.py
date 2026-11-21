@@ -340,7 +340,7 @@ class scene3_intuition(Scene):
             run_time=1.2,
         )
 
-        self.remove(c_text_dynamic)
+        
 
         # Re-attach dynamic elements for upper plot and left formula
         c_text_left = always_redraw(
@@ -348,8 +348,10 @@ class scene3_intuition(Scene):
                 f"c = {c_tracker.get_value():.1f}" if abs(c_tracker.get_value() - round(c_tracker.get_value())) > 0.05 else f"c = {int(round(c_tracker.get_value()))}",
                 font_size=32,
                 color=CORAL
-            ).next_to(arrow_c, DOWN, buff=0.1)
+            ).move_to(c_text_dynamic.get_center())
         )
+
+        self.remove(c_text_dynamic)
         self.add(c_text_left)
 
         test_line_scaled = always_redraw(
@@ -371,12 +373,12 @@ class scene3_intuition(Scene):
                 for px, py in active_points
             ])
         )
-        self.add(test_line_scaled, error_bars_scaled)
+        self.play(Create(test_line_scaled), Create(error_bars_scaled))
 
         # Lower Graph: Total Error vs c
         error_axes = Axes(
             x_range=[0, 7.5, 1],
-            y_range=[0, 18, 4],
+            y_range=[6, 18, 2],
             x_length=4.4,
             y_length=2.5,
             axis_config={
@@ -407,6 +409,7 @@ class scene3_intuition(Scene):
         self.wait(0.5)
 
         # Dynamic Tracer dot on Lower Error graph
+                # 1. Dynamic Tracer dot on Lower Error graph
         err_dot = always_redraw(
             lambda: Dot(
                 error_axes.c2p(c_tracker.get_value(), calc_total_error(c_tracker.get_value())),
@@ -414,49 +417,56 @@ class scene3_intuition(Scene):
                 color=CORAL
             )
         )
-        self.add(err_dot)
 
-        # Continuous Loss curve: smooth convex function fitting calculated errors
-        def loss_curve_func(c):
-            return 0.65 * (c - 3.5)**2 + 8.0
-
-        loss_curve = error_axes.plot(
-            loss_curve_func,
-            x_range=[0, 7.0],
-            color=CORAL,
+        # 2. Line that automatically traces behind err_dot as it moves
+        loss_trace = TracedPath(
+            err_dot.get_center,
+            stroke_color=CORAL,
             stroke_width=3.2
         )
 
-        # Sweep c smoothly from 0 to 7: top line rises, c updates, dots are placed on error graph
-        discrete_points_c = [0, 1, 2, 3, 4, 5, 6, 7]
+        self.add(loss_trace, err_dot)
+
+        # 3. Drop yellow milestone dots automatically when c passes integers 0..7
         plotted_dots = VGroup()
+        milestones = set(range(8))  # {0, 1, 2, 3, 4, 5, 6, 7}
 
-        for target_c in discrete_points_c:
-            if target_c > 0:
-                self.play(
-                    c_tracker.animate.set_value(target_c),
-                    run_time=0.55,
-                    rate_func=linear
-                )
-            p_dot = Dot(
-                error_axes.c2p(target_c, calc_total_error(target_c)),
-                radius=0.06,
-                color=YELLOW
-            )
-            plotted_dots.add(p_dot)
-            self.add(p_dot)
+        def drop_milestone_dots(mob):
+            curr_c = c_tracker.get_value()
+            for m in list(milestones):
+                # Trigger as soon as curr_c reaches or passes integer m
+                if curr_c >= m - 0.02:
+                    p_dot = Dot(
+                        error_axes.c2p(m, calc_total_error(m)),
+                        radius=0.06,
+                        color=YELLOW
+                    )
+                    plotted_dots.add(p_dot)
+                    self.add(p_dot)
+                    milestones.remove(m)
 
+        err_dot.add_updater(drop_milestone_dots)
+
+        # 4. Sweep c smoothly in ONE continuous animation from 0 to 7
+        c_tracker.set_value(0)
+        self.play(
+            c_tracker.animate.set_value(7),
+            run_time=4.0,
+            rate_func=linear
+        )
+        err_dot.remove_updater(drop_milestone_dots)
         self.wait(0.5)
 
-        # Draw the continuous Parabolic Loss Curve
-        self.play(Create(loss_curve), run_time=1.4)
-        self.wait(0.5)
+        # 5. Find and highlight the true minimum dynamically
+        c_vals = np.linspace(0, 7, 701)
+        best_c = c_vals[np.argmin([calc_total_error(c) for c in c_vals])]
+        min_err = calc_total_error(best_c)
 
-        # Highlight optimal minimum at c = 3.5 (Error = 8)
-        min_dot = Dot(error_axes.c2p(3.5, 8), radius=0.1, color=GREEN)
+        min_point = error_axes.c2p(best_c, min_err)
+        min_dot = Dot(min_point, radius=0.1, color=GREEN)
         self.play(
             Flash(
-                error_axes.c2p(3.5, 8),
+                min_point,
                 color=GREEN,
                 flash_radius=0.4,
                 line_length=0.15,
@@ -466,7 +476,6 @@ class scene3_intuition(Scene):
             run_time=0.8,
         )
 
-        self.wait(3.0)
 
 class scene2_pattern_visual(Scene):
     def construct(self):
