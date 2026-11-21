@@ -17,8 +17,457 @@ GREEN = "#72F1B8"
 YELLOW = "#FDEB5D"
 CORAL = "#F97E72"
 LAVENDER = "#A99BCB"
+SOFT_RED = "#FF2C2C"
 ## Storyboard Interpretation
 
+
+class scene3_intuition(Scene):
+    def construct(self):
+        # ==================================================
+        # RECONSTRUCT SCENE 2 FINAL STATE
+        # ==================================================
+
+        # --- Top Right Header Equation ---
+        equation = MathTex(
+            r"y = 2x + 1",
+            font_size=58 * 0.9,
+            color=GREEN
+        ).move_to([2.2, 2.7, 0])
+
+        # --- Right Side: Axes ---
+        axes = Axes(
+            x_range=[0, 3.8, 1],
+            y_range=[0, 8.5, 1],
+            x_length=4.4,
+            y_length=4.2,
+            axis_config={
+                "color": LAVENDER,
+                "stroke_width": 2.5,
+                "include_tip": True,
+                "tip_width": 0.16,
+                "tip_height": 0.16,
+            },
+        ).move_to([2.2, -0.6, 0])
+
+        x_axis_label = MathTex("x", color=CYAN, font_size=38).next_to(
+            axes.x_axis.get_end(), RIGHT, buff=0.15
+        )
+        y_axis_label = MathTex("y", color=PINK, font_size=38).next_to(
+            axes.y_axis.get_end(), UP, buff=0.15
+        )
+
+        # Continuous Line y = 2x + 1
+        line = axes.plot(
+            lambda x: 2 * x + 1,
+            x_range=[0, 3.4],
+            color=CYAN,
+            stroke_width=3.5,
+        )
+
+        # Points, Tick Labels & Projection Lines
+        points_data = [(0, 1), (1, 3), (2, 5), (3, 7)]
+        dots = VGroup()
+        projections = VGroup()
+        tick_labels = VGroup()
+
+        for x_val, y_val in points_data:
+            pt_coords = axes.c2p(x_val, y_val)
+            dot = Dot(pt_coords, radius=0.08, color=YELLOW)
+            dots.add(dot)
+
+            # Axis tick labels
+            y_tick = MathTex(str(y_val), font_size=28, color=PINK).next_to(
+                axes.c2p(0, y_val), LEFT, buff=0.12
+            )
+            tick_labels.add(y_tick)
+
+            if x_val > 0:
+                x_tick = MathTex(str(x_val), font_size=28, color=CYAN).next_to(
+                    axes.c2p(x_val, 0), DOWN, buff=0.12
+                )
+                tick_labels.add(x_tick)
+
+                # Dashed projection lines
+                v_line = DashedLine(
+                    axes.c2p(x_val, 0), pt_coords,
+                    dash_length=0.08, color=LAVENDER, stroke_width=1.8
+                )
+                h_line = DashedLine(
+                    axes.c2p(0, y_val), pt_coords,
+                    dash_length=0.08, color=LAVENDER, stroke_width=1.8
+                )
+                projections.add(v_line, h_line)
+            else:
+                x_tick = MathTex("0", font_size=28, color=CYAN).next_to(
+                    axes.c2p(0, 0), DOWN + LEFT, buff=0.08
+                )
+                tick_labels.add(x_tick)
+
+        # --- Left Side: Formulas and Labels ---
+        linear_title = Text(
+            "Linear Relationship",
+            font_size=32,
+            color=CYAN
+        ).move_to([-3.85, 1.4, 0])
+
+        gen_eq = MathTex(
+            "y", "=", "m", "x", "+", "c",
+            font_size=52
+        ).move_to([-3.85, 0.2, 0])
+        gen_eq[0].set_color(WHITE)
+        gen_eq[1].set_color(WHITE)
+        gen_eq[2].set_color(YELLOW)  # m
+        gen_eq[3].set_color(WHITE)
+        gen_eq[4].set_color(WHITE)
+        gen_eq[5].set_color(CORAL)   # c
+
+        m_char = gen_eq[2]
+        arrow_m = Arrow(
+            start=m_char.get_bottom() + DOWN * 0.1,
+            end=m_char.get_bottom() + DOWN * 0.85 + LEFT * 0.4,
+            color=YELLOW,
+            stroke_width=2.5,
+            max_tip_length_to_length_ratio=0.22,
+            buff=0,
+        )
+        m_val_text = MathTex("m = 2", font_size=38, color=YELLOW).next_to(
+            arrow_m.get_end(), DOWN, buff=0.15
+        )
+
+        c_char = gen_eq[5]
+        arrow_c = Arrow(
+            start=c_char.get_bottom() + DOWN * 0.1,
+            end=c_char.get_bottom() + DOWN * 0.85 + RIGHT * 0.4,
+            color=CORAL,
+            stroke_width=2.5,
+            max_tip_length_to_length_ratio=0.22,
+            buff=0,
+        )
+        c_val_text = MathTex("c = 1", font_size=38, color=CORAL).next_to(
+            arrow_c.get_end(), DOWN, buff=0.15
+        )
+
+        # Add everything to the screen initially
+        self.add(
+            equation,
+            axes, x_axis_label, y_axis_label,
+            line, dots, projections, tick_labels,
+            linear_title, gen_eq,
+            arrow_m, m_val_text,
+            arrow_c, c_val_text
+        )
+
+        self.wait(1.0)
+
+        # ==================================================
+        # STEP 2 (Panel 2): Replace parameters with "?"
+        # ==================================================
+        m_q = MathTex("m = \,?", font_size=38, color=YELLOW).move_to(m_val_text.get_center())
+        c_q = MathTex("c = \,?", font_size=38, color=CORAL).move_to(c_val_text.get_center())
+
+        self.play(
+            ReplacementTransform(m_val_text, m_q),
+            ReplacementTransform(c_val_text, c_q),
+            run_time=0.8,
+        )
+        self.wait(0.6)
+
+        # ==================================================
+        # STEP 3 (Panel 3): Clear 4th point & Set m=0, c=0
+        # ==================================================
+        m_0 = MathTex("m = 0", font_size=38, color=YELLOW).move_to(m_q.get_center())
+        c_0 = MathTex("c = 0", font_size=38, color=CORAL).move_to(c_q.get_center())
+
+        # Keep first 3 points: (0,1), (1,3), (2,5)
+        # Fade out line, dashed projections, dot 3, and tick labels for x=3, y=7
+        self.play(
+            FadeOut(line), 
+            FadeOut(projections),
+            # FadeOut(dots[3]),
+            # FadeOut(tick_labels[6]),  # y=7
+            # FadeOut(tick_labels[7]),  # x=3
+            ReplacementTransform(m_q, m_0),
+            ReplacementTransform(c_q, c_0),
+            run_time=1.0,
+        )
+        self.wait(0.6)
+
+        # ==================================================
+        # STEP 4 (Panel 4): Draw Candidate Line y = 0
+        # ==================================================
+        active_points = [(0, 1), (1, 3), (2, 5), (3, 7)]
+
+        c_tracker = ValueTracker(0.0)
+
+        # Dynamic candidate line: y = 0*x + c
+        test_line = always_redraw(
+            lambda: axes.plot(
+                lambda x: c_tracker.get_value(),
+                x_range=[0, 3.4],
+                color=CORAL,
+                stroke_width=3.5,
+            )
+        )
+
+        self.play(Create(test_line), run_time=0.9)
+        self.wait(0.5)
+
+        # ==================================================
+        # STEP 5 & 6 (Panels 5 & 6): Residual Bars & "Error" Label
+        # ==================================================
+        def get_error_bars():
+            c_val = c_tracker.get_value()
+            bars = VGroup()
+            for px, py in active_points:
+                p_top = axes.c2p(px, py)
+                p_bot = axes.c2p(px, c_val)
+                bar = Line(
+                    p_bot, p_top,
+                    color=YELLOW,
+                    stroke_width=3.2
+                )
+                bars.add(bar)
+            return bars
+
+        error_bars = always_redraw(get_error_bars)
+        self.play(Create(error_bars), run_time=0.8)
+
+        # "Error" annotation arrow
+        mid_pt_error = axes.c2p(3, 3.5)
+        error_label = Text("Error", font_size=26, color=SOFT_RED).move_to(
+            mid_pt_error + RIGHT * 1.5 + UP * 1.0
+        )
+        error_arrow = Arrow(
+            start=error_label.get_left() + LEFT * 0.05,
+            end=mid_pt_error + RIGHT * 0.1,
+            color=LAVENDER,
+            stroke_width=2.5,
+            max_tip_length_to_length_ratio=0.25,
+            buff=0,
+        )
+
+        self.play(
+            Write(error_label),
+            Create(error_arrow),
+            run_time=0.8,
+        )
+        self.wait(1.0)
+
+        # ==================================================
+        # STEP 7 & 8 (Panels 7 & 8): Calculate Total Error = 9
+        # ==================================================
+        err_calc_full = MathTex(
+            r"\text{Total Error} = (1 - 0) + (3 - 0) + (5 - 0) + (7 - 0)",
+            font_size=28,
+            color=WHITE
+        ).move_to([2.2, -3.5, 0])
+
+        err_res_9 = MathTex(
+            r"\text{Total Error} = 16",
+            font_size=32,
+            color=WHITE
+        ).move_to([2.2, -3.5, 0])
+
+        self.play(
+            FadeOut(error_label),
+            FadeOut(error_arrow),
+            FadeOut(equation),
+            Write(err_calc_full),
+            run_time=1.0,
+        )
+        self.wait(1.0)
+
+        self.play(
+            ReplacementTransform(err_calc_full, err_res_9),
+            run_time=0.8,
+        )
+        self.wait(0.8)
+
+        # ==================================================
+        # STEP 9 & 10 (Panels 9 & 10): Continuous c sweep from 0 -> 6
+        # ==================================================
+        self.remove(err_res_9, c_0)
+
+        # Dynamic c and error text updaters
+        c_text_dynamic = always_redraw(
+            lambda: MathTex(
+                f"c = {c_tracker.get_value():.1f}" if abs(c_tracker.get_value() - round(c_tracker.get_value())) > 0.05 else f"c = {int(round(c_tracker.get_value()))}",
+                font_size=38,
+                color=CORAL
+            ).move_to(arrow_c.get_end() + DOWN * 0.3)
+        )
+        self.add(c_text_dynamic)
+
+        def calc_total_error(c):
+            return abs(1 - c) + abs(3 - c) + abs(5 - c) + abs(7 - c)
+
+        err_text_dynamic = always_redraw(
+            lambda: MathTex(
+                rf"\text{{Total Error}} = {calc_total_error(c_tracker.get_value()):.1f}" if abs(calc_total_error(c_tracker.get_value()) - round(calc_total_error(c_tracker.get_value()))) > 0.05 else rf"\text{{Total Error}} = {int(round(calc_total_error(c_tracker.get_value())))}",
+                font_size=32,
+                color=WHITE
+            ).move_to([2.2, -3.5, 0])
+        )
+        self.add(err_text_dynamic)
+
+        # Sweep c: 0 -> 1 (pause: Panel 9), 1 -> 3 (pause: Panel 10), 3 -> 6, and back to 0
+        self.play(c_tracker.animate.set_value(1.0), run_time=1.5, rate_func=smooth)
+        self.wait(0.8)
+
+        self.play(c_tracker.animate.set_value(3.0), run_time=1.8, rate_func=smooth)
+        self.wait(0.8)
+
+        self.play(c_tracker.animate.set_value(6.0), run_time=2.0, rate_func=smooth)
+        self.wait(0.6)
+
+        self.play(c_tracker.animate.set_value(0.0), run_time=1.8, rate_func=smooth)
+        self.wait(0.6)
+
+        # ==================================================
+        # STEP 11 & 12 (Panels 11 & 12): Dual Layout + Error Graph
+        # ==================================================
+        self.remove(c_text_dynamic, err_text_dynamic, test_line, error_bars)
+
+        # Scale and move top data graph to upper-right quadrant
+        top_group_static = VGroup(
+            axes, x_axis_label, y_axis_label,
+            dots[0], dots[1], dots[2], dots[3],
+            tick_labels[0], tick_labels[1], tick_labels[2],
+            tick_labels[3], tick_labels[4], tick_labels[5], tick_labels[6], tick_labels[7],
+        )
+
+        # Create a group before self.play()
+        eq_group = VGroup(gen_eq, arrow_m, m_0, arrow_c)
+
+        self.play(
+            top_group_static.animate.scale(0.58).move_to([2.7, 1.8, 0]),
+            linear_title.animate.scale(0.9).move_to([-4.1, 1.8, 0]),
+            eq_group.animate.scale(0.85).move_to([-4.1, 0.2, 0]), # Adjust Y slightly to account for the taller group
+            run_time=1.2,
+        )
+
+
+        c_0_left = MathTex("c = 0", font_size=32, color=CORAL).next_to(arrow_c, DOWN, buff=0.1)
+        self.add(c_0_left)
+
+        # Re-attach scaled dynamic line & error bars to upper axes
+        test_line_scaled = always_redraw(
+            lambda: axes.plot(
+                lambda x: c_tracker.get_value(),
+                x_range=[0, 3.4],
+                color=CORAL,
+                stroke_width=2.5,
+            )
+        )
+        error_bars_scaled = always_redraw(
+            lambda: VGroup(*[
+                Line(
+                    axes.c2p(px, c_tracker.get_value()),
+                    axes.c2p(px, py),
+                    color=YELLOW,
+                    stroke_width=2.4
+                )
+                for px, py in active_points
+            ])
+        )
+        self.add(test_line_scaled, error_bars_scaled)
+
+        # Create Lower Graph (Total Error vs c)
+        error_axes = Axes(
+            x_range=[0, 6.5, 1],
+            y_range=[0, 10.5, 3],
+            x_length=4.4,
+            y_length=2.5,
+            axis_config={
+                "color": LAVENDER,
+                "stroke_width": 2.2,
+                "include_tip": True,
+                "tip_width": 0.14,
+                "tip_height": 0.14,
+            },
+        ).move_to([2.7, -1.9, 0])
+
+        error_c_label = MathTex("c", color=CORAL, font_size=32).next_to(
+            error_axes.x_axis.get_end(), RIGHT, buff=0.12
+        )
+        error_y_label = Text("total Error", font_size=20, color=YELLOW).next_to(
+            error_axes.y_axis.get_end(), UP, buff=0.12
+        )
+
+        # Tick 0 on lower axes
+        origin_0 = MathTex("0", font_size=22, color=LAVENDER).next_to(
+            error_axes.c2p(0, 0), DOWN + LEFT, buff=0.06
+        )
+        # Tick 9 on error axes
+        tick_9 = MathTex("9", font_size=22, color=YELLOW).next_to(
+            error_axes.c2p(0, 9), LEFT, buff=0.08
+        )
+
+        lower_graph_group = VGroup(error_axes, error_c_label, error_y_label, origin_0, tick_9)
+        self.play(Create(lower_graph_group), run_time=1.0)
+        self.wait(0.5)
+
+        # Continuous Tracer dot on Error graph
+        err_dot = always_redraw(
+            lambda: Dot(
+                error_axes.c2p(c_tracker.get_value(), calc_total_error(c_tracker.get_value())),
+                radius=0.07,
+                color=CORAL
+            )
+        )
+        self.add(err_dot)
+
+        # Loss curve path: smooth convex curve through calculated points
+        def loss_curve_func(c):
+            return 5/9 * (c - 3)**2 + 4
+
+        loss_curve = error_axes.plot(
+            loss_curve_func,
+            x_range=[0, 6.0],
+            color=CORAL,
+            stroke_width=3.2
+        )
+
+        # Sweep c from 0 to 6 slowly while plotting key dots
+        discrete_points_c = [0, 1, 2, 3, 4, 5, 6]
+        plotted_dots = VGroup()
+
+        for target_c in discrete_points_c:
+            if target_c > 0:
+                self.play(
+                    c_tracker.animate.set_value(target_c),
+                    run_time=0.6,
+                    rate_func=linear
+                )
+            p_dot = Dot(
+                error_axes.c2p(target_c, calc_total_error(target_c)),
+                radius=0.06,
+                color=YELLOW
+            )
+            plotted_dots.add(p_dot)
+            self.add(p_dot)
+
+        self.wait(0.5)
+
+        # Draw the continuous Parabolic Loss Curve
+        self.play(Create(loss_curve), run_time=1.5)
+        self.wait(0.5)
+
+        # Highlight optimal minimum at c = 3
+        min_dot = Dot(error_axes.c2p(3, 4), radius=0.1, color=GREEN)
+        self.play(
+            Flash(
+                error_axes.c2p(3, 4),
+                color=GREEN,
+                flash_radius=0.4,
+                line_length=0.15,
+                num_lines=8,
+            ),
+            FadeIn(min_dot),
+            run_time=0.8,
+        )
+
+        self.wait(3.0)
 
 class scene2_pattern_visual(Scene):
     def construct(self):
