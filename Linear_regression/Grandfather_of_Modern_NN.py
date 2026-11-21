@@ -20,8 +20,6 @@ LAVENDER = "#A99BCB"
 ## Storyboard Interpretation
 
 
-
-
 class scene1_intro(Scene):
 
     def construct(self):
@@ -227,6 +225,173 @@ class scene1_intro(Scene):
         )
 
         self.wait(2)
+
+
+        
+        # ==================================
+        # STEP 8
+        # Move table to the LEFT
+        # ==================================
+
+        table = VGroup(
+            x_header,
+            y_header,
+            zero,
+            arrow_0,
+            one,
+            row_1,
+            row_2,
+            row_3
+        )
+
+        # Dedicated left-side area.
+        # Scale down and anchor the table.
+        self.play(
+            table.animate
+                .scale(0.48)
+                .move_to([-4.15, 0, 0]),
+            run_time=1.5
+        )
+
+        # ==================================
+        # STEP 9
+        # Ask: What is the pattern?
+        # ==================================
+
+        question = Text(
+            "What is the pattern?",
+            font_size=30,
+            color=GREEN
+        )
+
+        question.move_to([1.6, 1.65, 0])
+
+        self.play(
+            Write(question),
+            run_time=1.2
+        )
+
+        self.wait(1.2)
+
+        # ==================================
+        # STEP 10
+        # Reveal 2x + 1
+        # ==================================
+
+        pattern = MathTex(
+            r"2x + 1",
+            font_size=62,
+            color=YELLOW
+        )
+
+        pattern.move_to([1.6, 0.55, 0])
+
+        self.play(
+            Write(pattern),
+            run_time=1.3
+        )
+
+        self.wait(1.5)
+
+        # ==================================
+        # STEP 11
+        # Introduce y = 2x + 1
+        # ==================================
+
+        equation = MathTex(
+            r"y = 2x + 1",
+            font_size=58,
+            color=GREEN
+        )
+
+        equation.move_to(pattern.get_center())
+
+        self.play(
+            FadeOut(question),
+            ReplacementTransform(pattern, equation),
+            run_time=1.2
+        )
+
+        self.wait(1)
+
+        # ==================================
+        # STEP 12
+        # Substitute x = 0
+        # ==================================
+
+        substitution_1 = MathTex(
+            r"y = 2 \times 0 + 1",
+            font_size=42,
+            color=WHITE
+        )
+
+        substitution_2 = MathTex(
+            r"y = 0 + 1",
+            font_size=42,
+            color=WHITE
+        )
+
+        substitution_3 = MathTex(
+            r"y = 1",
+            font_size=52,
+            color=YELLOW
+        )
+
+        # Keep all equations in exactly the
+        # same dedicated position.
+        substitution_position = [1.6, -0.85, 0]
+
+        substitution_1.move_to(substitution_position)
+        substitution_2.move_to(substitution_position)
+        substitution_3.move_to(substitution_position)
+
+        self.play(
+            Write(substitution_1),
+            run_time=1.2
+        )
+
+        self.wait(0.8)
+
+        self.play(
+            ReplacementTransform(
+                substitution_1,
+                substitution_2
+            ),
+            run_time=1
+        )
+
+        self.wait(0.8)
+
+        self.play(
+            ReplacementTransform(
+                substitution_2,
+                substitution_3
+            ),
+            run_time=1
+        )
+
+        self.wait(1.2)
+
+        # ==================================
+        # STEP 13
+        # Repeat for x = 1, 2, 3
+        # ==================================
+
+        repeat_note = Text(
+            "Now repeat for x = 1, 2, 3",
+            font_size=27,
+            color=GREEN
+        )
+
+        repeat_note.move_to([1.6, -2.0, 0])
+
+        self.play(
+            FadeIn(repeat_note, shift=UP * 0.2),
+            run_time=1
+        )
+
+        self.wait(3)
+
 
 
 class NeonLabDemo(Scene):
