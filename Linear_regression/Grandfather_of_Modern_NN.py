@@ -1,9 +1,8 @@
-
 from manim import *
 import numpy as np
 
 # ==========================================
-# IT VAYA — NEON LAB
+# IT VAYA — NEON LAB PALETTE
 # ==========================================
 
 config.background_color = "#262335"
@@ -18,7 +17,6 @@ YELLOW = "#FDEB5D"
 CORAL = "#F97E72"
 LAVENDER = "#A99BCB"
 SOFT_RED = "#FF2C2C"
-## Storyboard Interpretation
 
 
 class scene3_intuition(Scene):
@@ -38,8 +36,8 @@ class scene3_intuition(Scene):
         axes = Axes(
             x_range=[0, 3.8, 1],
             y_range=[0, 8.5, 1],
-            x_length=4.4,
-            y_length=4.2,
+            x_length=3,
+            y_length=3,
             axis_config={
                 "color": LAVENDER,
                 "stroke_width": 2.5,
@@ -248,7 +246,7 @@ class scene3_intuition(Scene):
         self.wait(1.0)
 
         # ==================================================
-        # STEP 7 & 8 (Panels 7 & 8): Total Error Calculation = 16
+        # STEP 7 & 8 (Panels 7 & 8): Total Absolute Error = 16
         # ==================================================
         err_calc_full = MathTex(
             r"\text{Total Error} = (1 - 0) + (3 - 0) + (5 - 0) + (7 - 0)",
@@ -278,11 +276,10 @@ class scene3_intuition(Scene):
         self.wait(0.8)
 
         # ==================================================
-        # STEP 9 & 10 (Panels 9 & 10): Continuous c sweep from 0 -> 6 -> 0
+        # STEP 9 & 10 (Panels 9 & 10): Continuous c sweep with Absolute Error
         # ==================================================
         self.remove(err_res_16, c_0)
 
-        # Dynamic c and error text updaters
         c_text_dynamic = always_redraw(
             lambda: MathTex(
                 f"c = {c_tracker.get_value():.1f}" if abs(c_tracker.get_value() - round(c_tracker.get_value())) > 0.05 else f"c = {int(round(c_tracker.get_value()))}",
@@ -292,12 +289,12 @@ class scene3_intuition(Scene):
         )
         self.add(c_text_dynamic)
 
-        def calc_total_error(c):
+        def calc_abs_error(c):
             return abs(1 - c) + abs(3 - c) + abs(5 - c) + abs(7 - c)
 
         err_text_dynamic = always_redraw(
             lambda: MathTex(
-                rf"\text{{Total Error}} = {calc_total_error(c_tracker.get_value()):.1f}" if abs(calc_total_error(c_tracker.get_value()) - round(calc_total_error(c_tracker.get_value()))) > 0.05 else rf"\text{{Total Error}} = {int(round(calc_total_error(c_tracker.get_value())))}",
+                rf"\text{{Total Error}} = {calc_abs_error(c_tracker.get_value()):.1f}" if abs(calc_abs_error(c_tracker.get_value()) - round(calc_abs_error(c_tracker.get_value()))) > 0.05 else rf"\text{{Total Error}} = {int(round(calc_abs_error(c_tracker.get_value())))}",
                 font_size=32,
                 color=WHITE
             ).move_to([2.2, -3.5, 0])
@@ -311,16 +308,148 @@ class scene3_intuition(Scene):
         self.play(c_tracker.animate.set_value(3.0), run_time=1.6, rate_func=smooth)
         self.wait(0.8)
 
-        self.play(c_tracker.animate.set_value(6.0), run_time=1.8, rate_func=smooth)
+        self.play(c_tracker.animate.set_value(8.0), run_time=1.8, rate_func=smooth)
         self.wait(0.8)
 
         self.play(c_tracker.animate.set_value(0.0), run_time=1.6, rate_func=smooth)
         self.wait(0.8)
 
         # ==================================================
-        # STEP 11 & 12 (Panels 11 & 12): Dual Layout + Real-Time Graph
+        # NEW STATE (Between 10 & 11): Error Squared (Squares + Sweep)
         # ==================================================
-        self.remove(err_text_dynamic, test_line, error_bars)
+        self.remove(err_text_dynamic)
+
+        # Helper to build true geometric squares extending right from each vertical error bar
+        def build_error_squares(stroke_w=2.4, opacity=0.22):
+            c_val = c_tracker.get_value()
+            squares = VGroup()
+            for px, py in active_points:
+                p_top = axes.c2p(px, py)
+                p_bot = axes.c2p(px, c_val)
+                side_len = abs(p_top[1] - p_bot[1])
+
+                if side_len < 1e-4:
+                    continue
+
+                y_min = min(p_top[1], p_bot[1])
+                y_max = max(p_top[1], p_bot[1])
+                x_left = p_top[0]
+                x_right = p_top[0] + side_len
+
+                sq = Polygon(
+                    [x_left, y_min, 0],
+                    [x_right, y_min, 0],
+                    [x_right, y_max, 0],
+                    [x_left, y_max, 0],
+                    color=YELLOW,
+                    fill_color=YELLOW,
+                    fill_opacity=opacity,
+                    stroke_width=stroke_w,
+                )
+                squares.add(sq)
+            return squares
+
+        # 1) Create initial squares at c = 0 + "Error Squared" callout (matching sketch)
+        initial_squares = build_error_squares()
+        sq_last = initial_squares[-1]
+        sq_top_mid = sq_last.get_top() + UP * 0.4
+
+        err_sq_label = Text("Error Squared", font_size=26, color=SOFT_RED).move_to(
+            sq_top_mid + RIGHT * 0.5 + UP * 0.9
+        )
+        err_sq_arrow = Arrow(
+            start=err_sq_label.get_bottom() + LEFT * 0.05,
+            end=sq_top_mid + RIGHT * 0.1,
+            color=LAVENDER,
+            stroke_width=2.5,
+            max_tip_length_to_length_ratio=0.25,
+            buff=0,
+        )
+
+        self.play(
+            Create(initial_squares),
+            run_time=3.0,
+        )
+
+        self.wait(1.0)
+
+        self.play(
+            
+            Write(err_sq_label),
+            Create(err_sq_arrow),
+            run_time=1.0,
+        )
+        self.wait(1.0)
+
+
+        # 2) Mirror Steps 7 & 8: Show expanded Total Error^2 = 84
+        err_sq_calc_full = MathTex(
+            r"\text{Total Error}^2 = (1 - 0)^2 + (3 - 0)^2 + (5 - 0)^2 + (7 - 0)^2",
+            font_size=24,
+            color=WHITE
+        ).move_to([2.2, -3.5, 0])
+
+        err_sq_res_84 = MathTex(
+            r"\text{Total Error}^2 = 84",
+            font_size=32,
+            color=WHITE
+        ).move_to([2.2, -3.5, 0])
+
+        self.play(
+            FadeOut(err_sq_label),
+            FadeOut(err_sq_arrow),
+            Write(err_sq_calc_full),
+            run_time=1.0,
+        )
+        self.wait(1.0)
+
+        self.play(
+            ReplacementTransform(err_sq_calc_full, err_sq_res_84),
+            run_time=0.8,
+        )
+        self.wait(0.8)
+
+        # 3) Mirror Steps 9 & 10: Dynamic squares + Total Error^2 sweep (0 -> 1 -> 3 -> 6 -> 0)
+        self.remove(initial_squares, err_sq_res_84)
+
+        error_squares = always_redraw(lambda: build_error_squares(stroke_w=2.4, opacity=0.22))
+        self.add(error_squares)
+
+        def calc_squared_error(c):
+            return (1 - c)**2 + (3 - c)**2 + (5 - c)**2 + (7 - c)**2
+
+        err_sq_text_dynamic = always_redraw(
+            lambda: MathTex(
+                rf"\text{{Total Error}}^2 = {calc_squared_error(c_tracker.get_value()):.1f}"
+                if abs(calc_squared_error(c_tracker.get_value()) - round(calc_squared_error(c_tracker.get_value()))) > 0.05
+                else rf"\text{{Total Error}}^2 = {int(round(calc_squared_error(c_tracker.get_value())))}",
+                font_size=32,
+                color=WHITE
+            ).move_to([2.2, -3.5, 0])
+        )
+        self.add(err_sq_text_dynamic)
+
+        # Sweep c: 0 -> 1 -> 3 -> 6 -> 0
+        self.play(c_tracker.animate.set_value(1.0), run_time=1.4, rate_func=smooth)
+        self.wait(0.8)
+
+        self.play(c_tracker.animate.set_value(3.0), run_time=1.6, rate_func=smooth)
+        self.wait(0.8)
+
+        self.play(c_tracker.animate.set_value(8.0), run_time=1.8, rate_func=smooth)
+        self.wait(0.8)
+
+        self.play(c_tracker.animate.set_value(0.0), run_time=1.6, rate_func=smooth)
+        self.wait(0.8)
+
+        # Clean up bottom readout before scaling into dual layout
+        self.play(FadeOut(err_sq_text_dynamic), run_time=0.5)
+        self.remove(err_sq_text_dynamic)
+
+        # ==================================================
+        # STEP 11 & 12 (Panels 11 & 12): Dual Layout + Squared Error Graph
+        # ==================================================
+        self.remove(test_line, error_bars, error_squares)
 
         # Static upper elements to scale
         top_group_static = VGroup(
@@ -331,7 +460,7 @@ class scene3_intuition(Scene):
             tick_labels[6], tick_labels[7],
         )
 
-        eq_group = VGroup(c_text_dynamic,gen_eq, arrow_m, m_0, arrow_c)
+        eq_group = VGroup(c_text_dynamic, gen_eq, arrow_m, m_0, arrow_c)
 
         self.play(
             top_group_static.animate.scale(0.58).move_to([2.7, 1.8, 0]),
@@ -339,8 +468,6 @@ class scene3_intuition(Scene):
             eq_group.animate.scale(0.85).move_to([-4.1, 0.4, 0]),
             run_time=1.2,
         )
-
-        
 
         # Re-attach dynamic elements for upper plot and left formula
         c_text_left = always_redraw(
@@ -350,7 +477,6 @@ class scene3_intuition(Scene):
                 color=CORAL
             ).move_to(c_text_dynamic.get_center())
         )
-
         self.remove(c_text_dynamic)
         self.add(c_text_left)
 
@@ -373,12 +499,19 @@ class scene3_intuition(Scene):
                 for px, py in active_points
             ])
         )
-        self.play(Create(test_line_scaled), Create(error_bars_scaled))
+        error_squares_scaled = always_redraw(
+            lambda: build_error_squares(stroke_w=1.8, opacity=0.22)
+        )
+        self.play(
+            Create(test_line_scaled),
+            Create(error_bars_scaled),
+            Create(error_squares_scaled),
+        )
 
-        # Lower Graph: Total Error vs c
+        # Lower Graph: Total Error Squared vs c
         error_axes = Axes(
-            x_range=[0, 7.5, 1],
-            y_range=[6, 18, 2],
+            x_range=[0, 8.5, 2],
+            y_range=[0, 95, 20],
             x_length=4.4,
             y_length=2.5,
             axis_config={
@@ -390,54 +523,49 @@ class scene3_intuition(Scene):
             },
         ).move_to([2.7, -1.9, 0])
 
-        error_c_label = MathTex("c", color=CORAL, font_size=32).next_to(
+        error_c_label = MathTex("c", color=CORAL, font_size=30).next_to(
             error_axes.x_axis.get_end(), RIGHT, buff=0.12
         )
-        error_y_label = Text("total Error", font_size=20, color=YELLOW).next_to(
+        error_y_label = MathTex(r"\text{Total Error}^2", font_size=22, color=YELLOW).next_to(
             error_axes.y_axis.get_end(), UP, buff=0.12
         )
 
-        origin_0 = MathTex("0", font_size=22, color=LAVENDER).next_to(
+        origin_0 = MathTex("0", font_size=20, color=LAVENDER).next_to(
             error_axes.c2p(0, 0), DOWN + LEFT, buff=0.06
         )
-        tick_16 = MathTex("16", font_size=22, color=YELLOW).next_to(
-            error_axes.c2p(0, 16), LEFT, buff=0.08
-        )
+        
 
-        lower_graph_group = VGroup(error_axes, error_c_label, error_y_label, origin_0, tick_16)
+        lower_graph_group = VGroup(error_axes, error_c_label, error_y_label, origin_0)
         self.play(Create(lower_graph_group), run_time=1.0)
         self.wait(0.5)
 
         # Dynamic Tracer dot on Lower Error graph
-                # 1. Dynamic Tracer dot on Lower Error graph
         err_dot = always_redraw(
             lambda: Dot(
-                error_axes.c2p(c_tracker.get_value(), calc_total_error(c_tracker.get_value())),
+                error_axes.c2p(c_tracker.get_value(), calc_squared_error(c_tracker.get_value())),
                 radius=0.07,
                 color=CORAL
             )
         )
 
-        # 2. Line that automatically traces behind err_dot as it moves
+        # Traced curve as c moves
         loss_trace = TracedPath(
             err_dot.get_center,
             stroke_color=CORAL,
             stroke_width=3.2
         )
-
         self.add(loss_trace, err_dot)
 
-        # 3. Drop yellow milestone dots automatically when c passes integers 0..7
+        # Milestone dots placed at integer steps of c (0..8)
         plotted_dots = VGroup()
-        milestones = set(range(8))  # {0, 1, 2, 3, 4, 5, 6, 7}
+        milestones = set(range(9))  # {0, 1, 2, 3, 4, 5, 6, 7, 8}
 
         def drop_milestone_dots(mob):
             curr_c = c_tracker.get_value()
             for m in list(milestones):
-                # Trigger as soon as curr_c reaches or passes integer m
-                if curr_c >= m - 0.02:
+                if curr_c >= m - 0.03:
                     p_dot = Dot(
-                        error_axes.c2p(m, calc_total_error(m)),
+                        error_axes.c2p(m, calc_squared_error(m)),
                         radius=0.06,
                         color=YELLOW
                     )
@@ -447,23 +575,23 @@ class scene3_intuition(Scene):
 
         err_dot.add_updater(drop_milestone_dots)
 
-        # 4. Sweep c smoothly in ONE continuous animation from 0 to 7
+        # Continuous smooth sweep of c from 0 to 8
         c_tracker.set_value(0)
         self.play(
-            c_tracker.animate.set_value(7),
-            run_time=4.0,
+            c_tracker.animate.set_value(8.0),
+            run_time=4.5,
             rate_func=linear
         )
         err_dot.remove_updater(drop_milestone_dots)
-        self.wait(0.5)
+        self.wait(0.6)
 
-        # 5. Find and highlight the true minimum dynamically
-        c_vals = np.linspace(0, 7, 701)
-        best_c = c_vals[np.argmin([calc_total_error(c) for c in c_vals])]
-        min_err = calc_total_error(best_c)
-
-        min_point = error_axes.c2p(best_c, min_err)
+        # Highlight optimal minimum at c = 4 (Error^2 = 20)
+        min_point = error_axes.c2p(4, 20)
         min_dot = Dot(min_point, radius=0.1, color=GREEN)
+        min_label = MathTex(r"\text{Min } (c=4)", font_size=22, color=GREEN).next_to(
+            min_dot, DOWN, buff=0.10
+        )
+
         self.play(
             Flash(
                 min_point,
@@ -473,8 +601,11 @@ class scene3_intuition(Scene):
                 num_lines=8,
             ),
             FadeIn(min_dot),
+            Write(min_label),
             run_time=0.8,
         )
+
+        self.wait(3.0)
 
 
 class scene2_pattern_visual(Scene):
@@ -573,8 +704,8 @@ class scene2_pattern_visual(Scene):
         axes = Axes(
             x_range=[0, 3.8, 1],
             y_range=[0, 8.5, 1],
-            x_length=4.4,
-            y_length=4.2,
+            x_length=3,
+            y_length=3,
             axis_config={
                 "color": LAVENDER,
                 "stroke_width": 2.5,
