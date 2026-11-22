@@ -18,6 +18,7 @@ CORAL = "#F97E72"
 LAVENDER = "#A99BCB"
 SOFT_RED = "#FF2C2C"
 
+
 class scene4_predictibility(Scene):
     def construct(self):
         # ==================================================
@@ -25,7 +26,7 @@ class scene4_predictibility(Scene):
         # ==================================================
 
         # --------------------------------------------------
-        # 1. Upper Plot (Axes, Labels, Points, Line & Squares at c = 8)
+        # 1. Upper Plot (Axes, Labels, Points)
         # --------------------------------------------------
         axes = Axes(
             x_range=[0, 3.8, 1],
@@ -79,7 +80,7 @@ class scene4_predictibility(Scene):
         )
         top_group_static.scale(0.58).move_to([2.7, 1.8, 0])
 
-        # Top line at final c = 8.0
+        # Top line at initial c = 8.0
         c_final = 8.0
         test_line = axes.plot(
             lambda x: c_final,
@@ -171,7 +172,7 @@ class scene4_predictibility(Scene):
         eq_group.scale(0.85).move_to([-4.1, 0.4, 0])
 
         # --------------------------------------------------
-        # 3. Lower Graph (Total Error Squared vs c)
+        # 3. Lower Graph (RSS vs c)
         # --------------------------------------------------
         error_axes = Axes(
             x_range=[0, 8.5, 2],
@@ -208,16 +209,12 @@ class scene4_predictibility(Scene):
             stroke_width=3.2,
         )
 
-        # Milestone dots at integer values of c (0..8)
         milestone_dots = VGroup(*[
             Dot(error_axes.c2p(c, calc_squared_error(c)), radius=0.06, color=YELLOW)
             for c in range(9)
         ])
-
-        # End tracer dot at c = 8
         err_dot = Dot(error_axes.c2p(8, calc_squared_error(8)), radius=0.07, color=CORAL)
 
-        # Minimum point at c = 4
         min_point = error_axes.c2p(4, 20)
         min_dot = Dot(min_point, radius=0.1, color=GREEN)
         min_label = MathTex(r"\text{Min } (c=4)", font_size=22, color=GREEN).next_to(
@@ -230,44 +227,197 @@ class scene4_predictibility(Scene):
             min_dot, min_label
         )
 
-        # --------------------------------------------------
         # Add All Scene 3 Ending Elements
-        # --------------------------------------------------
         self.add(
             linear_title, eq_group,
             top_group_static, test_line, error_bars, error_squares,
             lower_graph
         )
-
         self.wait(1.0)
 
         # ==================================================
-        # SCENE 4 ANIMATION STEPS GO HERE
+        # SCENE 4 TRANSITIONS
         # ==================================================
 
+        # Label transforms: Total Error^2 -> Residual Sum of Squares -> RSS
         RSS = MathTex(r"\text{Residual Sum of Squares}", font_size=22, color=YELLOW).next_to(
             error_axes.y_axis.get_end(), UP, buff=0.12
         )
-
-        self.play(
-            ReplacementTransform(
-                error_y_label, RSS
-            )
-        )
-
+        self.play(ReplacementTransform(error_y_label, RSS))
         self.wait(1.0)
 
         RSS2 = MathTex(r"\text{RSS}", font_size=22, color=YELLOW).next_to(
             error_axes.y_axis.get_end(), UP, buff=0.12
         )
+        self.play(ReplacementTransform(RSS, RSS2))
+        self.wait(1.0)
 
+        # --------------------------------------------------
+        # CLEANUP LOWER GRAPH (Keep only axes & parabola curve)
+        # --------------------------------------------------
         self.play(
-            ReplacementTransform(
-                RSS, RSS2
+            FadeOut(milestone_dots),
+            FadeOut(err_dot),
+            FadeOut(min_dot),
+            FadeOut(min_label),
+            run_time=0.8,
+        )
+        self.wait(0.5)
+
+        # --------------------------------------------------
+        # SETUP DYNAMIC SYSTEM AT c = 0.5
+        # --------------------------------------------------
+        self.remove(test_line, error_bars, error_squares)
+
+        c_tracker = ValueTracker(0.5)
+
+        # Helper to construct geometric squares dynamically
+        def build_dynamic_squares():
+            c_val = c_tracker.get_value()
+            squares = VGroup()
+            for px, py in points_data:
+                p_top = axes.c2p(px, py)
+                p_bot = axes.c2p(px, c_val)
+                side_len = abs(p_top[1] - p_bot[1])
+                if side_len < 1e-4:
+                    continue
+                y_min = min(p_top[1], p_bot[1])
+                y_max = max(p_top[1], p_bot[1])
+                x_left = p_top[0]
+                x_right = p_top[0] + side_len
+                sq = Polygon(
+                    [x_left, y_min, 0],
+                    [x_right, y_min, 0],
+                    [x_right, y_max, 0],
+                    [x_left, y_max, 0],
+                    color=YELLOW,
+                    fill_color=YELLOW,
+                    fill_opacity=0.22,
+                    stroke_width=1.8,
+                )
+                squares.add(sq)
+            return squares
+
+        # Dynamic upper plot components
+        dyn_test_line = always_redraw(
+            lambda: axes.plot(
+                lambda x: c_tracker.get_value(),
+                x_range=[0, 3.4],
+                color=CORAL,
+                stroke_width=2.5,
+            )
+        )
+        dyn_error_bars = always_redraw(
+            lambda: VGroup(*[
+                Line(
+                    axes.c2p(px, c_tracker.get_value()),
+                    axes.c2p(px, py),
+                    color=YELLOW,
+                    stroke_width=2.4
+                )
+                for px, py in points_data
+            ])
+        )
+        dyn_squares = always_redraw(build_dynamic_squares)
+
+        # Dynamic left formula c-label
+        dyn_c_val_text = always_redraw(
+            lambda: MathTex(
+                f"c = {c_tracker.get_value():.1f}" if abs(c_tracker.get_value() - round(c_tracker.get_value())) > 0.05 else f"c = {int(round(c_tracker.get_value()))}",
+                font_size=32,
+                color=CORAL
+            ).move_to(c_val_text.get_center())
+        )
+
+        self.remove(c_val_text)
+        self.add(dyn_test_line, dyn_error_bars, dyn_squares, dyn_c_val_text)
+
+        # --------------------------------------------------
+        # INTRODUCE THE ROLLING BALL & DASHED DROP-LINE
+        # --------------------------------------------------
+        # Ball sits on the RSS curve at c_tracker
+        ball = always_redraw(
+            lambda: Dot(
+                error_axes.c2p(c_tracker.get_value(), calc_squared_error(c_tracker.get_value())),
+                radius=0.11,
+                color=GREEN
             )
         )
 
+        # Dashed line dropping from ball down to c-axis
+        drop_line = always_redraw(
+            lambda: DashedLine(
+                error_axes.c2p(c_tracker.get_value(), calc_squared_error(c_tracker.get_value())),
+                error_axes.c2p(c_tracker.get_value(), 0),
+                dash_length=0.06,
+                color=GREEN,
+                stroke_width=2.0
+            )
+        )
+
+        self.play(
+            FadeIn(ball, scale=1.5),
+            Create(drop_line),
+            run_time=1.0,
+        )
         self.wait(1.0)
+
+        # --------------------------------------------------
+        # OSCILLATION & ROLLING SEQUENCE: 0.5 -> 6 -> 3 -> 5 -> 4
+        # --------------------------------------------------
+        # Roll 1: c = 0.5 -> 6.0
+        self.play(
+            c_tracker.animate.set_value(6.0),
+            run_time=2.2,
+            rate_func=rate_functions.ease_in_out_sine,
+        )
+        self.wait(0.8)
+
+        # Roll 2: c = 6.0 -> 3.0
+        self.play(
+            c_tracker.animate.set_value(3.0),
+            run_time=1.8,
+            rate_func=rate_functions.ease_in_out_sine,
+        )
+        self.wait(0.8)
+
+        # Roll 3: c = 3.0 -> 5.0
+        self.play(
+            c_tracker.animate.set_value(5.0),
+            run_time=1.5,
+            rate_func=rate_functions.ease_in_out_sine,
+        )
+        self.wait(0.8)
+
+        # Roll 4: c = 5.0 -> 4.0 (Settle at the minimum)
+        self.play(
+            c_tracker.animate.set_value(4.0),
+            run_time=1.4,
+            rate_func=rate_functions.ease_in_out_sine,
+        )
+        self.wait(0.6)
+
+        # --------------------------------------------------
+        # HIGHLIGHT OPTIMAL SETTLED POINT (c = 4)
+        # --------------------------------------------------
+        min_settle_pos = error_axes.c2p(4.0, calc_squared_error(4.0))
+        min_final_label = MathTex(r"\text{Min } (c=4)", font_size=22, color=GREEN).next_to(
+            min_settle_pos, DOWN, buff=0.12
+        )
+
+        self.play(
+            Flash(
+                min_settle_pos,
+                color=GREEN,
+                flash_radius=0.42,
+                line_length=0.16,
+                num_lines=8,
+            ),
+            Write(min_final_label),
+            run_time=1.0,
+        )
+
+        self.wait(3.0)
 
 
 class scene3_intuition(Scene):
