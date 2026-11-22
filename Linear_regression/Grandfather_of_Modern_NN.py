@@ -19,7 +19,7 @@ LAVENDER = "#A99BCB"
 SOFT_RED = "#FF2C2C"
 
 
-class scene7_steps(Scene):
+class scene_7_lost(Scene):
     def construct(self):
         # ==================================================
         # RECONSTRUCT SCENE 6 FINAL STATE (c = 4.0, m = 0)
@@ -256,7 +256,7 @@ class scene7_steps(Scene):
         )
 
         # --------------------------------------------------
-        # Display Scene 6 Ending State
+        # Display Scene 6 Initial Ending State
         # --------------------------------------------------
         self.add(
             linear_title, eq_group, slope_title, diff_val_text,
@@ -265,6 +265,193 @@ class scene7_steps(Scene):
         )
         self.wait(1.0)
 
+        # ==================================================
+        # SCENE 7: REALITY OF OPTIMIZATION — WE ARE "LOST"
+        # ==================================================
+
+        # --------------------------------------------------
+        # STEP 1: Upper plot & solid curve disappear
+        # In reality, we don't have visual guidance or the full curve
+        # --------------------------------------------------
+        dashed_loss_curve = DashedVMobject(
+            loss_curve.copy(),
+            num_dashes=44,
+            dashed_ratio=0.55
+        ).set_color(CORAL).set_stroke(opacity=0.35)
+
+        self.play(
+            FadeOut(top_group_static),
+            FadeOut(test_line),
+            FadeOut(error_bars),
+            FadeOut(error_squares),
+        )
+
+        self.wait(1)
+
+        self.play(
+            FadeOut(diff_zero_label),
+            FadeOut(diff_zero_arrow),
+            FadeOut(tangent_arrow),
+            FadeOut(ball),
+        )
+
+        self.wait(0.6)
+
+        self.play(
+            FadeOut(drop_line),
+            ReplacementTransform(loss_curve, dashed_loss_curve),
+        )
+
+        self.wait(0.6)
+
+        # --------------------------------------------------
+        # STEP 2: We only control 'c' (exploration on the c-axis)
+        # --------------------------------------------------
+        diff_question = MathTex(
+            r"\frac{d\text{RSS}}{dc} = \ ?",
+            font_size=28,
+            color=YELLOW
+        ).next_to(slope_title, DOWN, buff=0.25)
+
+        c_axis_dot = Dot(
+            error_axes.c2p(4.0, 0),
+            radius=0.10,
+            color=CORAL
+        )
+
+        self.play(
+            TransformMatchingShapes(diff_val_text, diff_question),
+            FadeIn(c_axis_dot, scale=0.6),
+            run_time=0.8,
+        )
+
+        self.wait(0.6)
+
+        # Exploration sweep along the c-axis (sliding left and right)
+        c_sweep_arrow = Arrow(
+            start=error_axes.c2p(0.2, 0),
+            end=error_axes.c2p(7.8, 0),
+            color=WHITE,
+            stroke_width=2.5,
+            max_tip_length_to_length_ratio=0.06,
+            buff=0,
+        ).shift(DOWN * 0.25)
+
+        c_sweep_text = Text("Adjust c", font_size=20, color=LAVENDER).next_to(
+            c_sweep_arrow, DOWN, buff=0.1
+        )
+
+        #######################
+
+        c_new_text = MathTex("c = ?", font_size=32, color=CORAL).next_to(
+            arrow_c.get_end(), DOWN, buff=0.25
+        )
+
+
+        self.play(
+            c_axis_dot.animate.move_to(error_axes.c2p(0.5, 0)),
+            TransformMatchingShapes(c_val_text, c_new_text),
+            Create(c_sweep_arrow),
+            FadeIn(c_sweep_text),
+            run_time=1.0,
+            rate_func=rate_functions.ease_in_out_sine,
+        )
+
+        self.wait(0.5)
+
+        self.play(
+            c_axis_dot.animate.move_to(error_axes.c2p(7.0, 0)),
+            run_time=1.2,
+            rate_func=rate_functions.ease_in_out_sine,
+        )
+
+        self.wait(0.5)
+
+        # --------------------------------------------------
+        # STEP 3: Where do we start? Let's pick c = 0.5
+        # --------------------------------------------------
+        c_05_text = MathTex("c = 0.5", font_size=32, color=CORAL).move_to(
+            c_val_text.get_center()
+        )
+
+        self.play(
+            c_axis_dot.animate.move_to(error_axes.c2p(0.5, 0)),
+            TransformMatchingShapes(c_new_text, c_05_text),
+            FadeOut(c_sweep_arrow),
+            FadeOut(c_sweep_text),
+            run_time=1.0,
+            rate_func=rate_functions.ease_in_out_sine,
+        )
+        self.wait(0.5)
+
+        # --------------------------------------------------
+        # STEP 4: Calculate RSS at c = 0.5 (Line shoots up to curve)
+        # --------------------------------------------------
+        rss_at_05 = calc_squared_error(0.5)
+        pt_on_curve = error_axes.c2p(0.5, rss_at_05)
+
+        eval_drop_line = DashedLine(
+            error_axes.c2p(0.5, 0),
+            pt_on_curve,
+            color=CYAN,
+            stroke_width=2.2,
+            dash_length=0.06
+        )
+
+        eval_ball = Dot(pt_on_curve, radius=0.11, color=CYAN)
+
+        self.play(
+            Create(eval_drop_line),
+            run_time=0.8,
+        )
+
+        self.wait(0.6)
+        self.play(
+            FadeIn(eval_ball, scale=0.5),
+            Flash(
+                pt_on_curve,
+                color=CYAN,
+                flash_radius=0.35,
+                line_length=0.14,
+                num_lines=8
+            ),
+            run_time=0.6,
+        )
+        self.wait(1.0)
+
+        # --------------------------------------------------
+        # STEP 5: Calculate Slope at c = 0.5 -> dRSS/dc = -28
+        # Arrow points in the direction of increasing RSS (upwards-left)
+        # --------------------------------------------------
+        slope_at_05 = 8.0 * (0.5 - 4.0)  # -28.0
+        dc = 0.25
+        p_ahead = error_axes.c2p(0.5 - dc, rss_at_05 - slope_at_05 * dc)
+        vec = p_ahead - pt_on_curve
+        unit_vec = vec / np.linalg.norm(vec)
+
+        length = 1.3
+        arrow_at_05 = Arrow(
+            start=pt_on_curve - unit_vec * (length / 2),
+            end=pt_on_curve + unit_vec * (length / 2),
+            color=WHITE,
+            stroke_width=3.2,
+            max_tip_length_to_length_ratio=0.18,
+            buff=0,
+        )
+
+        diff_neg_28 = MathTex(
+            r"\frac{d\text{RSS}}{dc} = -28",
+            font_size=28,
+            color=YELLOW
+        ).next_to(slope_title, DOWN, buff=0.25)
+
+        self.play(
+            TransformMatchingShapes(diff_question, diff_neg_28),
+            Create(arrow_at_05),
+            run_time=1.0,
+        )
+
+        self.wait(3.0)
 
 class scene6_intro_to_diff(Scene):
     def construct(self):
