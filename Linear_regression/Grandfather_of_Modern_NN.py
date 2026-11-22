@@ -18,6 +18,235 @@ CORAL = "#F97E72"
 LAVENDER = "#A99BCB"
 SOFT_RED = "#FF2C2C"
 
+class scene5_slope(Scene):
+    def construct(self):
+        # ==================================================
+        # RECONSTRUCT SCENE 4 FINAL STATE (c = 4.0, m = 0)
+        # ==================================================
+
+        # --------------------------------------------------
+        # 1. Upper Plot (Axes, Labels, Points)
+        # --------------------------------------------------
+        axes = Axes(
+            x_range=[0, 3.8, 1],
+            y_range=[0, 8.5, 1],
+            x_length=3,
+            y_length=3,
+            axis_config={
+                "color": LAVENDER,
+                "stroke_width": 2.5,
+                "include_tip": True,
+                "tip_width": 0.16,
+                "tip_height": 0.16,
+            },
+        ).move_to([2.2, -0.6, 0])
+
+        x_axis_label = MathTex("x", color=CYAN, font_size=38).next_to(
+            axes.x_axis.get_end(), RIGHT, buff=0.15
+        )
+        y_axis_label = MathTex("y", color=PINK, font_size=38).next_to(
+            axes.y_axis.get_end(), UP, buff=0.15
+        )
+
+        points_data = [(0, 1), (1, 3), (2, 5), (3, 7)]
+        dots = VGroup()
+        tick_labels = VGroup()
+
+        for x_val, y_val in points_data:
+            pt_coords = axes.c2p(x_val, y_val)
+            dot = Dot(pt_coords, radius=0.08, color=YELLOW)
+            dots.add(dot)
+
+            y_tick = MathTex(str(y_val), font_size=28, color=PINK).next_to(
+                axes.c2p(0, y_val), LEFT, buff=0.12
+            )
+            tick_labels.add(y_tick)
+
+            if x_val > 0:
+                x_tick = MathTex(str(x_val), font_size=28, color=CYAN).next_to(
+                    axes.c2p(x_val, 0), DOWN, buff=0.12
+                )
+                tick_labels.add(x_tick)
+            else:
+                x_tick = MathTex("0", font_size=28, color=CYAN).next_to(
+                    axes.c2p(0, 0), DOWN + LEFT, buff=0.08
+                )
+                tick_labels.add(x_tick)
+
+        top_group_static = VGroup(
+            axes, x_axis_label, y_axis_label,
+            dots, tick_labels
+        )
+        top_group_static.scale(0.58).move_to([2.7, 1.8, 0])
+
+        # Candidate line at optimal c = 4.0
+        c_val = 4.0
+        test_line = axes.plot(
+            lambda x: c_val,
+            x_range=[0, 3.4],
+            color=CORAL,
+            stroke_width=2.5,
+        )
+
+        # Residual bars at c = 4.0
+        error_bars = VGroup(*[
+            Line(
+                axes.c2p(px, c_val),
+                axes.c2p(px, py),
+                color=YELLOW,
+                stroke_width=2.4
+            )
+            for px, py in points_data
+        ])
+
+        # Geometric Error Squares at c = 4.0
+        error_squares = VGroup()
+        for px, py in points_data:
+            p_top = axes.c2p(px, py)
+            p_bot = axes.c2p(px, c_val)
+            side_len = abs(p_top[1] - p_bot[1])
+            if side_len < 1e-4:
+                continue
+            y_min = min(p_top[1], p_bot[1])
+            y_max = max(p_top[1], p_bot[1])
+            x_left = p_top[0]
+            x_right = p_top[0] + side_len
+            sq = Polygon(
+                [x_left, y_min, 0],
+                [x_right, y_min, 0],
+                [x_right, y_max, 0],
+                [x_left, y_max, 0],
+                color=YELLOW,
+                fill_color=YELLOW,
+                fill_opacity=0.22,
+                stroke_width=1.8,
+            )
+            error_squares.add(sq)
+
+        # --------------------------------------------------
+        # 2. Left Side: Title and Formulas
+        # --------------------------------------------------
+        linear_title = Text(
+            "Linear Relationship",
+            font_size=32,
+            color=CYAN
+        ).scale(0.9).move_to([-4.1, 1.8, 0])
+
+        gen_eq = MathTex(
+            "y", "=", "m", "x", "+", "c",
+            font_size=52
+        ).move_to([-3.85, 0.2, 0])
+        gen_eq[0].set_color(WHITE)
+        gen_eq[1].set_color(WHITE)
+        gen_eq[2].set_color(YELLOW)  # m
+        gen_eq[3].set_color(WHITE)
+        gen_eq[4].set_color(WHITE)
+        gen_eq[5].set_color(CORAL)   # c
+
+        m_char = gen_eq[2]
+        arrow_m = Arrow(
+            start=m_char.get_bottom() + DOWN * 0.1,
+            end=m_char.get_bottom() + DOWN * 0.85 + LEFT * 0.4,
+            color=YELLOW,
+            stroke_width=2.5,
+            max_tip_length_to_length_ratio=0.22,
+            buff=0,
+        )
+        m_0 = MathTex("m = 0", font_size=38, color=YELLOW).next_to(
+            arrow_m.get_end(), DOWN, buff=0.15
+        )
+
+        c_char = gen_eq[5]
+        arrow_c = Arrow(
+            start=c_char.get_bottom() + DOWN * 0.1,
+            end=c_char.get_bottom() + DOWN * 0.85 + RIGHT * 0.4,
+            color=CORAL,
+            stroke_width=2.5,
+            max_tip_length_to_length_ratio=0.22,
+            buff=0,
+        )
+        c_val_text = MathTex("c = 4", font_size=32, color=CORAL).next_to(
+            arrow_c.get_end(), DOWN, buff=0.25
+        )
+
+        eq_group = VGroup(c_val_text, gen_eq, arrow_m, m_0, arrow_c)
+        eq_group.scale(0.85).move_to([-4.1, 0.4, 0])
+
+        # --------------------------------------------------
+        # 3. Lower Graph (RSS vs c)
+        # --------------------------------------------------
+        error_axes = Axes(
+            x_range=[0, 8.5, 2],
+            y_range=[0, 95, 20],
+            x_length=4.4,
+            y_length=2.5,
+            axis_config={
+                "color": LAVENDER,
+                "stroke_width": 2.2,
+                "include_tip": True,
+                "tip_width": 0.14,
+                "tip_height": 0.14,
+            },
+        ).move_to([2.7, -1.9, 0])
+
+        error_c_label = MathTex("c", color=CORAL, font_size=30).next_to(
+            error_axes.x_axis.get_end(), RIGHT, buff=0.12
+        )
+        RSS2 = MathTex(r"\text{RSS}", font_size=22, color=YELLOW).next_to(
+            error_axes.y_axis.get_end(), UP, buff=0.12
+        )
+        origin_0 = MathTex("0", font_size=20, color=LAVENDER).next_to(
+            error_axes.c2p(0, 0), DOWN + LEFT, buff=0.06
+        )
+
+        def calc_squared_error(c):
+            return (1 - c)**2 + (3 - c)**2 + (5 - c)**2 + (7 - c)**2
+
+        # Fully drawn loss curve
+        loss_curve = error_axes.plot(
+            calc_squared_error,
+            x_range=[0, 8.0],
+            color=CORAL,
+            stroke_width=3.2,
+        )
+
+        # Settled Green Ball & Drop Line at Minimum (c = 4.0, RSS = 20)
+        ball = Dot(
+            error_axes.c2p(4.0, calc_squared_error(4.0)),
+            radius=0.11,
+            color=GREEN
+        )
+        drop_line = DashedLine(
+            error_axes.c2p(4.0, calc_squared_error(4.0)),
+            error_axes.c2p(4.0, 0),
+            dash_length=0.06,
+            color=GREEN,
+            stroke_width=2.0
+        )
+        min_final_label = MathTex(r"\text{Min } (c=4)", font_size=22, color=GREEN).next_to(
+            ball, DOWN, buff=0.12
+        )
+
+        lower_graph = VGroup(
+            error_axes, error_c_label, RSS2, origin_0,
+            loss_curve, ball, drop_line, min_final_label
+        )
+
+        # --------------------------------------------------
+        # Add All Scene 4 Ending Elements
+        # --------------------------------------------------
+        self.add(
+            linear_title, eq_group,
+            top_group_static, test_line, error_bars, error_squares,
+            lower_graph
+        )
+
+        self.wait(1.0)
+
+        # ==================================================
+        # SCENE 5 ANIMATION STEPS GO HERE
+        # ==================================================
+
 
 class scene4_predictibility(Scene):
     def construct(self):
