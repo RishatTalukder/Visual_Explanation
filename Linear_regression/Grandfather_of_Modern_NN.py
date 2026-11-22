@@ -79,19 +79,17 @@ class scene5_slope(Scene):
         )
         top_group_static.scale(0.58).move_to([2.7, 1.8, 0])
 
-        # Candidate line at optimal c = 4.0
-        c_val = 4.0
+        c_init = 4.0
         test_line = axes.plot(
-            lambda x: c_val,
+            lambda x: c_init,
             x_range=[0, 3.4],
             color=CORAL,
             stroke_width=2.5,
         )
 
-        # Residual bars at c = 4.0
         error_bars = VGroup(*[
             Line(
-                axes.c2p(px, c_val),
+                axes.c2p(px, c_init),
                 axes.c2p(px, py),
                 color=YELLOW,
                 stroke_width=2.4
@@ -99,11 +97,10 @@ class scene5_slope(Scene):
             for px, py in points_data
         ])
 
-        # Geometric Error Squares at c = 4.0
         error_squares = VGroup()
         for px, py in points_data:
             p_top = axes.c2p(px, py)
-            p_bot = axes.c2p(px, c_val)
+            p_bot = axes.c2p(px, c_init)
             side_len = abs(p_top[1] - p_bot[1])
             if side_len < 1e-4:
                 continue
@@ -165,8 +162,8 @@ class scene5_slope(Scene):
             max_tip_length_to_length_ratio=0.22,
             buff=0,
         )
-        c_val_text = MathTex("c = 4", font_size=32, color=CORAL).next_to(
-            arrow_c.get_end(), DOWN, buff=0.25
+        c_val_text = MathTex("c = 4", font_size=38, color=CORAL).next_to(
+            arrow_c.get_end(), DOWN, buff=0.3
         )
 
         eq_group = VGroup(c_val_text, gen_eq, arrow_m, m_0, arrow_c)
@@ -202,7 +199,6 @@ class scene5_slope(Scene):
         def calc_squared_error(c):
             return (1 - c)**2 + (3 - c)**2 + (5 - c)**2 + (7 - c)**2
 
-        # Fully drawn loss curve
         loss_curve = error_axes.plot(
             calc_squared_error,
             x_range=[0, 8.0],
@@ -210,7 +206,7 @@ class scene5_slope(Scene):
             stroke_width=3.2,
         )
 
-        # Settled Green Ball & Drop Line at Minimum (c = 4.0, RSS = 20)
+        # Initial Ball and Drop Line from Scene 4
         ball = Dot(
             error_axes.c2p(4.0, calc_squared_error(4.0)),
             radius=0.11,
@@ -232,21 +228,221 @@ class scene5_slope(Scene):
             loss_curve, ball, drop_line, min_final_label
         )
 
-        # --------------------------------------------------
         # Add All Scene 4 Ending Elements
-        # --------------------------------------------------
         self.add(
             linear_title, eq_group,
             top_group_static, test_line, error_bars, error_squares,
             lower_graph
         )
-
         self.wait(1.0)
 
         # ==================================================
-        # SCENE 5 ANIMATION STEPS GO HERE
+        # SCENE 5 TRANSITIONS: Introducing Slope
         # ==================================================
 
+        # Fade out Scene 4's static minimum label
+        self.play(FadeOut(min_final_label), run_time=0.6)
+
+        # "slope" Title on the Left
+        slope_title = Text("Slope", font_size=32, color=WHITE).move_to([-4.1, -1.8, 0])
+        self.play(Write(slope_title), run_time=0.8)
+
+        # --------------------------------------------------
+        # SETUP DYNAMIC SYSTEM & TANGENT LINE
+        # --------------------------------------------------
+        self.remove(test_line, error_bars, error_squares, ball, drop_line)
+
+        c_tracker = ValueTracker(0.5)
+
+        # Dynamic squares helper
+        def build_dynamic_squares():
+            c_val = c_tracker.get_value()
+            squares = VGroup()
+            for px, py in points_data:
+                p_top = axes.c2p(px, py)
+                p_bot = axes.c2p(px, c_val)
+                side_len = abs(p_top[1] - p_bot[1])
+                if side_len < 1e-4:
+                    continue
+                y_min = min(p_top[1], p_bot[1])
+                y_max = max(p_top[1], p_bot[1])
+                x_left = p_top[0]
+                x_right = p_top[0] + side_len
+                sq = Polygon(
+                    [x_left, y_min, 0],
+                    [x_right, y_min, 0],
+                    [x_right, y_max, 0],
+                    [x_left, y_max, 0],
+                    color=YELLOW,
+                    fill_color=YELLOW,
+                    fill_opacity=0.22,
+                    stroke_width=1.8,
+                )
+                squares.add(sq)
+            return squares
+
+        # Upper plot dynamic redraws
+        dyn_test_line = always_redraw(
+            lambda: axes.plot(
+                lambda x: c_tracker.get_value(),
+                x_range=[0, 3.4],
+                color=CORAL,
+                stroke_width=2.5,
+            )
+        )
+        dyn_error_bars = always_redraw(
+            lambda: VGroup(*[
+                Line(
+                    axes.c2p(px, c_tracker.get_value()),
+                    axes.c2p(px, py),
+                    color=YELLOW,
+                    stroke_width=2.4
+                )
+                for px, py in points_data
+            ])
+        )
+        dyn_squares = always_redraw(build_dynamic_squares)
+
+        # Dynamic left c label
+        dyn_c_val_text = always_redraw(
+            lambda: MathTex(
+                f"c = {c_tracker.get_value():.1f}" if abs(c_tracker.get_value() - round(c_tracker.get_value())) > 0.05 else f"c = {int(round(c_tracker.get_value()))}",
+                font_size=32,
+                color=CORAL
+            ).move_to(c_val_text.get_center())
+        )
+
+        self.remove(c_val_text)
+        self.add(dyn_test_line, dyn_error_bars, dyn_squares, dyn_c_val_text)
+
+        # Dynamic Ball & Drop Line
+        dyn_ball = always_redraw(
+            lambda: Dot(
+                error_axes.c2p(c_tracker.get_value(), calc_squared_error(c_tracker.get_value())),
+                radius=0.11,
+                color=GREEN
+            )
+        )
+        dyn_drop_line = always_redraw(
+            lambda: DashedLine(
+                error_axes.c2p(c_tracker.get_value(), calc_squared_error(c_tracker.get_value())),
+                error_axes.c2p(c_tracker.get_value(), 0),
+                dash_length=0.06,
+                color=GREEN,
+                stroke_width=2.0
+            )
+        )
+
+        # Dynamic Dashed Tangent Line at current c
+        def get_tangent_line(length=1.7):
+            c = c_tracker.get_value()
+            center = error_axes.c2p(c, calc_squared_error(c))
+            # d(RSS)/dc = 8 * (c - 4)
+            slope_val = 8.0 * (c - 4.0)
+            dc = 0.3
+            p1 = error_axes.c2p(c - dc, calc_squared_error(c) - slope_val * dc)
+            p2 = error_axes.c2p(c + dc, calc_squared_error(c) + slope_val * dc)
+            vec = normalize(p2 - p1)
+            return DashedLine(
+                center - vec * length / 2,
+                center + vec * length / 2,
+                dash_length=0.08,
+                color=WHITE,
+                stroke_width=3.2
+            )
+
+        dyn_tangent = always_redraw(get_tangent_line)
+
+        # Dynamic Slope Value display under "Slope" title
+        dyn_slope_val = always_redraw(
+            lambda: MathTex(
+                rf"\text{{slope}} = {8.0 * (c_tracker.get_value() - 4.0):.1f}"
+                if abs(8.0 * (c_tracker.get_value() - 4.0) - round(8.0 * (c_tracker.get_value() - 4.0))) > 0.05
+                else rf"\text{{slope}} = {int(round(8.0 * (c_tracker.get_value() - 4.0)))}",
+                font_size=28,
+                color=YELLOW
+            ).next_to(slope_title, DOWN, buff=0.25)
+        )
+
+        # Place at c = 0.5 initially
+        self.play(
+            FadeIn(dyn_ball),
+            Create(dyn_drop_line),
+            Create(dyn_tangent),
+            Write(dyn_slope_val),
+            run_time=1.0,
+        )
+        self.wait(1.0)
+
+        # --------------------------------------------------
+        # OSCILLATION SEQUENCE WITH TANGENT SLOPE
+        # --------------------------------------------------
+        # 1. Roll to c = 6.0 (Positive Slope)
+        self.play(
+            c_tracker.animate.set_value(6.0),
+            run_time=2.2,
+            rate_func=rate_functions.ease_in_out_sine,
+        )
+        # self.wait(0.8)
+
+        # 2. Roll back to c = 3.0 (Negative Slope)
+        self.play(
+            c_tracker.animate.set_value(3.0),
+            run_time=1.8,
+            rate_func=rate_functions.ease_in_out_sine,
+        )
+        # self.wait(0.8)
+
+        # 3. Roll to c = 5.0 (Positive Slope)
+        self.play(
+            c_tracker.animate.set_value(5.0),
+            run_time=1.5,
+            rate_func=rate_functions.ease_in_out_sine,
+        )
+        # self.wait(0.8)
+
+        # 4. Settle at c = 4.0 (Minimum, Flat Tangent: Slope = 0)
+        self.play(
+            c_tracker.animate.set_value(4.0),
+            run_time=1.4,
+            rate_func=rate_functions.ease_in_out_sine,
+        )
+        # self.wait(0.8)
+
+        # --------------------------------------------------
+        # HIGHLIGHT FINAL MINIMUM: Slope = 0
+        # --------------------------------------------------
+        tangent_center = error_axes.c2p(4.0, calc_squared_error(4.0))
+
+        slope_zero_label = MathTex(
+            r"\text{Slope} = 0",
+            font_size=26,
+            color=GREEN
+        ).move_to(tangent_center + UP * 0.85 + RIGHT * 0.3)
+
+        slope_zero_arrow = Arrow(
+            start=slope_zero_label.get_bottom(),
+            end=tangent_center + UP * 0.12,
+            color=GREEN,
+            stroke_width=2.5,
+            max_tip_length_to_length_ratio=0.25,
+            buff=0.08,
+        )
+
+        self.play(
+            Flash(
+                tangent_center,
+                color=GREEN,
+                flash_radius=0.42,
+                line_length=0.16,
+                num_lines=8,
+            ),
+            Write(slope_zero_label),
+            Create(slope_zero_arrow),
+            run_time=1.0,
+        )
+
+        self.wait(3.0)
 
 class scene4_predictibility(Scene):
     def construct(self):
