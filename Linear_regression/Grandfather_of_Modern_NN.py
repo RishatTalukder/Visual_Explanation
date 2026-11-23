@@ -18,6 +18,8 @@ CORAL = "#F97E72"
 LAVENDER = "#A99BCB"
 SOFT_RED = "#FF2C2C"
 
+
+
 class scene8_jump(Scene):
     def construct(self):
         # ==================================================
@@ -123,7 +125,7 @@ class scene8_jump(Scene):
             dashed_ratio=0.55
         ).set_color(CORAL).set_stroke(opacity=0.35)
 
-        # Elements at c = 0.5
+        # Active elements at c = 0.5
         c_axis_dot = Dot(
             error_axes.c2p(0.5, 0),
             radius=0.10,
@@ -143,16 +145,17 @@ class scene8_jump(Scene):
 
         eval_ball = Dot(pt_on_curve, radius=0.11, color=CYAN)
 
+        # Ascent arrow pointing Up-Left (from Scene 7)
         slope_at_05 = 8.0 * (0.5 - 4.0)  # -28.0
         dc = 0.25
         p_ahead = error_axes.c2p(0.5 - dc, rss_at_05 - slope_at_05 * dc)
-        vec = p_ahead - pt_on_curve
-        unit_vec = vec / np.linalg.norm(vec)
+        vec_ascent = p_ahead - pt_on_curve
+        unit_vec_ascent = vec_ascent / np.linalg.norm(vec_ascent)
 
         length = 1.3
-        arrow_at_05 = Arrow(
-            start=pt_on_curve - unit_vec * (length / 2),
-            end=pt_on_curve + unit_vec * (length / 2),
+        arrow_active = Arrow(
+            start=pt_on_curve - unit_vec_ascent * (length / 2),
+            end=pt_on_curve + unit_vec_ascent * (length / 2),
             color=WHITE,
             stroke_width=3.2,
             max_tip_length_to_length_ratio=0.18,
@@ -162,7 +165,7 @@ class scene8_jump(Scene):
         lower_graph = VGroup(
             error_axes, error_c_label, RSS2, origin_0,
             dashed_loss_curve, c_axis_dot,
-            eval_drop_line, eval_ball, arrow_at_05
+            eval_drop_line, eval_ball, arrow_active
         )
 
         # --------------------------------------------------
@@ -173,6 +176,306 @@ class scene8_jump(Scene):
             lower_graph
         )
         self.wait(1.0)
+
+        # ==================================================
+        # SCENE 8: NEGATIVE SLOPE & DISCRETE JUMP EXPERIMENT
+        # ==================================================
+
+        # --------------------------------------------------
+        # 1. Take Negative Slope: Flip equation & Flip Arrow to Descent
+        # --------------------------------------------------
+        neg_diff_val_text = MathTex(
+            r"-\frac{d\text{RSS}}{dc} = 28",
+            font_size=28,
+            color=YELLOW
+        ).next_to(slope_title, DOWN, buff=0.25)
+
+        # Arrow pointing Down-Right (Direction of Descent / Decreasing Error)
+        p_ahead_descent = error_axes.c2p(0.5 + dc, rss_at_05 + slope_at_05 * dc)
+        vec_descent = p_ahead_descent - pt_on_curve
+        unit_vec_descent = vec_descent / np.linalg.norm(vec_descent)
+
+        arrow_descent_05 = Arrow(
+            start=pt_on_curve - unit_vec_descent * (length / 2),
+            end=pt_on_curve + unit_vec_descent * (length / 2),
+            color=WHITE,
+            stroke_width=3.2,
+            max_tip_length_to_length_ratio=0.18,
+            buff=0,
+        )
+
+        self.play(
+            ReplacementTransform(diff_val_text, neg_diff_val_text),
+            ReplacementTransform(arrow_active, arrow_descent_05),
+            run_time=1.0,
+        )
+        arrow_active = arrow_descent_05
+        current_diff_text = neg_diff_val_text
+        current_c_text = c_val_text
+        self.wait(0.8)
+
+        # --------------------------------------------------
+        # Helper function to generate tangent arrow at any c
+        # --------------------------------------------------
+        def build_descent_arrow(c_val):
+            pt = error_axes.c2p(c_val, calc_squared_error(c_val))
+            slope = 8.0 * (c_val - 4.0)
+            dc_val = 0.25
+
+            # If slope <= 0 (c <= 4), stepping right decreases error -> point down-right
+            # If slope > 0 (c > 4), stepping left decreases error -> point down-left
+            if slope <= 0:
+                p_fwd = error_axes.c2p(c_val + dc_val, calc_squared_error(c_val) + slope * dc_val)
+            else:
+                p_fwd = error_axes.c2p(c_val - dc_val, calc_squared_error(c_val) - slope * dc_val)
+
+            v = p_fwd - pt
+            u = v / np.linalg.norm(v)
+            return Arrow(
+                start=pt - u * (length / 2),
+                end=pt + u * (length / 2),
+                color=WHITE,
+                stroke_width=3.2,
+                max_tip_length_to_length_ratio=0.18,
+                buff=0,
+            )
+
+        # --------------------------------------------------
+        # 2. Sequential Discrete Jumps by Step Size = +1.0
+        # --------------------------------------------------
+        jump_sequence = [
+            (0.5, 1.5, 20),
+            (1.5, 2.5, 12),
+            (2.5, 3.5, 4),
+            (3.5, 4.5, -4),  # Overshoots minimum!
+        ]
+
+        ghost_dots = VGroup()
+        jump_arcs = VGroup()
+
+        for c_prev, c_curr, neg_grad_val in jump_sequence:
+            p_prev = error_axes.c2p(c_prev, calc_squared_error(c_prev))
+            p_curr = error_axes.c2p(c_curr, calc_squared_error(c_curr))
+
+            # Faded ghost dot at previous location
+            ghost = Dot(p_prev, radius=0.08, color=CYAN, fill_opacity=0.35)
+            ghost_dots.add(ghost)
+            self.add(ghost)
+
+            # Curved Jump Arc
+            arc = CurvedArrow(
+                p_prev,
+                p_curr,
+                angle=-PI / 3.2,
+                color=CYAN if c_curr <= 4.0 else CORAL,
+                stroke_width=2.4,
+                tip_length=0.15,
+            )
+            jump_arcs.add(arc)
+
+            # Updated drop line, descent arrow, and labels
+            new_drop_line = DashedLine(
+                error_axes.c2p(c_curr, 0),
+                p_curr,
+                color=CYAN if c_curr <= 4.0 else CORAL,
+                stroke_width=2.2,
+                dash_length=0.06
+            )
+            new_arrow = build_descent_arrow(c_curr)
+
+            new_c_text = MathTex(
+                f"c = {c_curr}",
+                font_size=32,
+                color=CORAL
+            ).move_to(current_c_text.get_center())
+
+            new_diff_text = MathTex(
+                rf"-\frac{{d\text{{RSS}}}}{{dc}} = {neg_grad_val}",
+                font_size=28,
+                color=YELLOW
+            ).next_to(slope_title, DOWN, buff=0.25)
+
+            # Animate the jump
+            self.play(
+                Create(arc),
+                c_axis_dot.animate.move_to(error_axes.c2p(c_curr, 0)),
+                eval_ball.animate.move_to(p_curr).set_color(CYAN if c_curr <= 4.0 else CORAL),
+                ReplacementTransform(eval_drop_line, new_drop_line),
+                ReplacementTransform(arrow_active, new_arrow),
+                ReplacementTransform(current_c_text, new_c_text),
+                ReplacementTransform(current_diff_text, new_diff_text),
+                run_time=1.1,
+                rate_func=rate_functions.ease_in_out_sine,
+            )
+
+            eval_drop_line = new_drop_line
+            arrow_active = new_arrow
+            current_c_text = new_c_text
+            current_diff_text = new_diff_text
+            self.wait(0.5)
+
+        # --------------------------------------------------
+        # 3. The Seesaw: Overshoot at c = 4.5 forces step backward to c = 3.5
+        # --------------------------------------------------
+        # Jump Back: 4.5 -> 3.5
+        p_45 = error_axes.c2p(4.5, calc_squared_error(4.5))
+        p_35 = error_axes.c2p(3.5, calc_squared_error(3.5))
+
+        arc_back = CurvedArrow(
+            p_45,
+            p_35,
+            angle=-PI / 3.0,
+            color=CORAL,
+            stroke_width=2.4,
+            tip_length=0.15,
+        )
+
+        drop_line_35 = DashedLine(
+            error_axes.c2p(3.5, 0),
+            p_35,
+            color=CYAN,
+            stroke_width=2.2,
+            dash_length=0.06
+        )
+        arrow_35 = build_descent_arrow(3.5)
+
+        c_text_35 = MathTex("c = 3.5", font_size=32, color=CORAL).move_to(
+            current_c_text.get_center()
+        )
+        diff_text_35 = MathTex(
+            r"-\frac{d\text{RSS}}{dc} = 4",
+            font_size=28,
+            color=YELLOW
+        ).next_to(slope_title, DOWN, buff=0.25)
+
+        self.play(
+            Create(arc_back),
+            c_axis_dot.animate.move_to(error_axes.c2p(3.5, 0)),
+            eval_ball.animate.move_to(p_35).set_color(CYAN),
+            ReplacementTransform(eval_drop_line, drop_line_35),
+            ReplacementTransform(arrow_active, arrow_35),
+            ReplacementTransform(current_c_text, c_text_35),
+            ReplacementTransform(current_diff_text, diff_text_35),
+            run_time=1.0,
+            rate_func=rate_functions.ease_in_out_sine,
+        )
+
+        eval_drop_line = drop_line_35
+        arrow_active = arrow_35
+        current_c_text = c_text_35
+        current_diff_text = diff_text_35
+        self.wait(0.4)
+
+        # Jump Forward Again: 3.5 -> 4.5 (Seesaw oscillation)
+        arc_fwd_again = CurvedArrow(
+            p_35,
+            p_45,
+            angle=-PI / 3.0,
+            color=CORAL,
+            stroke_width=2.4,
+            tip_length=0.15,
+        )
+
+        drop_line_45 = DashedLine(
+            error_axes.c2p(4.5, 0),
+            p_45,
+            color=CORAL,
+            stroke_width=2.2,
+            dash_length=0.06
+        )
+        arrow_45 = build_descent_arrow(4.5)
+
+        c_text_45 = MathTex("c = 4.5", font_size=32, color=CORAL).move_to(
+            current_c_text.get_center()
+        )
+        diff_text_45 = MathTex(
+            r"-\frac{d\text{RSS}}{dc} = -4",
+            font_size=28,
+            color=YELLOW
+        ).next_to(slope_title, DOWN, buff=0.25)
+
+        self.play(
+            Create(arc_fwd_again),
+            c_axis_dot.animate.move_to(error_axes.c2p(4.5, 0)),
+            eval_ball.animate.move_to(p_45).set_color(CORAL),
+            ReplacementTransform(eval_drop_line, drop_line_45),
+            ReplacementTransform(arrow_active, arrow_45),
+            ReplacementTransform(current_c_text, c_text_45),
+            ReplacementTransform(current_diff_text, diff_text_45),
+            run_time=0.9,
+            rate_func=rate_functions.ease_in_out_sine,
+        )
+
+        # Properly update references for the seesaw state
+        eval_drop_line = drop_line_45
+        arrow_active = arrow_45
+        current_c_text = c_text_45
+        current_diff_text = diff_text_45
+        self.wait(0.6)
+
+        # --------------------------------------------------
+        # 4. Narrative Callout: "We might never reach the minimum RSS point"
+        # --------------------------------------------------
+        never_reach_text = Text(
+            "We might never reach the minimum RSS point",
+            font_size=24,
+            color=CORAL
+        ).move_to([2.7, 1.4, 0])
+
+        self.play(
+            FadeIn(never_reach_text, shift=UP * 0.2),
+            run_time=0.8,
+        )
+        self.wait(1.5)
+
+        # --------------------------------------------------
+        # 5. Reset & Rethink: Transform text & return point to c = 0.5 (Clean Handover)
+        # --------------------------------------------------
+        rethink_text = Text(
+            "Let's rethink this",
+            font_size=28,
+            color=CYAN
+        ).move_to(never_reach_text.get_center())
+
+        all_jump_artifacts = VGroup(ghost_dots, jump_arcs, arc_back, arc_fwd_again)
+
+        c_text_05_final = MathTex("c = 0.5", font_size=32, color=CORAL).move_to(
+            current_c_text.get_center()
+        )
+        diff_text_05_final = MathTex(
+            r"-\frac{d\text{RSS}}{dc} = 28",
+            font_size=28,
+            color=YELLOW
+        ).next_to(slope_title, DOWN, buff=0.25)
+
+        reset_drop_line = DashedLine(
+            error_axes.c2p(0.5, 0),
+            pt_on_curve,
+            color=CYAN,
+            stroke_width=2.2,
+            dash_length=0.06
+        )
+        reset_arrow = build_descent_arrow(0.5)
+
+        self.play(
+            ReplacementTransform(never_reach_text, rethink_text),
+            FadeOut(all_jump_artifacts),
+            c_axis_dot.animate.move_to(error_axes.c2p(0.5, 0)),
+            eval_ball.animate.move_to(pt_on_curve).set_color(CYAN),
+            ReplacementTransform(eval_drop_line, reset_drop_line),
+            ReplacementTransform(arrow_active, reset_arrow),
+            ReplacementTransform(current_c_text, c_text_05_final),
+            ReplacementTransform(current_diff_text, diff_text_05_final),
+            run_time=1.4,
+            rate_func=rate_functions.ease_in_out_sine,
+        )
+
+        eval_drop_line = reset_drop_line
+        arrow_active = reset_arrow
+        current_c_text = c_text_05_final
+        current_diff_text = diff_text_05_final
+
+        self.wait(3.0)
 
 
 class scene_7_lost(Scene):
