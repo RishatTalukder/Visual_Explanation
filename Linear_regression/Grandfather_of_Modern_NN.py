@@ -20,6 +20,7 @@ SOFT_RED = "#FF2C2C"
 
 
 
+
 class scene10_found(Scene):
     def construct(self):
         # ==================================================
@@ -82,8 +83,6 @@ class scene10_found(Scene):
             color=YELLOW
         ).next_to(negetive_slope_title, DOWN, buff=0.25)
 
-        left_side_group = VGroup(linear_title, eq_group, negetive_slope_title, diff_text)
-
         # --------------------------------------------------
         # 2. Upper Formulas (Step Formula & Iteration 3 Calculation)
         # --------------------------------------------------
@@ -98,8 +97,6 @@ class scene10_found(Scene):
             font_size=21,
             color=YELLOW
         ).next_to(step_formula, DOWN, buff=0.18)
-
-        upper_formula_group = VGroup(step_formula, step_calc_iter3)
 
         # --------------------------------------------------
         # 3. Lower Graph (Dashed Curve, History Arcs, Ghosts & Active State at c = 3.97)
@@ -144,7 +141,6 @@ class scene10_found(Scene):
             dashed_ratio=0.55
         ).set_color(CORAL).set_stroke(opacity=0.35)
 
-        # Iteration history points
         p0 = error_axes.c2p(0.5, calc_squared_error(0.5))
         p1 = error_axes.c2p(3.3, calc_squared_error(3.3))
         p2 = error_axes.c2p(3.86, calc_squared_error(3.86))
@@ -181,7 +177,6 @@ class scene10_found(Scene):
         )
         jump_arcs = VGroup(arc_1, arc_2, arc_3)
 
-        # Active state at c = 3.97
         c_axis_dot = Dot(
             error_axes.c2p(3.97, 0),
             radius=0.10,
@@ -230,11 +225,166 @@ class scene10_found(Scene):
         # Display Scene 9 Ending State
         # --------------------------------------------------
         self.add(
-            left_side_group,
-            upper_formula_group,
+            linear_title,
+            eq_group,
+            negetive_slope_title,
+            diff_text,
+            step_formula,
+            step_calc_iter3,
             lower_graph
         )
         self.wait(1.0)
+
+        # ==================================================
+        # SCENE 10 ANIMATIONS
+        # ==================================================
+
+        # --------------------------------------------------
+        # 1. Graph Merges into the Master Update Equation: c_new = c_old + Step
+        # --------------------------------------------------
+        c_new_eq1 = MathTex(
+            "c_{\\text{new}}", "=", "c_{\\text{old}}", "+", "\\text{Step}",
+            font_size=32
+        ).move_to([2.7, 0.6, 0])
+        c_new_eq1[0].set_color(CORAL)
+        c_new_eq1[1].set_color(WHITE)
+        c_new_eq1[2].set_color(CORAL)
+        c_new_eq1[3].set_color(WHITE)
+        c_new_eq1[4].set_color(CYAN)
+
+        self.play(
+            FadeOut(lower_graph, scale=0.4, shift=UP * 1.5),
+            ReplacementTransform(step_calc_iter3, c_new_eq1),
+            run_time=1.8,
+        )
+        self.wait(1.5)
+
+        # --------------------------------------------------
+        # 2. Step becomes Step Size * (Negative Slope) & absorbs top formula
+        # --------------------------------------------------
+        c_new_eq2 = MathTex(
+            "c_{\\text{new}}", "=", "c_{\\text{old}}", "+", "\\text{Step Size}", "\\times", "(\\text{Negative Slope})",
+            font_size=26
+        ).move_to([2.7, 0.6, 0])
+        c_new_eq2[0].set_color(CORAL)
+        c_new_eq2[1].set_color(WHITE)
+        c_new_eq2[2].set_color(CORAL)
+        c_new_eq2[3].set_color(WHITE)
+        c_new_eq2[4].set_color(CYAN)
+        c_new_eq2[5].set_color(WHITE)
+        c_new_eq2[6].set_color(YELLOW)
+
+        self.play(
+            FadeOut(step_formula, shift=DOWN * 0.3),
+            ReplacementTransform(c_new_eq1, c_new_eq2),
+            run_time=1.5,
+        )
+        self.wait(1.5)
+
+        # --------------------------------------------------
+        # 3. Step Size becomes Learning Rate
+        # --------------------------------------------------
+        c_new_eq3 = MathTex(
+            "c_{\\text{new}}", "=", "c_{\\text{old}}", "+", "\\text{Learning Rate}", "\\times", "(\\text{Negative Slope})",
+            font_size=25
+        ).move_to([2.7, 0.6, 0])
+        c_new_eq3[0].set_color(CORAL)
+        c_new_eq3[1].set_color(WHITE)
+        c_new_eq3[2].set_color(CORAL)
+        c_new_eq3[3].set_color(WHITE)
+        c_new_eq3[4].set_color(CYAN)
+        c_new_eq3[5].set_color(WHITE)
+        c_new_eq3[6].set_color(YELLOW)
+
+        self.play(
+            ReplacementTransform(c_new_eq2, c_new_eq3),
+            run_time=1.3,
+        )
+        self.wait(1.5)
+
+        # --------------------------------------------------
+        # 4. Learning Rate becomes Greek Symbol eta (η)
+        # --------------------------------------------------
+        c_new_eq4 = MathTex(
+            "c_{\\text{new}}", "=", "c_{\\text{old}}", "+", "\\eta", "\\times", "(\\text{Negative Slope})",
+            font_size=29
+        ).move_to([2.7, 0.6, 0])
+        c_new_eq4[0].set_color(CORAL)
+        c_new_eq4[1].set_color(WHITE)
+        c_new_eq4[2].set_color(CORAL)
+        c_new_eq4[3].set_color(WHITE)
+        c_new_eq4[4].set_color(CYAN)
+        c_new_eq4[5].set_color(WHITE)
+        c_new_eq4[6].set_color(YELLOW)
+
+        self.play(
+            ReplacementTransform(c_new_eq3, c_new_eq4),
+            run_time=1.3,
+        )
+        self.wait(1.5)
+
+        # --------------------------------------------------
+        # 5. Negative Slope becomes (-dRSS/dc) & lower-left slope disappears
+        # --------------------------------------------------
+        c_new_eq5 = MathTex(
+            "c_{\\text{new}}", "=", "c_{\\text{old}}", "+", "\\eta", "\\left(-\\frac{d\\text{RSS}}{dc}\\right)",
+            font_size=31
+        ).move_to([2.7, 0.6, 0])
+        c_new_eq5[0].set_color(CORAL)
+        c_new_eq5[1].set_color(WHITE)
+        c_new_eq5[2].set_color(CORAL)
+        c_new_eq5[3].set_color(WHITE)
+        c_new_eq5[4].set_color(CYAN)
+        c_new_eq5[5].set_color(YELLOW)
+
+        self.play(
+            FadeOut(negetive_slope_title, shift=RIGHT * 0.8),
+            FadeOut(diff_text, shift=RIGHT * 0.8),
+            ReplacementTransform(c_new_eq4, c_new_eq5),
+            run_time=1.6,
+        )
+        self.wait(1.5)
+
+        # --------------------------------------------------
+        # 6. Final Canonical Gradient Descent Formula: c_new = c_old - η (dRSS/dc)
+        # --------------------------------------------------
+        c_new_eq6 = MathTex(
+            "c_{\\text{new}}", "=", "c_{\\text{old}}", "-", "\\eta", "\\left(\\frac{d\\text{RSS}}{dc}\\right)",
+            font_size=34
+        ).move_to([2.7, 0.3, 0])
+        c_new_eq6[0].set_color(CORAL)
+        c_new_eq6[1].set_color(WHITE)
+        c_new_eq6[2].set_color(CORAL)
+        c_new_eq6[3].set_color(WHITE)
+        c_new_eq6[4].set_color(CYAN)
+        c_new_eq6[5].set_color(YELLOW)
+
+        rule_title = Text(
+            "Gradient Descent Update Rule",
+            font_size=23,
+            color=GREEN
+        ).next_to(c_new_eq6, UP, buff=0.45)
+
+        rule_box = RoundedRectangle(
+            corner_radius=0.15,
+            width=c_new_eq6.width + 0.6,
+            height=c_new_eq6.height + 0.45,
+            color=CYAN,
+            stroke_width=2.2,
+        ).move_to(c_new_eq6)
+
+        self.play(
+            ReplacementTransform(c_new_eq5, c_new_eq6),
+            # c_new_eq6.animate.scale(1.5),
+            run_time=1.4,
+        )
+
+        self.play(
+            # FadeIn(rule_title, shift=DOWN * 0.15),
+            Create(rule_box),
+            run_time=1.2,
+        )
+        self.wait(2.5)
 
 
 class scene9_way(Scene):
