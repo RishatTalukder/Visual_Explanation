@@ -17,7 +17,224 @@ YELLOW = "#FDEB5D"
 CORAL = "#F97E72"
 LAVENDER = "#A99BCB"
 SOFT_RED = "#FF2C2C"
- 
+
+
+
+class scene10_found(Scene):
+    def construct(self):
+        # ==================================================
+        # RECONSTRUCT SCENE 9 FINAL STATE (c = 3.97, -dRSS/dc = 0.2)
+        # ==================================================
+
+        # --------------------------------------------------
+        # 1. Left Side: Title, Formulas & Negative Slope Readout
+        # --------------------------------------------------
+        linear_title = Text(
+            "Linear Relationship",
+            font_size=32,
+            color=CYAN
+        ).scale(0.9).move_to([-4.1, 1.8, 0])
+
+        gen_eq = MathTex(
+            "y", "=", "m", "x", "+", "c",
+            font_size=52
+        ).move_to([-3.85, 0.2, 0])
+        gen_eq[0].set_color(WHITE)
+        gen_eq[1].set_color(WHITE)
+        gen_eq[2].set_color(YELLOW)  # m
+        gen_eq[3].set_color(WHITE)
+        gen_eq[4].set_color(WHITE)
+        gen_eq[5].set_color(CORAL)   # c
+
+        m_char = gen_eq[2]
+        arrow_m = Arrow(
+            start=m_char.get_bottom() + DOWN * 0.1,
+            end=m_char.get_bottom() + DOWN * 0.85 + LEFT * 0.4,
+            color=YELLOW,
+            stroke_width=2.5,
+            max_tip_length_to_length_ratio=0.22,
+            buff=0,
+        )
+        m_0 = MathTex("m = 0", font_size=38, color=YELLOW).next_to(
+            arrow_m.get_end(), DOWN, buff=0.15
+        )
+
+        c_char = gen_eq[5]
+        arrow_c = Arrow(
+            start=c_char.get_bottom() + DOWN * 0.1,
+            end=c_char.get_bottom() + DOWN * 0.85 + RIGHT * 0.4,
+            color=CORAL,
+            stroke_width=2.5,
+            max_tip_length_to_length_ratio=0.22,
+            buff=0,
+        )
+        c_val_text = MathTex("c = 3.97", font_size=32, color=CORAL).next_to(
+            arrow_c.get_end(), DOWN, buff=0.25
+        )
+
+        eq_group = VGroup(c_val_text, gen_eq, arrow_m, m_0, arrow_c)
+        eq_group.scale(0.85).move_to([-4.1, 0.4, 0])
+
+        negetive_slope_title = Text("Negative Slope", font_size=32, color=WHITE).move_to([-4.1, -1.8, 0])
+        diff_text = MathTex(
+            r"-\frac{d\text{RSS}}{dc} = 0.2",
+            font_size=28,
+            color=YELLOW
+        ).next_to(negetive_slope_title, DOWN, buff=0.25)
+
+        left_side_group = VGroup(linear_title, eq_group, negetive_slope_title, diff_text)
+
+        # --------------------------------------------------
+        # 2. Upper Formulas (Step Formula & Iteration 3 Calculation)
+        # --------------------------------------------------
+        step_formula = MathTex(
+            r"\text{Step} = \text{Step Size} \times \left(-\frac{d\text{RSS}}{dc}\right)",
+            font_size=24,
+            color=CYAN
+        ).move_to([2.7, 1.5, 0])
+
+        step_calc_iter3 = MathTex(
+            r"\text{Step} = 0.1 \times 1.12 \approx 0.11 \implies c = 3.97",
+            font_size=21,
+            color=YELLOW
+        ).next_to(step_formula, DOWN, buff=0.18)
+
+        upper_formula_group = VGroup(step_formula, step_calc_iter3)
+
+        # --------------------------------------------------
+        # 3. Lower Graph (Dashed Curve, History Arcs, Ghosts & Active State at c = 3.97)
+        # --------------------------------------------------
+        error_axes = Axes(
+            x_range=[0, 8.5, 2],
+            y_range=[0, 95, 20],
+            x_length=4.4,
+            y_length=2.5,
+            axis_config={
+                "color": LAVENDER,
+                "stroke_width": 2.2,
+                "include_tip": True,
+                "tip_width": 0.14,
+                "tip_height": 0.14,
+            },
+        ).move_to([2.7, -1.9, 0])
+
+        error_c_label = MathTex("c", color=CORAL, font_size=30).next_to(
+            error_axes.x_axis.get_end(), RIGHT, buff=0.12
+        )
+        RSS2 = MathTex(r"\text{RSS}", font_size=22, color=YELLOW).next_to(
+            error_axes.y_axis.get_end(), UP, buff=0.12
+        )
+        origin_0 = MathTex("0", font_size=20, color=LAVENDER).next_to(
+            error_axes.c2p(0, 0), DOWN + LEFT, buff=0.06
+        )
+
+        def calc_squared_error(c):
+            return (1 - c)**2 + (3 - c)**2 + (5 - c)**2 + (7 - c)**2
+
+        solid_loss_curve = error_axes.plot(
+            calc_squared_error,
+            x_range=[0, 8.0],
+            color=CORAL,
+            stroke_width=3.2,
+        )
+
+        dashed_loss_curve = DashedVMobject(
+            solid_loss_curve,
+            num_dashes=44,
+            dashed_ratio=0.55
+        ).set_color(CORAL).set_stroke(opacity=0.35)
+
+        # Iteration history points
+        p0 = error_axes.c2p(0.5, calc_squared_error(0.5))
+        p1 = error_axes.c2p(3.3, calc_squared_error(3.3))
+        p2 = error_axes.c2p(3.86, calc_squared_error(3.86))
+        p3 = error_axes.c2p(3.97, calc_squared_error(3.97))
+
+        ghost_0 = Dot(p0, radius=0.08, color=CYAN, fill_opacity=0.35)
+        ghost_1 = Dot(p1, radius=0.08, color=CYAN, fill_opacity=0.35)
+        ghost_2 = Dot(p2, radius=0.08, color=CYAN, fill_opacity=0.35)
+        ghost_dots = VGroup(ghost_0, ghost_1, ghost_2)
+
+        arc_1 = CurvedArrow(
+            p0,
+            p1,
+            angle=-PI / 3.4,
+            color=CYAN,
+            stroke_width=2.4,
+            tip_length=0.15,
+        )
+        arc_2 = CurvedArrow(
+            p1,
+            p2,
+            angle=-PI / 3.4,
+            color=CYAN,
+            stroke_width=2.4,
+            tip_length=0.15,
+        )
+        arc_3 = CurvedArrow(
+            p2,
+            p3,
+            angle=-PI / 3.4,
+            color=GREEN,
+            stroke_width=2.4,
+            tip_length=0.15,
+        )
+        jump_arcs = VGroup(arc_1, arc_2, arc_3)
+
+        # Active state at c = 3.97
+        c_axis_dot = Dot(
+            error_axes.c2p(3.97, 0),
+            radius=0.10,
+            color=CORAL
+        )
+
+        eval_drop_line = DashedLine(
+            error_axes.c2p(3.97, 0),
+            p3,
+            color=GREEN,
+            stroke_width=2.2,
+            dash_length=0.06
+        )
+
+        eval_ball = Dot(p3, radius=0.11, color=GREEN)
+
+        def build_descent_arrow(c_val, length=1.0):
+            pt = error_axes.c2p(c_val, calc_squared_error(c_val))
+            slope = 8.0 * (c_val - 4.0)
+            dc_val = 0.25
+            if slope <= 0:
+                p_fwd = error_axes.c2p(c_val + dc_val, calc_squared_error(c_val) + slope * dc_val)
+            else:
+                p_fwd = error_axes.c2p(c_val - dc_val, calc_squared_error(c_val) - slope * dc_val)
+            v = p_fwd - pt
+            norm_v = np.linalg.norm(v)
+            u = v / norm_v if norm_v > 1e-6 else RIGHT
+            return Arrow(
+                start=pt - u * (length / 2),
+                end=pt + u * (length / 2),
+                color=WHITE,
+                stroke_width=3.2,
+                max_tip_length_to_length_ratio=0.18,
+                buff=0,
+            )
+
+        arrow_active = build_descent_arrow(3.97, length=1.0)
+
+        lower_graph = VGroup(
+            error_axes, error_c_label, RSS2, origin_0,
+            dashed_loss_curve, ghost_dots, jump_arcs,
+            c_axis_dot, eval_drop_line, eval_ball, arrow_active
+        )
+
+        # --------------------------------------------------
+        # Display Scene 9 Ending State
+        # --------------------------------------------------
+        self.add(
+            left_side_group,
+            upper_formula_group,
+            lower_graph
+        )
+        self.wait(1.0)
 
 
 class scene9_way(Scene):
