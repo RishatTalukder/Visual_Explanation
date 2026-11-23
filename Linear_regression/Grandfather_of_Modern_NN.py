@@ -20,6 +20,176 @@ SOFT_RED = "#FF2C2C"
 
 
 
+class scene9_way(Scene):
+    def construct(self):
+        # ==================================================
+        # RECONSTRUCT SCENE 8 FINAL STATE (c = 0.5, -dRSS/dc = 28)
+        # ==================================================
+
+        # --------------------------------------------------
+        # 1. Left Side: Title, Formulas & Negative Slope Readout
+        # --------------------------------------------------
+        linear_title = Text(
+            "Linear Relationship",
+            font_size=32,
+            color=CYAN
+        ).scale(0.9).move_to([-4.1, 1.8, 0])
+
+        gen_eq = MathTex(
+            "y", "=", "m", "x", "+", "c",
+            font_size=52
+        ).move_to([-3.85, 0.2, 0])
+        gen_eq[0].set_color(WHITE)
+        gen_eq[1].set_color(WHITE)
+        gen_eq[2].set_color(YELLOW)  # m
+        gen_eq[3].set_color(WHITE)
+        gen_eq[4].set_color(WHITE)
+        gen_eq[5].set_color(CORAL)   # c
+
+        m_char = gen_eq[2]
+        arrow_m = Arrow(
+            start=m_char.get_bottom() + DOWN * 0.1,
+            end=m_char.get_bottom() + DOWN * 0.85 + LEFT * 0.4,
+            color=YELLOW,
+            stroke_width=2.5,
+            max_tip_length_to_length_ratio=0.22,
+            buff=0,
+        )
+        m_0 = MathTex("m = 0", font_size=38, color=YELLOW).next_to(
+            arrow_m.get_end(), DOWN, buff=0.15
+        )
+
+        c_char = gen_eq[5]
+        arrow_c = Arrow(
+            start=c_char.get_bottom() + DOWN * 0.1,
+            end=c_char.get_bottom() + DOWN * 0.85 + RIGHT * 0.4,
+            color=CORAL,
+            stroke_width=2.5,
+            max_tip_length_to_length_ratio=0.22,
+            buff=0,
+        )
+        c_val_text = MathTex("c = 0.5", font_size=32, color=CORAL).next_to(
+            arrow_c.get_end(), DOWN, buff=0.25
+        )
+
+        eq_group = VGroup(c_val_text, gen_eq, arrow_m, m_0, arrow_c)
+        eq_group.scale(0.85).move_to([-4.1, 0.4, 0])
+
+        negetive_slope_title = Text("Negative Slope", font_size=32, color=WHITE).move_to([-4.1, -1.8, 0])
+        neg_diff_val_text = MathTex(
+            r"-\frac{d\text{RSS}}{dc} = 28",
+            font_size=28,
+            color=YELLOW
+        ).next_to(negetive_slope_title, DOWN, buff=0.25)
+
+        left_side_group = VGroup(linear_title, eq_group, negetive_slope_title, neg_diff_val_text)
+
+        # --------------------------------------------------
+        # 2. Upper Callout ("Let's rethink this")
+        # --------------------------------------------------
+        rethink_text = Text(
+            "Let's rethink this",
+            font_size=28,
+            color=CYAN
+        ).move_to([2.7, 1.4, 0])
+
+        # --------------------------------------------------
+        # 3. Lower Graph (Dashed Parabola, Point, Drop Line, Descent Arrow at c = 0.5)
+        # --------------------------------------------------
+        error_axes = Axes(
+            x_range=[0, 8.5, 2],
+            y_range=[0, 95, 20],
+            x_length=4.4,
+            y_length=2.5,
+            axis_config={
+                "color": LAVENDER,
+                "stroke_width": 2.2,
+                "include_tip": True,
+                "tip_width": 0.14,
+                "tip_height": 0.14,
+            },
+        ).move_to([2.7, -1.9, 0])
+
+        error_c_label = MathTex("c", color=CORAL, font_size=30).next_to(
+            error_axes.x_axis.get_end(), RIGHT, buff=0.12
+        )
+        RSS2 = MathTex(r"\text{RSS}", font_size=22, color=YELLOW).next_to(
+            error_axes.y_axis.get_end(), UP, buff=0.12
+        )
+        origin_0 = MathTex("0", font_size=20, color=LAVENDER).next_to(
+            error_axes.c2p(0, 0), DOWN + LEFT, buff=0.06
+        )
+
+        def calc_squared_error(c):
+            return (1 - c)**2 + (3 - c)**2 + (5 - c)**2 + (7 - c)**2
+
+        solid_loss_curve = error_axes.plot(
+            calc_squared_error,
+            x_range=[0, 8.0],
+            color=CORAL,
+            stroke_width=3.2,
+        )
+
+        dashed_loss_curve = DashedVMobject(
+            solid_loss_curve,
+            num_dashes=44,
+            dashed_ratio=0.55
+        ).set_color(CORAL).set_stroke(opacity=0.35)
+
+        c_axis_dot = Dot(
+            error_axes.c2p(0.5, 0),
+            radius=0.10,
+            color=CORAL
+        )
+
+        rss_at_05 = calc_squared_error(0.5)
+        pt_on_curve = error_axes.c2p(0.5, rss_at_05)
+
+        eval_drop_line = DashedLine(
+            error_axes.c2p(0.5, 0),
+            pt_on_curve,
+            color=CYAN,
+            stroke_width=2.2,
+            dash_length=0.06
+        )
+
+        eval_ball = Dot(pt_on_curve, radius=0.11, color=CYAN)
+
+        # Descent arrow pointing Down-Right
+        slope_at_05 = 8.0 * (0.5 - 4.0)  # -28.0
+        dc = 0.25
+        p_ahead_descent = error_axes.c2p(0.5 + dc, rss_at_05 + slope_at_05 * dc)
+        vec_descent = p_ahead_descent - pt_on_curve
+        unit_vec_descent = vec_descent / np.linalg.norm(vec_descent)
+
+        length = 1.3
+        arrow_active = Arrow(
+            start=pt_on_curve - unit_vec_descent * (length / 2),
+            end=pt_on_curve + unit_vec_descent * (length / 2),
+            color=WHITE,
+            stroke_width=3.2,
+            max_tip_length_to_length_ratio=0.18,
+            buff=0,
+        )
+
+        lower_graph = VGroup(
+            error_axes, error_c_label, RSS2, origin_0,
+            dashed_loss_curve, c_axis_dot,
+            eval_drop_line, eval_ball, arrow_active
+        )
+
+        # --------------------------------------------------
+        # Display Scene 8 Ending State
+        # --------------------------------------------------
+        self.add(
+            left_side_group,
+            rethink_text,
+            lower_graph
+        )
+        self.wait(1.0)
+
+
+
 class scene8_jump(Scene):
     def construct(self):
         # ==================================================
@@ -190,6 +360,10 @@ class scene8_jump(Scene):
             color=YELLOW
         ).next_to(slope_title, DOWN, buff=0.25)
 
+
+        ##### negetive slope
+        negetive_slope_title = Text("Negative Slope", font_size=32, color=WHITE).move_to([-4.1, -1.8, 0])
+
         # Arrow pointing Down-Right (Direction of Descent / Decreasing Error)
         p_ahead_descent = error_axes.c2p(0.5 + dc, rss_at_05 + slope_at_05 * dc)
         vec_descent = p_ahead_descent - pt_on_curve
@@ -207,6 +381,7 @@ class scene8_jump(Scene):
         self.play(
             ReplacementTransform(diff_val_text, neg_diff_val_text),
             ReplacementTransform(arrow_active, arrow_descent_05),
+            ReplacementTransform(slope_title, negetive_slope_title),
             run_time=1.0,
         )
         arrow_active = arrow_descent_05
@@ -476,6 +651,8 @@ class scene8_jump(Scene):
         current_diff_text = diff_text_05_final
 
         self.wait(3.0)
+
+
 
 
 class scene_7_lost(Scene):
