@@ -17,7 +17,7 @@ YELLOW = "#FDEB5D"
 CORAL = "#F97E72"
 LAVENDER = "#A99BCB"
 SOFT_RED = "#FF2C2C"
-
+ 
 
 
 class scene9_way(Scene):
@@ -81,8 +81,6 @@ class scene9_way(Scene):
             font_size=28,
             color=YELLOW
         ).next_to(negetive_slope_title, DOWN, buff=0.25)
-
-        left_side_group = VGroup(linear_title, eq_group, negetive_slope_title, neg_diff_val_text)
 
         # --------------------------------------------------
         # 2. Upper Callout ("Let's rethink this")
@@ -155,22 +153,27 @@ class scene9_way(Scene):
 
         eval_ball = Dot(pt_on_curve, radius=0.11, color=CYAN)
 
-        # Descent arrow pointing Down-Right
-        slope_at_05 = 8.0 * (0.5 - 4.0)  # -28.0
-        dc = 0.25
-        p_ahead_descent = error_axes.c2p(0.5 + dc, rss_at_05 + slope_at_05 * dc)
-        vec_descent = p_ahead_descent - pt_on_curve
-        unit_vec_descent = vec_descent / np.linalg.norm(vec_descent)
+        def build_descent_arrow(c_val, length=1.3):
+            pt = error_axes.c2p(c_val, calc_squared_error(c_val))
+            slope = 8.0 * (c_val - 4.0)
+            dc_val = 0.25
+            if slope <= 0:
+                p_fwd = error_axes.c2p(c_val + dc_val, calc_squared_error(c_val) + slope * dc_val)
+            else:
+                p_fwd = error_axes.c2p(c_val - dc_val, calc_squared_error(c_val) - slope * dc_val)
+            v = p_fwd - pt
+            norm_v = np.linalg.norm(v)
+            u = v / norm_v if norm_v > 1e-6 else RIGHT
+            return Arrow(
+                start=pt - u * (length / 2),
+                end=pt + u * (length / 2),
+                color=WHITE,
+                stroke_width=3.2,
+                max_tip_length_to_length_ratio=0.18,
+                buff=0,
+            )
 
-        length = 1.3
-        arrow_active = Arrow(
-            start=pt_on_curve - unit_vec_descent * (length / 2),
-            end=pt_on_curve + unit_vec_descent * (length / 2),
-            color=WHITE,
-            stroke_width=3.2,
-            max_tip_length_to_length_ratio=0.18,
-            buff=0,
-        )
+        arrow_active = build_descent_arrow(0.5)
 
         lower_graph = VGroup(
             error_axes, error_c_label, RSS2, origin_0,
@@ -182,14 +185,311 @@ class scene9_way(Scene):
         # Display Scene 8 Ending State
         # --------------------------------------------------
         self.add(
-            left_side_group,
+            linear_title, eq_group, negetive_slope_title, neg_diff_val_text,
             rethink_text,
             lower_graph
         )
         self.wait(1.0)
 
+        # ==================================================
+        # SCENE 9: PROPORTIONAL STEPPING & GRADIENT DESCENT
+        # ==================================================
+
+        # --------------------------------------------------
+        # 1. Slope as a Guide (Pulse Negative Slope)
+        # --------------------------------------------------
+        self.play(
+            Indicate(neg_diff_val_text, color=YELLOW, scale_factor=1.15),
+            run_time=0.9,
+        )
+        self.wait(0.4)
+
+        # --------------------------------------------------
+        # 2. Introduce the Mathematical Formulation: Step = Step Size * (-dRSS/dc)
+        # --------------------------------------------------
+        step_formula = MathTex(
+            r"\text{Step} = \text{Step Size} \times \text{Negative Slope}",
+            font_size=24,
+            color=CYAN
+        ).move_to([2.7, 1.5, 0])
+
+        self.play(
+            ReplacementTransform(rethink_text, step_formula),
+            run_time=0.8,
+        )
+        self.wait(0.6)
+
+        
+
+        self.play(
+            ReplacementTransform(step_formula, MathTex(
+                r"\text{Step} = \text{Step Size} \times \left(-\frac{d\text{RSS}}{dc}\right)",
+                font_size=24,
+                color=CYAN
+            ).move_to(step_formula.get_center())
+            ),
+            run_time=0.8
+        )
+
+        # --------------------------------------------------
+        # 3. Test Step Size = 1.0 (Overshoot Warning) vs Step Size = 0.1 (Tolerable)
+        # --------------------------------------------------
+        step_calc_1 = MathTex(
+            r"\text{Step} = 1.0 \times 28 = 28 \quad",
+            r"\text{(Too Big!)}",
+            font_size=20,
+        ).next_to(step_formula, DOWN, buff=0.18)
+        step_calc_1[0].set_color(WHITE)
+        step_calc_1[1].set_color(SOFT_RED)
+
+        self.play(
+            FadeIn(step_calc_1, shift=DOWN * 0.1),
+            run_time=0.8,
+        )
+        self.wait(1.0)
+
+        step_calc_01 = MathTex(
+            r"\text{Step} = 0.1 \times 28 = 2.8 \quad",
+            r"\text{(Tolerable!)}",
+            font_size=20,
+        ).move_to(step_calc_1.get_center())
+        step_calc_01[0].set_color(WHITE)
+        step_calc_01[1].set_color(GREEN)
+
+        self.play(
+            ReplacementTransform(step_calc_1, step_calc_01),
+            run_time=0.8,
+        )
+        self.wait(1.0)
+
+        # Transform into active step execution readout   
+        active_step_calc = MathTex(
+            r"\text{Step} = 0.1 \times 28 = 2.8 \implies c = 3.3",
+            font_size=21,
+            color=YELLOW
+        ).move_to(step_calc_01.get_center())
+
+        self.play(
+            ReplacementTransform(step_calc_01, active_step_calc),
+            run_time=0.6,
+        )
+        self.wait(0.4)
+
+        # --------------------------------------------------
+        # 4. ITERATION 1: c = 0.5 -> c = 3.3 (Step = +2.8)
+        # --------------------------------------------------
+        p0 = error_axes.c2p(0.5, calc_squared_error(0.5))
+        p1 = error_axes.c2p(3.3, calc_squared_error(3.3))
+
+        ghost_0 = Dot(p0, radius=0.08, color=CYAN, fill_opacity=0.35)
+        self.add(ghost_0)
+
+        arc_1 = CurvedArrow(
+            p0,
+            p1,
+            angle=-PI / 3.4,
+            color=CYAN,
+            stroke_width=2.4,
+            tip_length=0.15,
+        )
+
+        drop_line_1 = DashedLine(
+            error_axes.c2p(3.3, 0),
+            p1,
+            color=CYAN,
+            stroke_width=2.2,
+            dash_length=0.06
+        )
+        arrow_1 = build_descent_arrow(3.3)
+
+        c_text_1 = MathTex("c = 3.3", font_size=32, color=CORAL).move_to(
+            c_val_text.get_center()
+        )
+        diff_text_1 = MathTex(
+            r"-\frac{d\text{RSS}}{dc} = 5.6",
+            font_size=28,
+            color=YELLOW
+        ).next_to(negetive_slope_title, DOWN, buff=0.25)
+
+        self.play(
+            Create(arc_1),
+            c_axis_dot.animate.move_to(error_axes.c2p(3.3, 0)),
+            eval_ball.animate.move_to(p1).set_color(CYAN),
+            ReplacementTransform(eval_drop_line, drop_line_1),
+            ReplacementTransform(arrow_active, arrow_1),
+            ReplacementTransform(c_val_text, c_text_1),
+            
+            run_time=1.2,
+            rate_func=rate_functions.ease_in_out_sine,
+        )
+
+        self.play(
+            ReplacementTransform(neg_diff_val_text, diff_text_1),
+        )
+
+        eval_drop_line = drop_line_1
+        arrow_active = arrow_1
+        current_c_text = c_text_1
+        current_diff_text = diff_text_1
+        self.wait(0.8)
+
+        # --------------------------------------------------
+        # 5. ITERATION 2: c = 3.3 -> c = 3.86 (Step = 0.1 * 5.6 = +0.56)
+        # --------------------------------------------------
+        p2 = error_axes.c2p(3.86, calc_squared_error(3.86))
+
+        ghost_1 = Dot(p1, radius=0.08, color=CYAN, fill_opacity=0.35)
+        self.add(ghost_1)
+
+        arc_2 = CurvedArrow(
+            p1,
+            p2,
+            angle=-PI / 3.4,
+            color=CYAN,
+            stroke_width=2.4,
+            tip_length=0.15,
+        )
+
+        step_calc_iter2 = MathTex(
+            r"\text{Step} = 0.1 \times 5.6 = 0.56 \implies c = 3.86",
+            font_size=21,
+            color=YELLOW
+        ).move_to(active_step_calc.get_center())
+
+        drop_line_2 = DashedLine(
+            error_axes.c2p(3.86, 0),
+            p2,
+            color=CYAN,
+            stroke_width=2.2,
+            dash_length=0.06
+        )
+        arrow_2 = build_descent_arrow(3.86)
+
+        c_text_2 = MathTex("c = 3.86", font_size=32, color=CORAL).move_to(
+            current_c_text.get_center()
+        )
+        diff_text_2 = MathTex(
+            r"-\frac{d\text{RSS}}{dc} = 1.1",
+            font_size=28,
+            color=YELLOW
+        ).next_to(negetive_slope_title, DOWN, buff=0.25)
+
+        self.play(
+            ReplacementTransform(active_step_calc, step_calc_iter2),
+            run_time=0.8
+        )
+
+        self.play(
+            
+            Create(arc_2),
+            c_axis_dot.animate.move_to(error_axes.c2p(3.86, 0)),
+            eval_ball.animate.move_to(p2).set_color(CYAN),
+            ReplacementTransform(eval_drop_line, drop_line_2),
+            ReplacementTransform(arrow_active, arrow_2),
+            ReplacementTransform(current_c_text, c_text_2),
+            
+            run_time=1.2,
+            rate_func=rate_functions.ease_in_out_sine,
+        )
+
+        self.play(
+            ReplacementTransform(current_diff_text, diff_text_2),
+            run_time=0.8 
+        )
+
+        eval_drop_line = drop_line_2
+        arrow_active = arrow_2
+        current_c_text = c_text_2
+        current_diff_text = diff_text_2
+        active_step_calc = step_calc_iter2
+        self.wait(0.8)
+
+        # --------------------------------------------------
+        # 6. ITERATION 3: c = 3.86 -> c = 3.97 (Step = 0.1 * 1.12 = +0.11)
+        # --------------------------------------------------
+        p3 = error_axes.c2p(3.97, calc_squared_error(3.97))
+
+        ghost_2 = Dot(p2, radius=0.08, color=CYAN, fill_opacity=0.35)
+        self.add(ghost_2)
+
+        arc_3 = CurvedArrow(
+            p2,
+            p3,
+            angle=-PI / 3.4,
+            color=GREEN,
+            stroke_width=2.4,
+            tip_length=0.15,
+        )
+
+        step_calc_iter3 = MathTex(
+            r"\text{Step} = 0.1 \times 1.12 \approx 0.11 \implies c = 3.97",
+            font_size=21,
+            color=YELLOW
+        ).move_to(active_step_calc.get_center())
+
+        drop_line_3 = DashedLine(
+            error_axes.c2p(3.97, 0),
+            p3,
+            color=GREEN,
+            stroke_width=2.2,
+            dash_length=0.06
+        )
+        arrow_3 = build_descent_arrow(3.97, length=1.0)
+
+        c_text_3 = MathTex("c = 3.97", font_size=32, color=CORAL).move_to(
+            current_c_text.get_center()
+        )
+        diff_text_3 = MathTex(
+            r"-\frac{d\text{RSS}}{dc} = 0.2",
+            font_size=28,
+            color=YELLOW
+        ).next_to(negetive_slope_title, DOWN, buff=0.25)
+
+        self.play(
+            ReplacementTransform(active_step_calc, step_calc_iter3),
+            run_time=0.8
+        )
+
+        self.play(
+            
+            Create(arc_3),
+            c_axis_dot.animate.move_to(error_axes.c2p(3.97, 0)),
+            eval_ball.animate.move_to(p3).set_color(GREEN),
+            ReplacementTransform(eval_drop_line, drop_line_3),
+            ReplacementTransform(arrow_active, arrow_3),
+            ReplacementTransform(current_c_text, c_text_3),
+            
+            run_time=1.2,
+            rate_func=rate_functions.ease_in_out_sine,
+        )
+
+        self.play(
+            ReplacementTransform(current_diff_text, diff_text_3),
+            run_time=0.8
+        )
+
+        eval_drop_line = drop_line_3
+        arrow_active = arrow_3
+        current_c_text = c_text_3
+        current_diff_text = diff_text_3
+        active_step_calc = step_calc_iter3
+
+        # Convergence highlight
+        self.play(
+            Flash(
+                p3,
+                color=GREEN,
+                flash_radius=0.40,
+                line_length=0.15,
+                num_lines=8,
+            ),
+            run_time=0.8,
+        )
+
+        self.wait(3.0)
 
 
+        
 class scene8_jump(Scene):
     def construct(self):
         # ==================================================
