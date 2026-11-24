@@ -40,6 +40,91 @@ LAVENDER = "#A99BCB"
 SOFT_RED = "#FF2C2C"
 
 
+class scene13_connection(Scene):
+    def construct(self):
+        # ==================================================
+        # RECONSTRUCT SCENE 12 FINAL STATE
+        # ==================================================
+
+        # --------------------------------------------------
+        # 1. Top Middle: Grand Title & Underline
+        # --------------------------------------------------
+        final_title = Text(
+            "Linear Regression",
+            font_size=42,
+            weight=BOLD,
+            color=CYAN
+        ).move_to([0, 3.0, 0])
+
+        underline = Line(
+            start=final_title.get_left() + DOWN * 0.28,
+            end=final_title.get_right() + DOWN * 0.28,
+            color=PINK,
+            stroke_width=2.5,
+        )
+
+        top_title_group = VGroup(final_title, underline)
+
+        # --------------------------------------------------
+        # 2. Left Side: Parameterized Linear Model (y = β₁x + β₀)
+        # --------------------------------------------------
+        beta_eq = MathTex(
+            "y", "=", "\\beta_1", "x", "+", "\\beta_0",
+            font_size=44
+        ).move_to([-4.1, 0.4, 0])
+        beta_eq[0].set_color(WHITE)
+        beta_eq[1].set_color(WHITE)
+        beta_eq[2].set_color(YELLOW)  # beta_1
+        beta_eq[3].set_color(WHITE)
+        beta_eq[4].set_color(WHITE)
+        beta_eq[5].set_color(CORAL)   # beta_0
+
+        # --------------------------------------------------
+        # 3. Right Side: Generalized Gradient Descent Update Rule
+        # --------------------------------------------------
+        rule_title = Text(
+            "Gradient Descent Update Rule",
+            font_size=23,
+            color=GREEN
+        ).move_to([2.7, 1.45, 0])
+
+        beta_new_eq = MathTex(
+            "\\beta_{\\text{new}}", "=", "\\beta_{\\text{old}}", "-", "\\eta", "\\left(\\frac{\\partial\\text{RSS}}{\\partial\\beta}\\right)",
+            font_size=35
+        ).move_to([2.7, 0.3, 0])
+        beta_new_eq[0].set_color(PINK)
+        beta_new_eq[1].set_color(WHITE)
+        beta_new_eq[2].set_color(PINK)
+        beta_new_eq[3].set_color(WHITE)
+        beta_new_eq[4].set_color(CYAN)
+        beta_new_eq[5].set_color(YELLOW)
+
+        single_rule_box = RoundedRectangle(
+            corner_radius=0.16,
+            width=beta_new_eq.width + 0.65,
+            height=beta_new_eq.height + 0.55,
+            color=CYAN,
+            stroke_width=2.2,
+        ).move_to(beta_new_eq)
+
+        right_group = VGroup(rule_title, single_rule_box, beta_new_eq)
+
+        # --------------------------------------------------
+        # Display Scene 12 Ending State
+        # --------------------------------------------------
+        self.add(
+            top_title_group,
+            beta_eq,
+            right_group
+        )
+        self.wait(1.0)
+
+        # ==================================================
+        # SCENE 13 ANIMATIONS (Awaiting Instructions)
+        # ==================================================
+
+
+
 class scene12_generalization(Scene):
     def construct(self):
         # ==================================================
