@@ -19,9 +19,28 @@ LAVENDER = "#A99BCB"
 SOFT_RED = "#F75353"
 
 
+from manim import *
+import numpy as np
+
+# ==========================================
+# IT VAYA — NEON LAB PALETTE
+# ==========================================
+
+config.background_color = "#262335"
+
+BG = "#262335"
+PANEL = "#34294F"
+WHITE = "#FDEBFF"
+PINK = "#FF7EDB"
+CYAN = "#36F9F6"
+GREEN = "#72F1B8"
+YELLOW = "#FDEB5D"
+CORAL = "#F97E72"
+LAVENDER = "#A99BCB"
+SOFT_RED = "#FF2C2C"
 
 
-class scene13_connection(Scene):
+class scene13_expansion(Scene):
     def construct(self):
         # ==================================================
         # RECONSTRUCT SCENE 12 FINAL STATE
@@ -52,11 +71,11 @@ class scene13_connection(Scene):
         beta_eq = MathTex(
             "y", "=", "\\beta_1", "x", "+", "\\beta_0",
             font_size=44
-        ).move_to([-4.1, 0.4, 0])
+        ).move_to([-3.8, 0.4, 0])
         beta_eq[0].set_color(WHITE)
         beta_eq[1].set_color(WHITE)
         beta_eq[2].set_color(YELLOW)  # beta_1
-        beta_eq[3].set_color(WHITE)
+        beta_eq[3].set_color(WHITE)   # x
         beta_eq[4].set_color(WHITE)
         beta_eq[5].set_color(CORAL)   # beta_0
 
@@ -101,10 +120,178 @@ class scene13_connection(Scene):
         self.wait(1.0)
 
         # ==================================================
-        # SCENE 13 ANIMATIONS (Awaiting Instructions)
+        # SCENE 13 ANIMATIONS
         # ==================================================
 
+        # --------------------------------------------------
+        # 1. Pop / Pulse β₁ and β₀
+        # --------------------------------------------------
+        self.play(
+            Indicate(beta_eq[2], color=YELLOW, scale_factor=1.25),
+            Indicate(beta_eq[5], color=CORAL, scale_factor=1.25),
+            run_time=1.3,
+        )
+        self.wait(1.0)
 
+        # --------------------------------------------------
+        # 2. Input and Output Labels with Pointers
+        # --------------------------------------------------
+        output_text = Text("Output", font_size=20, color=PINK).next_to(beta_eq[0], UP, buff=0.65)
+        arrow_output = Arrow(
+            start=output_text.get_bottom(),
+            end=beta_eq[0].get_top() + UP * 0.08,
+            color=PINK,
+            stroke_width=2.2,
+            max_tip_length_to_length_ratio=0.25,
+            buff=0.06,
+        )
+
+        input_text = Text("Input", font_size=20, color=CYAN).next_to(beta_eq[3], UP, buff=0.65)
+        arrow_input = Arrow(
+            start=input_text.get_bottom(),
+            end=beta_eq[3].get_top() + UP * 0.08,
+            color=CYAN,
+            stroke_width=2.2,
+            max_tip_length_to_length_ratio=0.25,
+            buff=0.06,
+        )
+
+        io_group = VGroup(output_text, arrow_output, input_text, arrow_input)
+
+        self.play(
+            FadeIn(output_text, shift=DOWN * 0.15),
+            GrowArrow(arrow_output),
+            FadeIn(input_text, shift=DOWN * 0.15),
+            GrowArrow(arrow_input),
+            run_time=1.3,
+        )
+        self.wait(2.0)
+
+        # --------------------------------------------------
+        # 3. Fade Out Labels & Start Multivariate Extension
+        # --------------------------------------------------
+        self.play(
+            FadeOut(io_group, shift=UP * 0.2),
+            run_time=0.9,
+        )
+
+        # Step 3A: y = β₁x₁ + β₂x₂ + β₀
+        multi_eq_1 = MathTex(
+            "y", "=", "\\beta_1", "x_1", "+", "\\beta_2", "x_2", "+", "\\beta_0",
+            font_size=33
+        ).move_to([-3.65, 0.4, 0])
+        multi_eq_1[0].set_color(WHITE)
+        multi_eq_1[1].set_color(WHITE)
+        multi_eq_1[2].set_color(YELLOW)  # beta_1
+        multi_eq_1[3].set_color(CYAN)    # x_1
+        multi_eq_1[4].set_color(WHITE)
+        multi_eq_1[5].set_color(YELLOW)  # beta_2
+        multi_eq_1[6].set_color(CYAN)    # x_2
+        multi_eq_1[7].set_color(WHITE)
+        multi_eq_1[8].set_color(CORAL)   # beta_0
+
+        self.play(
+            ReplacementTransform(beta_eq, multi_eq_1),
+            run_time=1.4,
+        )
+        self.wait(1.2)
+
+        # Step 3B: y = β₁x₁ + β₂x₂ + β₃x₃ + β₀
+        multi_eq_2 = MathTex(
+            "y", "=", "\\beta_1", "x_1", "+", "\\beta_2", "x_2", "+", "\\beta_3", "x_3", "+", "\\beta_0",
+            font_size=29
+        ).move_to([-3.65, 0.4, 0])
+        multi_eq_2[0].set_color(WHITE)
+        multi_eq_2[1].set_color(WHITE)
+        multi_eq_2[2].set_color(YELLOW)
+        multi_eq_2[3].set_color(CYAN)
+        multi_eq_2[4].set_color(WHITE)
+        multi_eq_2[5].set_color(YELLOW)
+        multi_eq_2[6].set_color(CYAN)
+        multi_eq_2[7].set_color(WHITE)
+        multi_eq_2[8].set_color(YELLOW)
+        multi_eq_2[9].set_color(CYAN)
+        multi_eq_2[10].set_color(WHITE)
+        multi_eq_2[11].set_color(CORAL)
+
+        self.play(
+            ReplacementTransform(multi_eq_1, multi_eq_2),
+            run_time=1.4,
+        )
+        self.wait(1.2)
+
+        # Step 3C: y = β₁x₁ + β₂x₂ + ... + βₙxₙ + β₀
+        multi_eq_3 = MathTex(
+            "y", "=", "\\beta_1", "x_1", "+", "\\beta_2", "x_2", "+", "\\dots", "+", "\\beta_n", "x_n", "+", "\\beta_0",
+            font_size=26
+        ).move_to([-3.65, 0.4, 0])
+        multi_eq_3[0].set_color(WHITE)
+        multi_eq_3[1].set_color(WHITE)
+        multi_eq_3[2].set_color(YELLOW)
+        multi_eq_3[3].set_color(CYAN)
+        multi_eq_3[4].set_color(WHITE)
+        multi_eq_3[5].set_color(YELLOW)
+        multi_eq_3[6].set_color(CYAN)
+        multi_eq_3[7].set_color(WHITE)
+        multi_eq_3[8].set_color(WHITE)   # dots
+        multi_eq_3[9].set_color(WHITE)
+        multi_eq_3[10].set_color(YELLOW) # beta_n
+        multi_eq_3[11].set_color(CYAN)   # x_n
+        multi_eq_3[12].set_color(WHITE)
+        multi_eq_3[13].set_color(CORAL)  # beta_0
+
+        self.play(
+            ReplacementTransform(multi_eq_2, multi_eq_3),
+            run_time=1.5,
+        )
+        self.wait(1.5)
+
+        # --------------------------------------------------
+        # 4. Collapse into Summation Form: y = ∑ βᵢxᵢ + β₀
+        # --------------------------------------------------
+        sum_eq = MathTex(
+            "y", "=", "\\sum_{i=1}^n", "\\beta_i", "x_i", "+", "\\beta_0",
+            font_size=36
+        ).move_to([-3.65, 0.4, 0])
+        sum_eq[0].set_color(WHITE)
+        sum_eq[1].set_color(WHITE)
+        sum_eq[2].set_color(GREEN)   # summation
+        sum_eq[3].set_color(YELLOW)  # beta_i
+        sum_eq[4].set_color(CYAN)    # x_i
+        sum_eq[5].set_color(WHITE)
+        sum_eq[6].set_color(CORAL)   # beta_0
+
+        model_subtitle = Text(
+            "Multivariate Linear Model",
+            font_size=20,
+            color=LAVENDER
+        ).next_to(sum_eq, DOWN, buff=0.45)
+
+        self.play(
+            ReplacementTransform(multi_eq_3, sum_eq),
+            FadeIn(model_subtitle, shift=UP * 0.15),
+            run_time=1.6,
+        )
+        self.wait(1.5)
+
+        # --------------------------------------------------
+        # 5. Universality: Highlight the Gradient Descent Rule
+        # --------------------------------------------------
+        universal_note = MathTex(
+            r"\text{Updates each } \beta \in \{\beta_0, \beta_1, \dots, \beta_n\}",
+            font_size=21,
+            color=GREEN
+        ).next_to(single_rule_box, DOWN, buff=0.35)
+
+        self.play(
+            Indicate(single_rule_box, color=YELLOW, scale_factor=1.06),
+            Indicate(beta_new_eq, color=WHITE, scale_factor=1.06),
+            # FadeIn(universal_note, shift=UP * 0.15),
+            run_time=1.6,
+        )
+        self.wait(3.0)
+
+        
 
 class scene12_generalization(Scene):
     def construct(self):
