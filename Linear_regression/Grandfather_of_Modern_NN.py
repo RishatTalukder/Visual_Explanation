@@ -16,6 +16,26 @@ GREEN = "#72F1B8"
 YELLOW = "#FDEB5D"
 CORAL = "#F97E72"
 LAVENDER = "#A99BCB"
+SOFT_RED = "#F75353"
+
+from manim import *
+import numpy as np
+
+# ==========================================
+# IT VAYA — NEON LAB PALETTE
+# ==========================================
+
+config.background_color = "#262335"
+
+BG = "#262335"
+PANEL = "#34294F"
+WHITE = "#FDEBFF"
+PINK = "#FF7EDB"
+CYAN = "#36F9F6"
+GREEN = "#72F1B8"
+YELLOW = "#FDEB5D"
+CORAL = "#F97E72"
+LAVENDER = "#A99BCB"
 SOFT_RED = "#FF2C2C"
 
 
@@ -79,39 +99,184 @@ class scene11_gradient_descent(Scene):
         # --------------------------------------------------
         # 2. Right Side: Master Gradient Descent Rule with Bounding Box
         # --------------------------------------------------
-        c_new_eq6 = MathTex(
+        c_new_eq = MathTex(
             "c_{\\text{new}}", "=", "c_{\\text{old}}", "-", "\\eta", "\\left(\\frac{d\\text{RSS}}{dc}\\right)",
             font_size=34
         ).move_to([2.7, 0.3, 0])
-        c_new_eq6[0].set_color(CORAL)
-        c_new_eq6[1].set_color(WHITE)
-        c_new_eq6[2].set_color(CORAL)
-        c_new_eq6[3].set_color(WHITE)
-        c_new_eq6[4].set_color(CYAN)
-        c_new_eq6[5].set_color(YELLOW)
+        c_new_eq[0].set_color(CORAL)
+        c_new_eq[1].set_color(WHITE)
+        c_new_eq[2].set_color(CORAL)
+        c_new_eq[3].set_color(WHITE)
+        c_new_eq[4].set_color(CYAN)
+        c_new_eq[5].set_color(YELLOW)
 
         rule_box = RoundedRectangle(
             corner_radius=0.15,
-            width=c_new_eq6.width + 0.6,
-            height=c_new_eq6.height + 0.45,
+            width=c_new_eq.width + 0.6,
+            height=c_new_eq.height + 0.45,
             color=CYAN,
             stroke_width=2.2,
-        ).move_to(c_new_eq6)
-
-        formula_group = VGroup(c_new_eq6, rule_box)
+        ).move_to(c_new_eq)
 
         # --------------------------------------------------
         # Display Scene 10 Ending State
         # --------------------------------------------------
         self.add(
             left_side_group,
-            formula_group
+            c_new_eq,
+            rule_box
         )
         self.wait(1.0)
 
         # ==================================================
-        # SCENE 11 ANIMATIONS (Awaiting Instructions)
+        # SCENE 11 ANIMATIONS
         # ==================================================
+
+        # --------------------------------------------------
+        # 1. Label the equation: "Gradient Descent Update Rule"
+        # --------------------------------------------------
+        rule_title = Text(
+            "Gradient Descent Update Rule",
+            font_size=23,
+            color=GREEN
+        ).next_to(rule_box, UP, buff=0.35)
+
+        self.play(
+            FadeIn(rule_title, shift=DOWN * 0.15),
+            run_time=1.0,
+        )
+        self.wait(1.5)
+
+        # --------------------------------------------------
+        # 2. Recall the True Pattern in Lower Left: y = 2x + 1
+        # --------------------------------------------------
+        target_title = Text(
+            "Target Function",
+            font_size=22,
+            color=LAVENDER
+        ).move_to([-4.1, -1.3, 0])
+
+        target_eq = MathTex(
+            "y", "=", "2", "x", "+", "1",
+            font_size=38
+        ).next_to(target_title, DOWN, buff=0.18)
+        target_eq[0].set_color(WHITE)
+        target_eq[1].set_color(WHITE)
+        target_eq[2].set_color(YELLOW)  # m = 2
+        target_eq[3].set_color(WHITE)
+        target_eq[4].set_color(WHITE)
+        target_eq[5].set_color(CORAL)   # c = 1
+
+        target_badge = RoundedRectangle(
+            corner_radius=0.15,
+            width=3.6,
+            height=1.45,
+            color=PINK,
+            stroke_width=1.6,
+            fill_color=PANEL,
+            fill_opacity=0.45,
+        ).move_to(VGroup(target_title, target_eq).get_center())
+
+        target_group = VGroup(target_badge, target_title, target_eq)
+
+        self.play(
+            FadeIn(target_group, shift=UP * 0.3),
+            run_time=1.3,
+        )
+        self.wait(1.5)
+
+        # --------------------------------------------------
+        # 3. Discrepancy Highlight: c = 3.97 vs c = 1
+        # --------------------------------------------------
+        self.play(
+            Indicate(c_val_text, color=SOFT_RED, scale_factor=1.15),
+            Indicate(target_eq[5], color=CORAL, scale_factor=1.25),
+            run_time=1.4,
+        )
+        self.wait(1.5)
+
+        # --------------------------------------------------
+        # 4. Highlight m = 0 as the reason (Pulse Animation)
+        # --------------------------------------------------
+        self.play(
+            m_0.animate.scale(1.3).set_color(PINK),
+            arrow_m.animate.set_color(PINK),
+            run_time=0.6,
+        )
+        self.play(
+            m_0.animate.scale(1 / 1.3).set_color(YELLOW),
+            arrow_m.animate.set_color(YELLOW),
+            run_time=0.6,
+        )
+        self.wait(1.5)
+
+        # --------------------------------------------------
+        # 5. Expand & Introduce Update Equation for m
+        # --------------------------------------------------
+        # Target positions for stacked equations
+        c_target_pos = np.array([2.7, 0.85, 0])
+        m_target_pos = np.array([2.7, -0.45, 0])
+
+        m_new_eq = MathTex(
+            "m_{\\text{new}}", "=", "m_{\\text{old}}", "-", "\\eta", "\\left(\\frac{d\\text{RSS}}{dm}\\right)",
+            font_size=34
+        ).move_to(m_target_pos)
+        m_new_eq[0].set_color(YELLOW)
+        m_new_eq[1].set_color(WHITE)
+        m_new_eq[2].set_color(YELLOW)
+        m_new_eq[3].set_color(WHITE)
+        m_new_eq[4].set_color(CYAN)
+        m_new_eq[5].set_color(YELLOW)
+
+        # Expanded box covering both equations
+        double_rule_box = RoundedRectangle(
+            corner_radius=0.18,
+            width=c_new_eq.width + 0.65,
+            height=2.5,
+            color=CYAN,
+            stroke_width=2.2,
+        ).move_to([2.7, 0.2, 0])
+
+        self.play(
+            rule_title.animate.move_to([2.7, 2.05, 0]),
+            c_new_eq.animate.move_to(c_target_pos),
+            Transform(rule_box, double_rule_box),
+            FadeIn(m_new_eq, shift=UP * 0.3),
+            run_time=1.6,
+        )
+        self.wait(1.8)
+
+        # --------------------------------------------------
+        # 6. Transform to Partial Derivatives (d -> ∂)
+        # --------------------------------------------------
+        c_new_partial = MathTex(
+            "c_{\\text{new}}", "=", "c_{\\text{old}}", "-", "\\eta", "\\left(\\frac{\\partial\\text{RSS}}{\\partial c}\\right)",
+            font_size=34
+        ).move_to(c_target_pos)
+        c_new_partial[0].set_color(CORAL)
+        c_new_partial[1].set_color(WHITE)
+        c_new_partial[2].set_color(CORAL)
+        c_new_partial[3].set_color(WHITE)
+        c_new_partial[4].set_color(CYAN)
+        c_new_partial[5].set_color(YELLOW)
+
+        m_new_partial = MathTex(
+            "m_{\\text{new}}", "=", "m_{\\text{old}}", "-", "\\eta", "\\left(\\frac{\\partial\\text{RSS}}{\\partial m}\\right)",
+            font_size=34
+        ).move_to(m_target_pos)
+        m_new_partial[0].set_color(YELLOW)
+        m_new_partial[1].set_color(WHITE)
+        m_new_partial[2].set_color(YELLOW)
+        m_new_partial[3].set_color(WHITE)
+        m_new_partial[4].set_color(CYAN)
+        m_new_partial[5].set_color(YELLOW)
+
+        self.play(
+            ReplacementTransform(c_new_eq, c_new_partial),
+            ReplacementTransform(m_new_eq, m_new_partial),
+            run_time=1.6,
+        )
+        self.wait(2.5)
 
 
 
