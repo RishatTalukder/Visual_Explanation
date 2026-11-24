@@ -19,6 +19,101 @@ LAVENDER = "#A99BCB"
 SOFT_RED = "#FF2C2C"
 
 
+class scene11_gradient_descent(Scene):
+    def construct(self):
+        # ==================================================
+        # RECONSTRUCT SCENE 10 FINAL STATE
+        # ==================================================
+
+        # --------------------------------------------------
+        # 1. Left Side: Title & Linear Model (m = 0, c = 3.97)
+        # --------------------------------------------------
+        linear_title = Text(
+            "Linear Relationship",
+            font_size=32,
+            color=CYAN
+        ).scale(0.9).move_to([-4.1, 1.8, 0])
+
+        gen_eq = MathTex(
+            "y", "=", "m", "x", "+", "c",
+            font_size=52
+        ).move_to([-3.85, 0.2, 0])
+        gen_eq[0].set_color(WHITE)
+        gen_eq[1].set_color(WHITE)
+        gen_eq[2].set_color(YELLOW)  # m
+        gen_eq[3].set_color(WHITE)
+        gen_eq[4].set_color(WHITE)
+        gen_eq[5].set_color(CORAL)   # c
+
+        m_char = gen_eq[2]
+        arrow_m = Arrow(
+            start=m_char.get_bottom() + DOWN * 0.1,
+            end=m_char.get_bottom() + DOWN * 0.85 + LEFT * 0.4,
+            color=YELLOW,
+            stroke_width=2.5,
+            max_tip_length_to_length_ratio=0.22,
+            buff=0,
+        )
+        m_0 = MathTex("m = 0", font_size=38, color=YELLOW).next_to(
+            arrow_m.get_end(), DOWN, buff=0.15
+        )
+
+        c_char = gen_eq[5]
+        arrow_c = Arrow(
+            start=c_char.get_bottom() + DOWN * 0.1,
+            end=c_char.get_bottom() + DOWN * 0.85 + RIGHT * 0.4,
+            color=CORAL,
+            stroke_width=2.5,
+            max_tip_length_to_length_ratio=0.22,
+            buff=0,
+        )
+        c_val_text = MathTex("c = 3.97", font_size=32, color=CORAL).next_to(
+            arrow_c.get_end(), DOWN, buff=0.25
+        )
+
+        eq_group = VGroup(c_val_text, gen_eq, arrow_m, m_0, arrow_c)
+        eq_group.scale(0.85).move_to([-4.1, 0.4, 0])
+
+        left_side_group = VGroup(linear_title, eq_group)
+
+        # --------------------------------------------------
+        # 2. Right Side: Master Gradient Descent Rule with Bounding Box
+        # --------------------------------------------------
+        c_new_eq6 = MathTex(
+            "c_{\\text{new}}", "=", "c_{\\text{old}}", "-", "\\eta", "\\left(\\frac{d\\text{RSS}}{dc}\\right)",
+            font_size=34
+        ).move_to([2.7, 0.3, 0])
+        c_new_eq6[0].set_color(CORAL)
+        c_new_eq6[1].set_color(WHITE)
+        c_new_eq6[2].set_color(CORAL)
+        c_new_eq6[3].set_color(WHITE)
+        c_new_eq6[4].set_color(CYAN)
+        c_new_eq6[5].set_color(YELLOW)
+
+        rule_box = RoundedRectangle(
+            corner_radius=0.15,
+            width=c_new_eq6.width + 0.6,
+            height=c_new_eq6.height + 0.45,
+            color=CYAN,
+            stroke_width=2.2,
+        ).move_to(c_new_eq6)
+
+        formula_group = VGroup(c_new_eq6, rule_box)
+
+        # --------------------------------------------------
+        # Display Scene 10 Ending State
+        # --------------------------------------------------
+        self.add(
+            left_side_group,
+            formula_group
+        )
+        self.wait(1.0)
+
+        # ==================================================
+        # SCENE 11 ANIMATIONS (Awaiting Instructions)
+        # ==================================================
+
+
 
 
 class scene10_found(Scene):
