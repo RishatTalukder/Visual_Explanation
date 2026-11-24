@@ -20,6 +20,164 @@ SOFT_RED = "#F75353"
 
 
 
+class scene15_non_linearity(Scene):
+    def construct(self):
+        # ==================================================
+        # RECONSTRUCT SCENE 14 FINAL STATE
+        # ==================================================
+
+        # --------------------------------------------------
+        # 1. Upper Right: Scaled Gradient Descent Rule
+        # --------------------------------------------------
+        beta_new_eq = MathTex(
+            "\\beta_{\\text{new}}", "=", "\\beta_{\\text{old}}", "-", "\\eta", "\\left(\\frac{\\partial\\text{RSS}}{\\partial\\beta}\\right)",
+            font_size=35
+        ).scale(0.85).move_to([3.4, 2.2, 0])
+        beta_new_eq[0].set_color(PINK)
+        beta_new_eq[1].set_color(WHITE)
+        beta_new_eq[2].set_color(PINK)
+        beta_new_eq[3].set_color(WHITE)
+        beta_new_eq[4].set_color(CYAN)
+        beta_new_eq[5].set_color(YELLOW)
+
+        # --------------------------------------------------
+        # 2. Perceptron Bounding Box & Header Formula
+        # --------------------------------------------------
+        perceptron_box = RoundedRectangle(
+            corner_radius=0.2,
+            width=8.6,
+            height=3.6,
+            color=LAVENDER,
+            stroke_width=1.8,
+            fill_color=PANEL,
+            fill_opacity=0.2
+        ).move_to([-0.75, -1.4, 0])
+
+        neuron_title = MathTex(
+            "y", "=", "\\sum_{i=1}^n", "\\beta_i", "x_i", "+", "\\beta_0",
+            font_size=36
+        ).move_to(perceptron_box.get_top() + UP * 0.6)
+        neuron_title[0].set_color(WHITE)
+        neuron_title[1].set_color(WHITE)
+        neuron_title[2].set_color(GREEN)   # summation
+        neuron_title[3].set_color(YELLOW)  # beta_i
+        neuron_title[4].set_color(CYAN)    # x_i
+        neuron_title[5].set_color(WHITE)
+        neuron_title[6].set_color(CORAL)   # beta_0
+
+        # --------------------------------------------------
+        # 3. Input Nodes (x1, x2, x3)
+        # --------------------------------------------------
+        node_x1 = Circle(radius=0.36, color=CYAN, fill_color=PANEL, fill_opacity=0.9, stroke_width=2.4).move_to([-4.4, -0.4, 0])
+        lbl_x1 = MathTex("x_1", font_size=26, color=CYAN).move_to(node_x1)
+        group_x1 = VGroup(node_x1, lbl_x1)
+
+        node_x2 = Circle(radius=0.36, color=CYAN, fill_color=PANEL, fill_opacity=0.9, stroke_width=2.4).move_to([-4.4, -1.4, 0])
+        lbl_x2 = MathTex("x_2", font_size=26, color=CYAN).move_to(node_x2)
+        group_x2 = VGroup(node_x2, lbl_x2)
+
+        node_x3 = Circle(radius=0.36, color=CYAN, fill_color=PANEL, fill_opacity=0.9, stroke_width=2.4).move_to([-4.4, -2.4, 0])
+        lbl_x3 = MathTex("x_3", font_size=26, color=CYAN).move_to(node_x3)
+        group_x3 = VGroup(node_x3, lbl_x3)
+
+        input_nodes = VGroup(group_x1, group_x2, group_x3)
+
+        # --------------------------------------------------
+        # 4. Weight Arrows & Labels (beta_1, beta_2, beta_3)
+        # --------------------------------------------------
+        sum_box_left_pt1 = np.array([-2.0, -1.05, 0])
+        sum_box_left_pt2 = np.array([-2.0, -1.4, 0])
+        sum_box_left_pt3 = np.array([-2.0, -1.75, 0])
+
+        arrow_1 = Arrow(node_x1.get_right(), sum_box_left_pt1, color=WHITE, stroke_width=2.4, buff=0.08, max_tip_length_to_length_ratio=0.10)
+        lbl_b1 = MathTex("\\beta_1", font_size=23, color=YELLOW).next_to(arrow_1.get_center(), UP, buff=0.1)
+
+        arrow_2 = Arrow(node_x2.get_right(), sum_box_left_pt2, color=WHITE, stroke_width=2.4, buff=0.08, max_tip_length_to_length_ratio=0.10)
+        lbl_b2 = MathTex("\\beta_2", font_size=23, color=YELLOW).next_to(arrow_2.get_center(), UP, buff=0.1)
+
+        arrow_3 = Arrow(node_x3.get_right(), sum_box_left_pt3, color=WHITE, stroke_width=2.4, buff=0.08, max_tip_length_to_length_ratio=0.10)
+        lbl_b3 = MathTex("\\beta_3", font_size=23, color=YELLOW).next_to(arrow_3.get_center(), DOWN, buff=0.1)
+
+        weights_group = VGroup(arrow_1, lbl_b1, arrow_2, lbl_b2, arrow_3, lbl_b3)
+
+        # --------------------------------------------------
+        # 5. Summation Block
+        # --------------------------------------------------
+        sum_box = RoundedRectangle(
+            corner_radius=0.14,
+            width=1.3,
+            height=1.3,
+            color=GREEN,
+            stroke_width=2.4,
+            fill_color=PANEL,
+            fill_opacity=0.1
+        ).move_to([-1.35, -1.4, 0])
+        sum_symbol = MathTex("\\sum", font_size=44, color=GREEN).move_to(sum_box)
+        sum_block = VGroup(sum_box, sum_symbol)
+
+        # --------------------------------------------------
+        # 6. Bias Node
+        # --------------------------------------------------
+        arrow_to_bias = Arrow(
+            sum_box.get_right(),
+            np.array([0.42, -1.4, 0]),
+            color=WHITE,
+            stroke_width=2.4,
+            buff=0.08,
+            max_tip_length_to_length_ratio=0.22
+        )
+        bias_node = Circle(
+            radius=0.46,
+            color=CORAL,
+            fill_color=PANEL,
+            fill_opacity=0.1,
+            stroke_width=2.4
+        ).move_to([0.95, -1.4, 0])
+        bias_lbl = MathTex("+\\beta_0", font_size=25, color=CORAL).move_to(bias_node)
+        bias_group = VGroup(arrow_to_bias, bias_node, bias_lbl)
+
+        # --------------------------------------------------
+        # 7. Output Node
+        # --------------------------------------------------
+        arrow_to_out = Arrow(
+            bias_node.get_right(),
+            np.array([2.35, -1.4, 0]),
+            color=WHITE,
+            stroke_width=2.4,
+            buff=0.08,
+            max_tip_length_to_length_ratio=0.22
+        )
+        y_node = Circle(
+            radius=0.38,
+            color=PINK,
+            fill_color=PANEL,
+            fill_opacity=0.1,
+            stroke_width=2.4
+        ).move_to([2.85, -1.4, 0])
+        y_lbl = MathTex("y", font_size=28, color=PINK).move_to(y_node)
+        out_group = VGroup(arrow_to_out, y_node, y_lbl)
+
+        # --------------------------------------------------
+        # Display Scene 14 Ending State
+        # --------------------------------------------------
+        self.add(
+            beta_new_eq,
+            perceptron_box,
+            neuron_title,
+            input_nodes,
+            weights_group,
+            sum_block,
+            bias_group,
+            out_group
+        )
+        self.wait(1.0)
+
+        # ==================================================
+        # SCENE 15 ANIMATIONS (Awaiting Instructions)
+        # ==================================================
+
+
+
 class scene14_connection(Scene):
     def construct(self):
         # ==================================================
