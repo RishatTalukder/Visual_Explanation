@@ -19,6 +19,26 @@ LAVENDER = "#A99BCB"
 SOFT_RED = "#F75353"
 
 
+from manim import *
+import numpy as np
+
+# ==========================================
+# IT VAYA — NEON LAB PALETTE
+# ==========================================
+
+config.background_color = "#262335"
+
+BG = "#262335"
+PANEL = "#34294F"
+WHITE = "#FDEBFF"
+PINK = "#FF7EDB"
+CYAN = "#36F9F6"
+GREEN = "#72F1B8"
+YELLOW = "#FDEB5D"
+CORAL = "#F97E72"
+LAVENDER = "#A99BCB"
+SOFT_RED = "#FF2C2C"
+
 
 class scene12_generalization(Scene):
     def construct(self):
@@ -185,7 +205,7 @@ class scene12_generalization(Scene):
         self.wait(1.4)
 
         # --------------------------------------------------
-        # 3. Clean Left Side & Rename m -> beta_1, c -> beta_2
+        # 3. Clean Left Side & Rename m -> beta_1, c -> beta_0
         # --------------------------------------------------
         beta_eq = MathTex(
             "y", "=", "\\beta_1", "x", "+", "\\beta_0",
@@ -196,11 +216,11 @@ class scene12_generalization(Scene):
         beta_eq[2].set_color(YELLOW)  # beta_1
         beta_eq[3].set_color(WHITE)
         beta_eq[4].set_color(WHITE)
-        beta_eq[5].set_color(CORAL)   # beta_2
+        beta_eq[5].set_color(CORAL)   # beta_0
 
         self.play(
             FadeOut(target_group, shift=DOWN * 0.4),
-            FadeOut(linear_title,),
+            FadeOut(linear_title),
             FadeOut(arrow_m),
             FadeOut(m_0),
             FadeOut(arrow_c),
@@ -242,7 +262,37 @@ class scene12_generalization(Scene):
             ReplacementTransform(m_new_partial, beta_new_eq),
             run_time=1.8,
         )
-        self.wait(2.5)
+        self.wait(1.5)
+
+        # --------------------------------------------------
+        # 5. Grand Finale: "Linear Regression" Title at Top Middle
+        # --------------------------------------------------
+        final_title = Text(
+            "Linear Regression",
+            font_size=42,
+            weight=BOLD,
+            color=CYAN
+        ).move_to([0, 3.0, 0])
+
+        underline = Line(
+            start=final_title.get_left() + DOWN * 0.28,
+            end=final_title.get_right() + DOWN * 0.28,
+            color=PINK,
+            stroke_width=2.5,
+        )
+
+        title_group = VGroup(final_title, underline)
+
+        self.play(
+            FadeIn(final_title, shift=DOWN * 0.25),
+            Create(underline),
+            run_time=1.4,
+        )
+        self.play(
+            Indicate(final_title, color=YELLOW, scale_factor=1.05),
+            run_time=1.2,
+        )
+        self.wait(3.0)
 
 
 class scene11_gradient_descent(Scene):
