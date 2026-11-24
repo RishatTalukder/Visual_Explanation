@@ -18,25 +18,231 @@ CORAL = "#F97E72"
 LAVENDER = "#A99BCB"
 SOFT_RED = "#F75353"
 
-from manim import *
-import numpy as np
 
-# ==========================================
-# IT VAYA — NEON LAB PALETTE
-# ==========================================
 
-config.background_color = "#262335"
+class scene12_generalization(Scene):
+    def construct(self):
+        # ==================================================
+        # RECONSTRUCT SCENE 11 FINAL STATE
+        # ==================================================
 
-BG = "#262335"
-PANEL = "#34294F"
-WHITE = "#FDEBFF"
-PINK = "#FF7EDB"
-CYAN = "#36F9F6"
-GREEN = "#72F1B8"
-YELLOW = "#FDEB5D"
-CORAL = "#F97E72"
-LAVENDER = "#A99BCB"
-SOFT_RED = "#FF2C2C"
+        # --------------------------------------------------
+        # 1. Left Side: Linear Model & Target Function
+        # --------------------------------------------------
+        linear_title = Text(
+            "Linear Relationship",
+            font_size=32,
+            color=CYAN
+        ).scale(0.9).move_to([-4.1, 1.8, 0])
+
+        gen_eq = MathTex(
+            "y", "=", "m", "x", "+", "c",
+            font_size=52
+        ).move_to([-3.85, 0.2, 0])
+        gen_eq[0].set_color(WHITE)
+        gen_eq[1].set_color(WHITE)
+        gen_eq[2].set_color(YELLOW)  # m
+        gen_eq[3].set_color(WHITE)
+        gen_eq[4].set_color(WHITE)
+        gen_eq[5].set_color(CORAL)   # c
+
+        m_char = gen_eq[2]
+        arrow_m = Arrow(
+            start=m_char.get_bottom() + DOWN * 0.1,
+            end=m_char.get_bottom() + DOWN * 0.85 + LEFT * 0.4,
+            color=YELLOW,
+            stroke_width=2.5,
+            max_tip_length_to_length_ratio=0.22,
+            buff=0,
+        )
+        m_0 = MathTex("m = 0", font_size=38, color=YELLOW).next_to(
+            arrow_m.get_end(), DOWN, buff=0.15
+        )
+
+        c_char = gen_eq[5]
+        arrow_c = Arrow(
+            start=c_char.get_bottom() + DOWN * 0.1,
+            end=c_char.get_bottom() + DOWN * 0.85 + RIGHT * 0.4,
+            color=CORAL,
+            stroke_width=2.5,
+            max_tip_length_to_length_ratio=0.22,
+            buff=0,
+        )
+        c_val_text = MathTex("c = 3.97", font_size=32, color=CORAL).next_to(
+            arrow_c.get_end(), DOWN, buff=0.25
+        )
+
+        eq_group = VGroup(c_val_text, gen_eq, arrow_m, m_0, arrow_c)
+        eq_group.scale(0.85).move_to([-4.1, 0.4, 0])
+
+        # Lower-left Target Function Badge
+        target_title = Text(
+            "Target Function",
+            font_size=22,
+            color=LAVENDER
+        ).move_to([-4.1, -1.3, 0])
+
+        target_eq = MathTex(
+            "y", "=", "2", "x", "+", "1",
+            font_size=38
+        ).next_to(target_title, DOWN, buff=0.18)
+        target_eq[0].set_color(WHITE)
+        target_eq[1].set_color(WHITE)
+        target_eq[2].set_color(YELLOW)  # m = 2
+        target_eq[3].set_color(WHITE)
+        target_eq[4].set_color(WHITE)
+        target_eq[5].set_color(CORAL)   # c = 1
+
+        target_badge = RoundedRectangle(
+            corner_radius=0.15,
+            width=3.6,
+            height=1.45,
+            color=PINK,
+            stroke_width=1.6,
+            fill_color=PANEL,
+            fill_opacity=0.45,
+        ).move_to(VGroup(target_title, target_eq).get_center())
+
+        target_group = VGroup(target_badge, target_title, target_eq)
+
+        left_side_group = VGroup(linear_title, eq_group, target_group)
+
+        # --------------------------------------------------
+        # 2. Right Side: Master Gradient Descent Rules (Partial Derivatives)
+        # --------------------------------------------------
+        c_target_pos = np.array([2.7, 0.85, 0])
+        m_target_pos = np.array([2.7, -0.45, 0])
+
+        rule_title = Text(
+            "Gradient Descent Update Rule",
+            font_size=23,
+            color=GREEN
+        ).move_to([2.7, 2.05, 0])
+
+        c_new_partial = MathTex(
+            "c_{\\text{new}}", "=", "c_{\\text{old}}", "-", "\\eta", "\\left(\\frac{\\partial\\text{RSS}}{\\partial c}\\right)",
+            font_size=34
+        ).move_to(c_target_pos)
+        c_new_partial[0].set_color(CORAL)
+        c_new_partial[1].set_color(WHITE)
+        c_new_partial[2].set_color(CORAL)
+        c_new_partial[3].set_color(WHITE)
+        c_new_partial[4].set_color(CYAN)
+        c_new_partial[5].set_color(YELLOW)
+
+        m_new_partial = MathTex(
+            "m_{\\text{new}}", "=", "m_{\\text{old}}", "-", "\\eta", "\\left(\\frac{\\partial\\text{RSS}}{\\partial m}\\right)",
+            font_size=34
+        ).move_to(m_target_pos)
+        m_new_partial[0].set_color(YELLOW)
+        m_new_partial[1].set_color(WHITE)
+        m_new_partial[2].set_color(YELLOW)
+        m_new_partial[3].set_color(WHITE)
+        m_new_partial[4].set_color(CYAN)
+        m_new_partial[5].set_color(YELLOW)
+
+        double_rule_box = RoundedRectangle(
+            corner_radius=0.18,
+            width=c_new_partial.width + 0.65,
+            height=2.5,
+            color=CYAN,
+            stroke_width=2.2,
+        ).move_to([2.7, 0.2, 0])
+
+        right_side_group = VGroup(rule_title, double_rule_box, c_new_partial, m_new_partial)
+
+        # --------------------------------------------------
+        # Display Scene 11 Ending State
+        # --------------------------------------------------
+        self.add(
+            left_side_group,
+            right_side_group
+        )
+        self.wait(1.0)
+
+        # ==================================================
+        # SCENE 12 ANIMATIONS
+        # ==================================================
+
+        # --------------------------------------------------
+        # 1. RSS Dependency: RSS term pulses in soft red
+        # --------------------------------------------------
+        self.play(
+            Indicate(c_new_partial[5], color=SOFT_RED, scale_factor=1.18),
+            Indicate(m_new_partial[5], color=SOFT_RED, scale_factor=1.18),
+            run_time=1.5,
+        )
+        self.wait(1.2)
+
+        # --------------------------------------------------
+        # 2. Learning Rate (eta) Pulse in Neon Pink
+        # --------------------------------------------------
+        self.play(
+            Indicate(c_new_partial[4], color=PINK, scale_factor=1.35),
+            Indicate(m_new_partial[4], color=PINK, scale_factor=1.35),
+            run_time=1.3,
+        )
+        self.wait(1.4)
+
+        # --------------------------------------------------
+        # 3. Clean Left Side & Rename m -> beta_1, c -> beta_2
+        # --------------------------------------------------
+        beta_eq = MathTex(
+            "y", "=", "\\beta_1", "x", "+", "\\beta_0",
+            font_size=44
+        ).move_to([-4.1, 0.4, 0])
+        beta_eq[0].set_color(WHITE)
+        beta_eq[1].set_color(WHITE)
+        beta_eq[2].set_color(YELLOW)  # beta_1
+        beta_eq[3].set_color(WHITE)
+        beta_eq[4].set_color(WHITE)
+        beta_eq[5].set_color(CORAL)   # beta_2
+
+        self.play(
+            FadeOut(target_group, shift=DOWN * 0.4),
+            FadeOut(linear_title,),
+            FadeOut(arrow_m),
+            FadeOut(m_0),
+            FadeOut(arrow_c),
+            FadeOut(c_val_text),
+            run_time=1.2,
+        )
+        self.play(
+            ReplacementTransform(gen_eq, beta_eq),
+            run_time=1.4,
+        )
+        self.wait(1.5)
+
+        # --------------------------------------------------
+        # 4. Generalize Both Equations into Master Beta Update Rule
+        # --------------------------------------------------
+        beta_new_eq = MathTex(
+            "\\beta_{\\text{new}}", "=", "\\beta_{\\text{old}}", "-", "\\eta", "\\left(\\frac{\\partial\\text{RSS}}{\\partial\\beta}\\right)",
+            font_size=35
+        ).move_to([2.7, 0.3, 0])
+        beta_new_eq[0].set_color(PINK)
+        beta_new_eq[1].set_color(WHITE)
+        beta_new_eq[2].set_color(PINK)
+        beta_new_eq[3].set_color(WHITE)
+        beta_new_eq[4].set_color(CYAN)
+        beta_new_eq[5].set_color(YELLOW)
+
+        single_rule_box = RoundedRectangle(
+            corner_radius=0.16,
+            width=beta_new_eq.width + 0.65,
+            height=beta_new_eq.height + 0.55,
+            color=CYAN,
+            stroke_width=2.2,
+        ).move_to(beta_new_eq)
+
+        self.play(
+            rule_title.animate.move_to([2.7, 1.45, 0]),
+            Transform(double_rule_box, single_rule_box),
+            ReplacementTransform(c_new_partial, beta_new_eq),
+            ReplacementTransform(m_new_partial, beta_new_eq),
+            run_time=1.8,
+        )
+        self.wait(2.5)
 
 
 class scene11_gradient_descent(Scene):
