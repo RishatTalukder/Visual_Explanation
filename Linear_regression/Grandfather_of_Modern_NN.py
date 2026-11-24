@@ -173,8 +173,202 @@ class scene15_non_linearity(Scene):
         self.wait(1.0)
 
         # ==================================================
-        # SCENE 15 ANIMATIONS (Awaiting Instructions)
+        # SCENE 15 ANIMATIONS
         # ==================================================
+
+        # --------------------------------------------------
+        # 1. Title transforms to "Linear Function" & clean UI
+        # --------------------------------------------------
+        linear_title = Text("Linear Function", font_size=32, color=CYAN).move_to(neuron_title.get_center())
+
+        self.play(
+            ReplacementTransform(neuron_title, linear_title),
+            FadeOut(perceptron_box),
+            FadeOut(beta_new_eq, shift=UP * 0.4),
+            run_time=1.3,
+        )
+        self.wait(1.0)
+
+        # --------------------------------------------------
+        # 2. Scale down model & shift to the left
+        # --------------------------------------------------
+        model_elements = VGroup(input_nodes, weights_group, sum_block, bias_group, out_group)
+        full_left_model = VGroup(linear_title, model_elements)
+
+        self.play(
+            full_left_model.animate.scale(0.70).move_to([-4, 0.2, 0]),
+            run_time=1.5,
+        )
+        self.wait(1.0)
+
+        # --------------------------------------------------
+        # 3. Arrow from y to Linear Graph on the Right
+        # --------------------------------------------------
+        
+
+        linear_axes = Axes(
+            x_range=[-2.5, 2.5, 1],
+            y_range=[-2.5, 2.5, 1],
+            x_length=3.0,
+            y_length=2.3,
+            axis_config={
+                "color": LAVENDER,
+                "stroke_width": 2.0,
+                "include_tip": True,
+                "tip_width": 0.12,
+                "tip_height": 0.12,
+            },
+        ).move_to(full_left_model.get_right() + RIGHT * 4 + DOWN * 0.28)
+
+        arrow_to_linear = Arrow(
+            start=y_node.get_right() + RIGHT * 0.05,
+            end=linear_axes.get_left() + LEFT * 0.05,
+            color=WHITE,
+            stroke_width=2.2,
+            max_tip_length_to_length_ratio=0.20,
+            buff=0.08
+        )
+
+        linear_line = linear_axes.plot(
+            lambda x: 0.85 * x,
+            color=PINK,
+            stroke_width=3.2
+        )
+
+        linear_graph_title = Text(
+            "Linear Pattern",
+            font_size=20,
+            color=PINK
+        ).next_to(linear_axes, UP, buff=0.18)
+
+        linear_graph_group = VGroup(linear_axes, linear_line, linear_graph_title)
+
+        self.play(
+            GrowArrow(arrow_to_linear),
+            Create(linear_axes),
+            FadeIn(linear_graph_title, shift=DOWN * 0.15),
+            run_time=1.3,
+        )
+        self.play(
+            Create(linear_line),
+            run_time=1.2,
+        )
+        self.wait(2.0)
+
+        # --------------------------------------------------
+        # 4. Linear Graph morphs into Sigmoid Activation Box
+        # --------------------------------------------------
+        sigmoid_box = Rectangle(
+            width=1.65,
+            height=0.85,
+            color=CYAN,
+            stroke_width=2.2,
+            fill_color=PANEL,
+            fill_opacity=0.6,
+        ).move_to(linear_axes.get_center())
+
+        sigmoid_formula = MathTex(
+            r"\sigma(z) = \frac{1}{1 + e^{-z}}",
+            font_size=20,
+            color=WHITE,
+        ).move_to(sigmoid_box.get_center())
+        sigmoid_group = VGroup(sigmoid_box, sigmoid_formula)
+
+        arrow_to_sigmoid = always_redraw(
+            lambda: Arrow(
+                start=y_node.get_right(),
+                end=sigmoid_box.get_left(),
+                color=WHITE,
+                stroke_width=2.2,
+                max_tip_length_to_length_ratio=0.20,
+                buff=0.05,
+            )
+        )
+
+        # self.remove(arrow_to_linear)
+        # self.add(arrow_to_sigmoid)
+        self.play(
+            ReplacementTransform(arrow_to_linear, arrow_to_sigmoid),
+            ReplacementTransform(linear_graph_group, sigmoid_group),
+            run_time=1.6,
+        )
+        self.wait(1.2)
+
+        # Move Sigmoid box + formula right next to y_node, with arrow adjusting automatically
+        target_sigmoid_group = sigmoid_group.copy().scale(0.82).next_to(
+            y_node, RIGHT, buff=0.55
+        )
+        self.play(
+            Transform(sigmoid_group, target_sigmoid_group),
+            run_time=1.2,
+        )
+        self.wait(0.8)
+
+        # --------------------------------------------------
+        # 5. Sigmoid Box points to Non-linear S-Curve Graph
+        # --------------------------------------------------
+        sigmoid_axes = Axes(
+            x_range=[-4, 4, 2],
+            y_range=[0, 1.15, 0.5],
+            x_length=2.8,
+            y_length=2.1,
+            axis_config={
+                "color": LAVENDER,
+                "stroke_width": 2.0,
+                "include_tip": True,
+                "tip_width": 0.12,
+                "tip_height": 0.12,
+            },
+        ).move_to(sigmoid_box.get_center() + RIGHT * 3.5)
+
+        arrow_to_curve = Arrow(
+            start=sigmoid_box.get_right(),
+            end=sigmoid_axes.get_left(),
+            color=WHITE,
+            stroke_width=2.2,
+            max_tip_length_to_length_ratio=0.22,
+            buff=0.08,
+        )
+
+        curve_label_1 = MathTex("1", font_size=18, color=LAVENDER).next_to(
+            sigmoid_axes.c2p(0, 1.0), LEFT, buff=0.08
+        )
+        curve_label_0 = MathTex("0", font_size=18, color=LAVENDER).next_to(
+            sigmoid_axes.c2p(0, 0.0), DOWN + LEFT, buff=0.06
+        )
+
+        sigmoid_curve = sigmoid_axes.plot(
+            lambda x: 1.0 / (1.0 + np.exp(-x)),
+            x_range=[-3.8, 3.8],
+            color=GREEN,
+            stroke_width=3.4,
+        )
+
+        curve_title = Text(
+            "Non-linear Pattern",
+            font_size=20,
+            color=GREEN,
+        ).next_to(sigmoid_axes, UP, buff=0.18)
+
+        curve_graph_group = VGroup(sigmoid_axes, curve_label_1, curve_label_0, curve_title)
+
+        self.play(
+            GrowArrow(arrow_to_curve),
+            Create(sigmoid_axes),
+            Write(curve_label_1),
+            Write(curve_label_0),
+            FadeIn(curve_title, shift=DOWN * 0.15),
+            run_time=1.4,
+        )
+        self.play(
+            Create(sigmoid_curve),
+            run_time=1.6,
+        )
+        self.play(
+            Indicate(sigmoid_curve, color=YELLOW, scale_factor=1.08),
+            run_time=1.2,
+        )
+        self.wait(3.0)
 
 
 
