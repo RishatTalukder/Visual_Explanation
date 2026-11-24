@@ -33,40 +33,40 @@ class scene17_finale(Scene):
             "Perceptron Model",
             font_size=36,
             color=WHITE
-        ).move_to([0, 2.7, 0])
+        ).move_to([0, 2.85, 0])
 
         # --------------------------------------------------
         # 2. Generalized Input Nodes (x1, x2, ..., xn)
         # --------------------------------------------------
         gen_node_x1 = Circle(
-            radius=0.42,
+            radius=0.40,
             color=PINK,
             fill_color=PANEL,
-            fill_opacity=0.85,
+            fill_opacity=0.9,
             stroke_width=2.5
-        ).move_to([-4.5, 1.1, 0])
+        ).move_to([-4.6, 1.0, 0])
         gen_lbl_x1 = MathTex("x_1", font_size=28, color=WHITE).move_to(gen_node_x1)
         gen_group_x1 = VGroup(gen_node_x1, gen_lbl_x1)
 
         gen_node_x2 = Circle(
-            radius=0.42,
+            radius=0.40,
             color=PINK,
             fill_color=PANEL,
-            fill_opacity=0.85,
+            fill_opacity=0.9,
             stroke_width=2.5
-        ).move_to([-4.5, 0.0, 0])
+        ).move_to([-4.6, 0.0, 0])
         gen_lbl_x2 = MathTex("x_2", font_size=28, color=WHITE).move_to(gen_node_x2)
         gen_group_x2 = VGroup(gen_node_x2, gen_lbl_x2)
 
-        gen_dots = MathTex(r"\vdots", font_size=36, color=WHITE).move_to([-4.5, -0.85, 0])
+        gen_dots = MathTex(r"\vdots", font_size=34, color=WHITE).move_to([-4.6, -0.85, 0])
 
         gen_node_xn = Circle(
-            radius=0.42,
+            radius=0.40,
             color=PINK,
             fill_color=PANEL,
-            fill_opacity=0.85,
+            fill_opacity=0.9,
             stroke_width=2.5
-        ).move_to([-4.5, -1.8, 0])
+        ).move_to([-4.6, -1.75, 0])
         gen_lbl_xn = MathTex("x_n", font_size=28, color=WHITE).move_to(gen_node_xn)
         gen_group_xn = VGroup(gen_node_xn, gen_lbl_xn)
 
@@ -76,13 +76,13 @@ class scene17_finale(Scene):
         # 3. Summation Box
         # --------------------------------------------------
         gen_sum_box = Rectangle(
-            width=2.2,
-            height=1.5,
+            width=2.1,
+            height=1.4,
             color=LAVENDER,
             stroke_width=2.2,
             fill_color=PANEL,
-            fill_opacity=0.85
-        ).move_to([-1.5, -0.4, 0])
+            fill_opacity=0.9
+        ).move_to([-1.65, -0.35, 0])
         gen_sum_text = Text("summation", font_size=21, color=WHITE).move_to(gen_sum_box)
         gen_sum_group = VGroup(gen_sum_box, gen_sum_text)
 
@@ -91,7 +91,7 @@ class scene17_finale(Scene):
         # --------------------------------------------------
         arr_in_1 = Arrow(
             gen_node_x1.get_right(),
-            gen_sum_box.get_left() + UP * 0.45,
+            gen_sum_box.get_left() + UP * 0.42,
             color=CYAN,
             stroke_width=2.6,
             buff=0.08,
@@ -107,7 +107,7 @@ class scene17_finale(Scene):
         )
         arr_in_n = Arrow(
             gen_node_xn.get_right(),
-            gen_sum_box.get_left() + DOWN * 0.45,
+            gen_sum_box.get_left() + DOWN * 0.42,
             color=CYAN,
             stroke_width=2.6,
             buff=0.08,
@@ -115,9 +115,9 @@ class scene17_finale(Scene):
         )
         gen_arrows = VGroup(arr_in_1, arr_in_2, arr_in_n)
 
-        w_lbl_1 = MathTex("w_1", font_size=26, color=YELLOW).next_to(arr_in_1.get_center(), UP, buff=0.12)
-        w_lbl_2 = MathTex("w_2", font_size=26, color=YELLOW).next_to(arr_in_2.get_center(), UP, buff=0.12)
-        w_lbl_n = MathTex("w_n", font_size=26, color=YELLOW).next_to(arr_in_n.get_center(), DOWN, buff=0.12)
+        w_lbl_1 = MathTex("w_1", font_size=26, color=YELLOW).next_to(arr_in_1.get_center(), UP, buff=0.10)
+        w_lbl_2 = MathTex("w_2", font_size=26, color=YELLOW).next_to(arr_in_2.get_center(), UP, buff=0.10)
+        w_lbl_n = MathTex("w_n", font_size=26, color=YELLOW).next_to(arr_in_n.get_center(), DOWN, buff=0.10)
         w_labels = VGroup(w_lbl_1, w_lbl_2, w_lbl_n)
 
         # --------------------------------------------------
@@ -125,23 +125,23 @@ class scene17_finale(Scene):
         # --------------------------------------------------
         arr_sum_to_bias = Arrow(
             gen_sum_box.get_right(),
-            np.array([0.3, -0.4, 0]),
+            np.array([0.25, -0.35, 0]),
             color=WHITE,
             stroke_width=2.4,
             buff=0.08,
             max_tip_length_to_length_ratio=0.20
         )
         gen_bias_node = Circle(
-            radius=0.48,
+            radius=0.45,
             color=PINK,
             fill_color=PANEL,
-            fill_opacity=0.85,
+            fill_opacity=0.9,
             stroke_width=2.5
-        ).move_to([0.85, -0.4, 0])
+        ).move_to([0.78, -0.35, 0])
         gen_bias_lbl = MathTex("+b", font_size=28, color=WHITE).move_to(gen_bias_node)
         gen_bias_group = VGroup(arr_sum_to_bias, gen_bias_node, gen_bias_lbl)
 
-        bias_label_title = Text("Bias", font_size=23, color=CORAL).next_to(gen_bias_node, UP, buff=0.75)
+        bias_label_title = Text("Bias", font_size=23, color=CORAL).next_to(gen_bias_node, UP, buff=0.72)
         arrow_to_bias_node = Arrow(
             start=bias_label_title.get_bottom(),
             end=gen_bias_node.get_top(),
@@ -157,7 +157,7 @@ class scene17_finale(Scene):
         # --------------------------------------------------
         arr_bias_to_act = Arrow(
             gen_bias_node.get_right(),
-            np.array([1.75, -0.4, 0]),
+            np.array([1.70, -0.35, 0]),
             color=CYAN,
             stroke_width=2.4,
             buff=0.08,
@@ -165,28 +165,25 @@ class scene17_finale(Scene):
         )
         gen_act_box = RoundedRectangle(
             corner_radius=0.22,
-            width=2.2,
-            height=1.2,
+            width=2.1,
+            height=1.15,
             color=GREEN,
             stroke_width=2.5,
             fill_color=PANEL,
-            fill_opacity=0.85
-        ).move_to([2.9, -0.4, 0])
+            fill_opacity=0.9
+        ).move_to([2.80, -0.35, 0])
         gen_act_text = Text("activation", font_size=21, color=GREEN).move_to(gen_act_box)
         gen_act_group = VGroup(arr_bias_to_act, gen_act_box, gen_act_text)
 
         gen_out_arrow = Arrow(
             gen_act_box.get_right(),
-            np.array([4.8, -0.4, 0]),
+            np.array([4.65, -0.35, 0]),
             color=WHITE,
             stroke_width=2.6,
             buff=0.08,
             max_tip_length_to_length_ratio=0.16
         )
 
-        # --------------------------------------------------
-        # Display Scene 16 Ending State
-        # --------------------------------------------------
         self.add(
             perceptron_title,
             gen_inputs,
@@ -201,8 +198,331 @@ class scene17_finale(Scene):
         self.wait(1.0)
 
         # ==================================================
-        # SCENE 17 FINALE ANIMATIONS (Awaiting Instructions)
+        # SCENE 17 FINALE ANIMATIONS
         # ==================================================
+
+        # --------------------------------------------------
+        # 1. Condense Perceptron into a Single Circle Neuron
+        # --------------------------------------------------
+        single_neuron = Circle(
+            radius=0.34,
+            color=WHITE,
+            fill_color=PANEL,
+            fill_opacity=0.95,
+            stroke_width=2.6
+        ).move_to([-0.5, -0.35, 0])
+
+        new_arr_1 = Arrow(
+            gen_node_x1.get_right(), single_neuron.get_left(),
+            color=CYAN, stroke_width=2.4, buff=0.08, max_tip_length_to_length_ratio=0.14
+        )
+        new_arr_2 = Arrow(
+            gen_node_x2.get_right(), single_neuron.get_left(),
+            color=CYAN, stroke_width=2.4, buff=0.08, max_tip_length_to_length_ratio=0.14
+        )
+        new_arr_n = Arrow(
+            gen_node_xn.get_right(), single_neuron.get_left(),
+            color=CYAN, stroke_width=2.4, buff=0.08, max_tip_length_to_length_ratio=0.14
+        )
+        new_gen_arrows = VGroup(new_arr_1, new_arr_2, new_arr_n)
+
+        single_out_arrow = Arrow(
+            single_neuron.get_right(),
+            single_neuron.get_right() + RIGHT * 1.4,
+            color=WHITE,
+            stroke_width=2.5,
+            buff=0.08,
+            max_tip_length_to_length_ratio=0.20
+        )
+
+        self.play(
+            FadeOut(bias_callout, shift=UP * 0.2),
+            FadeOut(w_labels, shift=UP * 0.2),
+            ReplacementTransform(VGroup(gen_sum_group, gen_bias_group, gen_act_group), single_neuron),
+            ReplacementTransform(gen_arrows, new_gen_arrows),
+            ReplacementTransform(gen_out_arrow, single_out_arrow),
+            run_time=1.3,
+        )
+        self.wait(1.0)
+
+        # --------------------------------------------------
+        # 2. Grow into 3-Layer Neural Network (5 -> 5 -> 3)
+        # --------------------------------------------------
+        inputs_target_pos = [
+            [-5.2, 1.15, 0],
+            [-5.2, 0.20, 0],
+            [-5.2, -0.65, 0],
+            [-5.2, -1.55, 0]
+        ]
+
+        x_l1 = -2.6
+        x_l2 = -0.1
+        x_l3 = 2.4
+
+        y_5_nodes = [1.2, 0.4, -0.4, -1.2, -2.0]
+        y_3_nodes = [0.4, -0.4, -1.2]
+
+        layer1_nodes = VGroup(*[
+            Circle(radius=0.27, color=WHITE, fill_color=PANEL, fill_opacity=0.95, stroke_width=2.3).move_to([x_l1, y, 0])
+            for y in y_5_nodes
+        ])
+        layer2_nodes = VGroup(*[
+            Circle(radius=0.27, color=WHITE, fill_color=PANEL, fill_opacity=0.95, stroke_width=2.3).move_to([x_l2, y, 0])
+            for y in y_5_nodes
+        ])
+        layer3_nodes = VGroup(*[
+            Circle(radius=0.27, color=WHITE, fill_color=PANEL, fill_opacity=0.95, stroke_width=2.3).move_to([x_l3, y, 0])
+            for y in y_3_nodes
+        ])
+
+        # Shift inputs left while morphing single_neuron into the first neuron of Layer 1
+        anchor_neuron = layer1_nodes[0].copy()
+
+        self.play(
+            gen_group_x1.animate.move_to(inputs_target_pos[0]),
+            gen_group_x2.animate.move_to(inputs_target_pos[1]),
+            gen_dots.animate.move_to(inputs_target_pos[2]),
+            gen_group_xn.animate.move_to(inputs_target_pos[3]),
+            Transform(single_neuron, anchor_neuron),
+            FadeOut(new_gen_arrows),
+            FadeOut(single_out_arrow),
+            run_time=1.0,
+        )
+
+        # Build connections for each stage
+        def make_connections(src_nodes, dst_nodes, color_hex=CYAN, width=1.6, opacity=0.65):
+            conns = VGroup()
+            for s in src_nodes:
+                for d in dst_nodes:
+                    conns.add(
+                        Line(
+                            s.get_right(),
+                            d.get_left(),
+                            color=color_hex,
+                            stroke_width=width,
+                            stroke_opacity=opacity
+                        )
+                    )
+            return conns
+
+        in_node_list = [gen_node_x1, gen_node_x2, gen_node_xn]
+        conn_in_l1 = make_connections(in_node_list, layer1_nodes, CYAN, 1.7, 0.7)
+        conn_l1_l2 = make_connections(layer1_nodes, layer2_nodes, CYAN, 1.6, 0.6)
+        conn_l2_l3 = make_connections(layer2_nodes, layer3_nodes, CYAN, 1.6, 0.6)
+
+        final_output_arrows = VGroup(*[
+            Arrow(
+                n3.get_right(),
+                n3.get_right() + RIGHT * 1.05,
+                color=WHITE,
+                stroke_width=2.2,
+                buff=0.06,
+                max_tip_length_to_length_ratio=0.22
+            )
+            for n3 in layer3_nodes
+        ])
+
+        # Column 1 (5 neurons): replace anchor with real layer1_nodes[0] and pop remaining 4 one by one
+        self.remove(single_neuron)
+        self.add(layer1_nodes[0])
+        self.play(
+            LaggedStart(
+                *[FadeIn(n, scale=0.6) for n in layer1_nodes[1:]],
+                lag_ratio=0.14
+            ),
+            LaggedStart(
+                *[Create(line) for line in conn_in_l1],
+                lag_ratio=0.04
+            ),
+            run_time=1.3,
+        )
+
+        # Column 2 (5 neurons) connected to Layer 1
+        self.play(
+            LaggedStart(
+                *[FadeIn(n, scale=0.6) for n in layer2_nodes],
+                lag_ratio=0.14
+            ),
+            LaggedStart(
+                *[Create(line) for line in conn_l1_l2],
+                lag_ratio=0.03
+            ),
+            run_time=1.4,
+        )
+
+        # Column 3 (3 neurons) connected to Layer 2 + output arrows
+        self.play(
+            LaggedStart(
+                *[FadeIn(n, scale=0.6) for n in layer3_nodes],
+                lag_ratio=0.16
+            ),
+            LaggedStart(
+                *[Create(line) for line in conn_l2_l3],
+                lag_ratio=0.04
+            ),
+            LaggedStart(
+                *[GrowArrow(arr) for arr in final_output_arrows],
+                lag_ratio=0.15
+            ),
+            run_time=1.4,
+        )
+        self.wait(0.8)
+
+        # --------------------------------------------------
+        # 3. Title: "Perceptron Model" -> "Neural Network"
+        # --------------------------------------------------
+        nn_title = Text("Neural Network", font_size=34, weight=BOLD, color=CYAN).move_to([0, 2.85, 0])
+
+        self.play(
+            ReplacementTransform(perceptron_title, nn_title),
+            run_time=1.1,
+        )
+        self.wait(0.8)
+
+        # --------------------------------------------------
+        # 4. Wiggle Connection Lines (Weights) & Pop Biases One by One
+        # --------------------------------------------------
+        all_lines = VGroup(*conn_in_l1, *conn_l1_l2, *conn_l2_l3)
+        all_neurons = VGroup(*layer1_nodes, *layer2_nodes, *layer3_nodes)
+
+        self.play(
+            LaggedStart(
+                *[
+                    Wiggle(
+                        ln,
+                        scale_value=1.06,
+                        rotation_angle=0.015 * TAU,
+                        n_wiggles=3
+                    )
+                    for ln in all_lines
+                ],
+                lag_ratio=0.015
+            ),
+            run_time=1.5,
+        )
+        self.wait(0.5)
+
+        # Each neuron pops out (bias added) and settles back one by one
+        self.play(
+            LaggedStart(
+                *[
+                    Succession(
+                        n.animate(run_time=0.18).scale(1.22).set_color(CORAL),
+                        n.animate(run_time=0.18).scale(1 / 1.22).set_color(WHITE),
+                    )
+                    for n in all_neurons
+                ],
+                lag_ratio=0.09
+            ),
+            run_time=2.0,
+        )
+        self.wait(0.8)
+
+        # --------------------------------------------------
+        # 5. Gradient Descent Equation Appears (Top Right)
+        # --------------------------------------------------
+        eq_pos = np.array([3.65, 2.85, 0])
+
+        gd_beta = MathTex(
+            "\\beta_{\\text{new}}", "=", "\\beta_{\\text{old}}", "-", "\\eta", "\\left(\\frac{\\partial\\text{RSS}}{\\partial\\beta}\\right)",
+            font_size=26
+        ).move_to(eq_pos)
+        gd_beta[0].set_color(PINK)
+        gd_beta[1].set_color(WHITE)
+        gd_beta[2].set_color(PINK)
+        gd_beta[3].set_color(WHITE)
+        gd_beta[4].set_color(CYAN)
+        gd_beta[5].set_color(YELLOW)
+
+        gd_box = RoundedRectangle(
+            corner_radius=0.14,
+            width=gd_beta.width + 0.45,
+            height=gd_beta.height + 0.30,
+            color=CYAN,
+            stroke_width=2.0,
+            fill_color=PANEL,
+            fill_opacity=0.20
+        ).move_to(eq_pos)
+
+        self.play(
+            FadeIn(gd_box, shift=DOWN * 0.15),
+            Write(gd_beta),
+            nn_title.animate.move_to([-3.5, 3.0, 0]),
+            run_time=1.2,
+        )
+        self.wait(1.4)
+
+        # --------------------------------------------------
+        # 6. Transform β -> w (Keep RSS for Linear Regression Comparison)
+        # --------------------------------------------------
+        gd_w = MathTex(
+            "w_{\\text{new}}", "=", "w_{\\text{old}}", "-", "\\eta", "\\left(\\frac{\\partial\\text{RSS}}{\\partial w}\\right)",
+            font_size=26
+        ).move_to(eq_pos)
+        gd_w[0].set_color(YELLOW)
+        gd_w[1].set_color(WHITE)
+        gd_w[2].set_color(YELLOW)
+        gd_w[3].set_color(WHITE)
+        gd_w[4].set_color(CYAN)
+        gd_w[5].set_color(YELLOW)
+
+        self.play(
+            ReplacementTransform(gd_beta, gd_w),
+            run_time=1.2,
+        )
+        self.wait(1.8)
+
+        # --------------------------------------------------
+        # 7. Transform RSS -> Loss -> Canonical L
+        # --------------------------------------------------
+        gd_loss = MathTex(
+            "w_{\\text{new}}", "=", "w_{\\text{old}}", "-", "\\eta", "\\left(\\frac{\\partial\\text{Loss}}{\\partial w}\\right)",
+            font_size=26
+        ).move_to(eq_pos)
+        gd_loss[0].set_color(YELLOW)
+        gd_loss[1].set_color(WHITE)
+        gd_loss[2].set_color(YELLOW)
+        gd_loss[3].set_color(WHITE)
+        gd_loss[4].set_color(CYAN)
+        gd_loss[5].set_color(CORAL)
+
+        self.play(
+            ReplacementTransform(gd_w, gd_loss),
+            run_time=1.2,
+        )
+        self.wait(1.4)
+
+        gd_final = MathTex(
+            "w_{\\text{new}}", "=", "w_{\\text{old}}", "-", "\\eta", "\\left(\\frac{\\partial L}{\\partial w}\\right)",
+            font_size=28
+        ).move_to(eq_pos)
+        gd_final[0].set_color(YELLOW)
+        gd_final[1].set_color(WHITE)
+        gd_final[2].set_color(YELLOW)
+        gd_final[3].set_color(WHITE)
+        gd_final[4].set_color(CYAN)
+        gd_final[5].set_color(GREEN)
+
+        final_box = RoundedRectangle(
+            corner_radius=0.14,
+            width=gd_final.width + 0.45,
+            height=gd_final.height + 0.30,
+            color=GREEN,
+            stroke_width=2.2,
+            fill_color=PANEL,
+            fill_opacity=0.20
+        ).move_to(eq_pos)
+
+        self.play(
+            Transform(gd_box, final_box),
+            ReplacementTransform(gd_loss, gd_final),
+            run_time=1.2,
+        )
+        self.play(
+            Circumscribe(VGroup(final_box, gd_final), color=GREEN, time_width=0.7),
+            run_time=1.2,
+        )
+        self.wait(3.0)
 
 
 
