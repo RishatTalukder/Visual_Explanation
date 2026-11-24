@@ -6182,6 +6182,9 @@ class scene2_pattern_visual(Scene):
             Write(tick_labels[1]),  # x=0
             run_time=0.7,
         )
+
+        self.wait(2)
+        
         self.play(
             Create(projections[0]),  # v_line 1
             Create(projections[1]),  # h_line 1
