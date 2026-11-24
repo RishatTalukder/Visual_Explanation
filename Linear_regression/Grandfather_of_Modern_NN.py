@@ -19,25 +19,101 @@ LAVENDER = "#A99BCB"
 SOFT_RED = "#F75353"
 
 
-from manim import *
-import numpy as np
 
-# ==========================================
-# IT VAYA — NEON LAB PALETTE
-# ==========================================
+class scene14_connection(Scene):
+    def construct(self):
+        # ==================================================
+        # RECONSTRUCT SCENE 13 FINAL STATE
+        # ==================================================
 
-config.background_color = "#262335"
+        # --------------------------------------------------
+        # 1. Top Middle: Grand Title & Underline
+        # --------------------------------------------------
+        final_title = Text(
+            "Linear Regression",
+            font_size=42,
+            weight=BOLD,
+            color=CYAN
+        ).move_to([0, 3.0, 0])
 
-BG = "#262335"
-PANEL = "#34294F"
-WHITE = "#FDEBFF"
-PINK = "#FF7EDB"
-CYAN = "#36F9F6"
-GREEN = "#72F1B8"
-YELLOW = "#FDEB5D"
-CORAL = "#F97E72"
-LAVENDER = "#A99BCB"
-SOFT_RED = "#FF2C2C"
+        underline = Line(
+            start=final_title.get_left() + DOWN * 0.28,
+            end=final_title.get_right() + DOWN * 0.28,
+            color=PINK,
+            stroke_width=2.5,
+        )
+
+        top_title_group = VGroup(final_title, underline)
+
+        # --------------------------------------------------
+        # 2. Left Side: Multivariate Model & Subtitle
+        # --------------------------------------------------
+        sum_eq = MathTex(
+            "y", "=", "\\sum_{i=1}^n", "\\beta_i", "x_i", "+", "\\beta_0",
+            font_size=36
+        ).move_to([-3.65, 0.4, 0])
+        sum_eq[0].set_color(WHITE)
+        sum_eq[1].set_color(WHITE)
+        sum_eq[2].set_color(GREEN)   # summation
+        sum_eq[3].set_color(YELLOW)  # beta_i
+        sum_eq[4].set_color(CYAN)    # x_i
+        sum_eq[5].set_color(WHITE)
+        sum_eq[6].set_color(CORAL)   # beta_0
+
+        model_subtitle = Text(
+            "Multivariate Linear Model",
+            font_size=20,
+            color=LAVENDER
+        ).next_to(sum_eq, DOWN, buff=0.45)
+
+        left_side_group = VGroup(sum_eq, model_subtitle)
+
+        # --------------------------------------------------
+        # 3. Right Side: Generalized Gradient Descent Update Rule
+        # --------------------------------------------------
+        rule_title = Text(
+            "Gradient Descent Update Rule",
+            font_size=23,
+            color=GREEN
+        ).move_to([2.7, 1.45, 0])
+
+        beta_new_eq = MathTex(
+            "\\beta_{\\text{new}}", "=", "\\beta_{\\text{old}}", "-", "\\eta", "\\left(\\frac{\\partial\\text{RSS}}{\\partial\\beta}\\right)",
+            font_size=35
+        ).move_to([2.7, 0.3, 0])
+        beta_new_eq[0].set_color(PINK)
+        beta_new_eq[1].set_color(WHITE)
+        beta_new_eq[2].set_color(PINK)
+        beta_new_eq[3].set_color(WHITE)
+        beta_new_eq[4].set_color(CYAN)
+        beta_new_eq[5].set_color(YELLOW)
+
+        single_rule_box = RoundedRectangle(
+            corner_radius=0.16,
+            width=beta_new_eq.width + 0.65,
+            height=beta_new_eq.height + 0.55,
+            color=CYAN,
+            stroke_width=2.2,
+        ).move_to(beta_new_eq)
+
+        right_side_group = VGroup(rule_title, single_rule_box, beta_new_eq)
+
+        # --------------------------------------------------
+        # Display Scene 13 Ending State
+        # --------------------------------------------------
+        self.add(
+            top_title_group,
+            left_side_group,
+            right_side_group
+        )
+        self.wait(1.0)
+
+        # ==================================================
+        # SCENE 14 ANIMATIONS (Awaiting Instructions)
+        # ==================================================
+
+
+
 
 
 class scene13_expansion(Scene):
