@@ -19,26 +19,6 @@ LAVENDER = "#A99BCB"
 SOFT_RED = "#F75353"
 
 
-from manim import *
-import numpy as np
-
-# ==========================================
-# IT VAYA — NEON LAB PALETTE
-# ==========================================
-
-config.background_color = "#262335"
-
-BG = "#262335"
-PANEL = "#34294F"
-WHITE = "#FDEBFF"
-PINK = "#FF7EDB"
-CYAN = "#36F9F6"
-GREEN = "#72F1B8"
-YELLOW = "#FDEB5D"
-CORAL = "#F97E72"
-LAVENDER = "#A99BCB"
-SOFT_RED = "#FF2C2C"
-
 
 class scene16_neural_network(Scene):
     def construct(self):
@@ -131,7 +111,6 @@ class scene16_neural_network(Scene):
         y_lbl = MathTex("y", font_size=28, color=PINK).move_to(y_node)
         out_group = VGroup(arrow_to_out, y_node, y_lbl)
 
-        # Scale and position left model
         model_elements = VGroup(input_nodes, weights_group, sum_block, bias_group, out_group)
         full_left_model = VGroup(linear_title, model_elements).scale(0.70).move_to([-4, 0.2, 0])
 
@@ -225,8 +204,171 @@ class scene16_neural_network(Scene):
         self.wait(1.0)
 
         # ==================================================
-        # SCENE 16 ANIMATIONS (Awaiting Instructions)
-        # ================================================== 
+        # SCENE 16 ANIMATIONS
+        # ==================================================
+
+        # --------------------------------------------------
+        # 1. Clean Titles & Center Full Assembly
+        # --------------------------------------------------
+        full_assembly = VGroup(
+            model_elements,
+            arrow_to_sigmoid,
+            sigmoid_group,
+            arrow_to_curve,
+            sigmoid_axes,
+            curve_label_1,
+            curve_label_0,
+            sigmoid_curve
+        )
+
+        self.play(
+            FadeOut(linear_title, shift=UP * 0.2),
+            FadeOut(curve_title, shift=UP * 0.2),
+            run_time=0.8,
+        )
+        self.play(
+            full_assembly.animate.move_to([0, -0.4, 0]),
+            run_time=1.5,
+        )
+        self.wait(1.0)
+
+        # --------------------------------------------------
+        # 2. Titles: "A Neuron" -> "Perceptron Model"
+        # --------------------------------------------------
+        neuron_title = Text("A Neuron", font_size=36, color=CYAN).move_to([0, 2.7, 0])
+        perceptron_title = Text("Perceptron Model", font_size=36, color=WHITE).move_to([0, 2.7, 0])
+
+        self.play(
+            FadeIn(neuron_title, shift=DOWN * 0.2),
+            run_time=1.0,
+        )
+        self.wait(1.2)
+        self.play(
+            ReplacementTransform(neuron_title, perceptron_title),
+            run_time=1.2,
+        )
+        self.wait(1.5)
+
+        # --------------------------------------------------
+        # 3. Build Generalized Perceptron Components (Storyboard Reference)
+        # --------------------------------------------------
+        # Generalized Input Nodes (x1, x2, ..., xn)
+        gen_node_x1 = Circle(radius=0.42, color=PINK, fill_color=PANEL, fill_opacity=0.85, stroke_width=2.5).move_to([-4.5, 1.1, 0])
+        gen_lbl_x1 = MathTex("x_1", font_size=28, color=WHITE).move_to(gen_node_x1)
+        gen_group_x1 = VGroup(gen_node_x1, gen_lbl_x1)
+
+        gen_node_x2 = Circle(radius=0.42, color=PINK, fill_color=PANEL, fill_opacity=0.85, stroke_width=2.5).move_to([-4.5, 0.0, 0])
+        gen_lbl_x2 = MathTex("x_2", font_size=28, color=WHITE).move_to(gen_node_x2)
+        gen_group_x2 = VGroup(gen_node_x2, gen_lbl_x2)
+
+        gen_dots = MathTex(r"\vdots", font_size=36, color=WHITE).move_to([-4.5, -0.85, 0])
+
+        gen_node_xn = Circle(radius=0.42, color=PINK, fill_color=PANEL, fill_opacity=0.85, stroke_width=2.5).move_to([-4.5, -1.8, 0])
+        gen_lbl_xn = MathTex("x_n", font_size=28, color=WHITE).move_to(gen_node_xn)
+        gen_group_xn = VGroup(gen_node_xn, gen_lbl_xn)
+
+        gen_inputs = VGroup(gen_group_x1, gen_group_x2, gen_dots, gen_group_xn)
+
+        # Summation Box ("summation")
+        gen_sum_box = Rectangle(
+            width=2.2,
+            height=1.5,
+            color=LAVENDER,
+            stroke_width=2.2,
+            fill_color=PANEL,
+            fill_opacity=0.85
+        ).move_to([-1.5, -0.4, 0])
+        gen_sum_text = Text("summation", font_size=21, color=WHITE).move_to(gen_sum_box)
+        gen_sum_group = VGroup(gen_sum_box, gen_sum_text)
+
+        # Connecting Weight Arrows (Blue / Cyan)
+        arr_in_1 = Arrow(gen_node_x1.get_right(), gen_sum_box.get_left() + UP * 0.45, color=CYAN, stroke_width=2.6, buff=0.08, max_tip_length_to_length_ratio=0.14)
+        arr_in_2 = Arrow(gen_node_x2.get_right(), gen_sum_box.get_left(), color=CYAN, stroke_width=2.6, buff=0.08, max_tip_length_to_length_ratio=0.14)
+        arr_in_n = Arrow(gen_node_xn.get_right(), gen_sum_box.get_left() + DOWN * 0.45, color=CYAN, stroke_width=2.6, buff=0.08, max_tip_length_to_length_ratio=0.14)
+
+        gen_arrows = VGroup(arr_in_1, arr_in_2, arr_in_n)
+
+        # Bias Node (+b)
+        arr_sum_to_bias = Arrow(gen_sum_box.get_right(), np.array([0.3, -0.4, 0]), color=WHITE, stroke_width=2.4, buff=0.08, max_tip_length_to_length_ratio=0.20)
+        gen_bias_node = Circle(radius=0.48, color=PINK, fill_color=PANEL, fill_opacity=0.85, stroke_width=2.5).move_to([0.85, -0.4, 0])
+        gen_bias_lbl = MathTex("+b", font_size=28, color=WHITE).move_to(gen_bias_node)
+        gen_bias_group = VGroup(arr_sum_to_bias, gen_bias_node, gen_bias_lbl)
+
+        # Activation Box ("activation")
+        arr_bias_to_act = Arrow(gen_bias_node.get_right(), np.array([1.75, -0.4, 0]), color=CYAN, stroke_width=2.4, buff=0.08, max_tip_length_to_length_ratio=0.20)
+        gen_act_box = RoundedRectangle(
+            corner_radius=0.22,
+            width=2.2,
+            height=1.2,
+            color=GREEN,
+            stroke_width=2.5,
+            fill_color=PANEL,
+            fill_opacity=0.85
+        ).move_to([2.9, -0.4, 0])
+        gen_act_text = Text("activation", font_size=21, color=GREEN).move_to(gen_act_box)
+        gen_act_group = VGroup(arr_bias_to_act, gen_act_box, gen_act_text)
+
+        # Output Arrow
+        gen_out_arrow = Arrow(gen_act_box.get_right(), np.array([4.8, -0.4, 0]), color=WHITE, stroke_width=2.6, buff=0.08, max_tip_length_to_length_ratio=0.16)
+
+        # --------------------------------------------------
+        # 4. Transform Assembly into Clean Generalized Perceptron
+        # --------------------------------------------------
+        self.play(
+            FadeOut(sigmoid_axes),
+            FadeOut(curve_label_1),
+            FadeOut(curve_label_0),
+            FadeOut(sigmoid_curve),
+            FadeOut(arrow_to_curve),
+            ReplacementTransform(input_nodes, gen_inputs),
+            ReplacementTransform(weights_group, gen_arrows),
+            ReplacementTransform(sum_block, gen_sum_group),
+            ReplacementTransform(bias_group, gen_bias_group),
+            ReplacementTransform(VGroup(out_group, arrow_to_sigmoid, sigmoid_group), VGroup(gen_act_group, gen_out_arrow)),
+            run_time=2.0,
+        )
+        self.wait(1.5)
+
+        # --------------------------------------------------
+        # 5. Weights Jump, Wiggle & Reveal 'w' Labels
+        # --------------------------------------------------
+        w_lbl_1 = MathTex("w_1", font_size=26, color=YELLOW).next_to(arr_in_1.get_center(), UP, buff=0.12)
+        w_lbl_2 = MathTex("w_2", font_size=26, color=YELLOW).next_to(arr_in_2.get_center(), UP, buff=0.12)
+        w_lbl_n = MathTex("w_n", font_size=26, color=YELLOW).next_to(arr_in_n.get_center(), DOWN, buff=0.12)
+        w_labels = VGroup(w_lbl_1, w_lbl_2, w_lbl_n)
+
+        self.play(
+            Wiggle(gen_arrows, scale_value=1.12, rotation_angle=0.04 * TAU, n_wiggles=4),
+            gen_arrows.animate.set_color(YELLOW),
+            run_time=1.4,
+        )
+        self.play(
+            FadeIn(w_labels, shift=UP * 0.15),
+            gen_arrows.animate.set_color(CYAN),
+            run_time=1.0,
+        )
+        self.wait(1.5)
+
+        # --------------------------------------------------
+        # 6. Bias Label & Pointer directly to +b Node
+        # --------------------------------------------------
+        bias_label_title = Text("Bias", font_size=23, color=CORAL).next_to(gen_bias_node, UP, buff=0.75)
+        arrow_to_bias_node = Arrow(
+            start=bias_label_title.get_bottom(),
+            end=gen_bias_node.get_top(),
+            color=CORAL,
+            stroke_width=2.4,
+            buff=0.08,
+            max_tip_length_to_length_ratio=0.24
+        )
+
+        self.play(
+            FadeIn(bias_label_title, shift=DOWN * 0.15),
+            GrowArrow(arrow_to_bias_node),
+            Indicate(gen_bias_node, color=CORAL, scale_factor=1.15),
+            run_time=1.4,
+        )
+        self.wait(3.0)
 
 
 
