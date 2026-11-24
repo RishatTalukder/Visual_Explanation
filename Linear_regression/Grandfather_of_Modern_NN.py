@@ -195,7 +195,7 @@ class scene17_finale(Scene):
             gen_act_group,
             gen_out_arrow
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # ==================================================
         # SCENE 17 FINALE ANIMATIONS
@@ -243,7 +243,7 @@ class scene17_finale(Scene):
             ReplacementTransform(gen_out_arrow, single_out_arrow),
             run_time=1.3,
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # --------------------------------------------------
         # 2. Grow into 3-Layer Neural Network (5 -> 5 -> 3)
@@ -366,7 +366,7 @@ class scene17_finale(Scene):
             ),
             run_time=1.4,
         )
-        self.wait(0.8)
+        self.wait(2)
 
         # --------------------------------------------------
         # 3. Title: "Perceptron Model" -> "Neural Network"
@@ -377,7 +377,7 @@ class scene17_finale(Scene):
             ReplacementTransform(perceptron_title, nn_title),
             run_time=1.1,
         )
-        self.wait(0.8)
+        self.wait(2)
 
         # --------------------------------------------------
         # 4. Wiggle Connection Lines (Weights) & Pop Biases One by One
@@ -400,7 +400,7 @@ class scene17_finale(Scene):
             ),
             run_time=1.5,
         )
-        self.wait(0.5)
+        self.wait(2)
 
         # Each neuron pops out (bias added) and settles back one by one
         self.play(
@@ -416,7 +416,7 @@ class scene17_finale(Scene):
             ),
             run_time=2.0,
         )
-        self.wait(0.8)
+        self.wait(2)
 
         # --------------------------------------------------
         # 5. Gradient Descent Equation Appears (Top Right)
@@ -450,7 +450,7 @@ class scene17_finale(Scene):
             nn_title.animate.move_to([-3.5, 3.0, 0]),
             run_time=1.2,
         )
-        self.wait(1.4)
+        self.wait(2)
 
         # --------------------------------------------------
         # 6. Transform β -> w (Keep RSS for Linear Regression Comparison)
@@ -470,7 +470,7 @@ class scene17_finale(Scene):
             ReplacementTransform(gd_beta, gd_w),
             run_time=1.2,
         )
-        self.wait(1.8)
+        self.wait(2)
 
         # --------------------------------------------------
         # 7. Transform RSS -> Loss -> Canonical L
@@ -490,7 +490,7 @@ class scene17_finale(Scene):
             ReplacementTransform(gd_w, gd_loss),
             run_time=1.2,
         )
-        self.wait(1.4)
+        self.wait(2)
 
         gd_final = MathTex(
             "w_{\\text{new}}", "=", "w_{\\text{old}}", "-", "\\eta", "\\left(\\frac{\\partial L}{\\partial w}\\right)",
@@ -522,7 +522,7 @@ class scene17_finale(Scene):
             Circumscribe(VGroup(final_box, gd_final), color=GREEN, time_width=0.7),
             run_time=1.2,
         )
-        self.wait(3.0)
+        self.wait(2)
 
 
 
@@ -707,7 +707,7 @@ class scene16_neural_network(Scene):
             arrow_to_curve,
             curve_graph_group
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # ==================================================
         # SCENE 16 ANIMATIONS
@@ -736,7 +736,7 @@ class scene16_neural_network(Scene):
             full_assembly.animate.move_to([0, -0.4, 0]),
             run_time=1.5,
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # --------------------------------------------------
         # 2. Titles: "A Neuron" -> "Perceptron Model"
@@ -748,12 +748,12 @@ class scene16_neural_network(Scene):
             FadeIn(neuron_title, shift=DOWN * 0.2),
             run_time=1.0,
         )
-        self.wait(1.2)
+        self.wait(2)
         self.play(
             ReplacementTransform(neuron_title, perceptron_title),
             run_time=1.2,
         )
-        self.wait(1.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # 3. Build Generalized Perceptron Components (Storyboard Reference)
@@ -833,7 +833,7 @@ class scene16_neural_network(Scene):
             ReplacementTransform(VGroup(out_group, arrow_to_sigmoid, sigmoid_group), VGroup(gen_act_group, gen_out_arrow)),
             run_time=2.0,
         )
-        self.wait(1.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # 5. Weights Jump, Wiggle & Reveal 'w' Labels
@@ -853,7 +853,7 @@ class scene16_neural_network(Scene):
             gen_arrows.animate.set_color(CYAN),
             run_time=1.0,
         )
-        self.wait(1.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # 6. Bias Label & Pointer directly to +b Node
@@ -874,7 +874,7 @@ class scene16_neural_network(Scene):
             Indicate(gen_bias_node, color=CORAL, scale_factor=1.15),
             run_time=1.4,
         )
-        self.wait(3.0)
+        self.wait(2)
 
 
 
@@ -1028,7 +1028,7 @@ class scene15_non_linearity(Scene):
             bias_group,
             out_group
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # ==================================================
         # SCENE 15 ANIMATIONS
@@ -1045,7 +1045,7 @@ class scene15_non_linearity(Scene):
             FadeOut(beta_new_eq, shift=UP * 0.4),
             run_time=1.3,
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # --------------------------------------------------
         # 2. Scale down model & shift to the left
@@ -1057,7 +1057,7 @@ class scene15_non_linearity(Scene):
             full_left_model.animate.scale(0.70).move_to([-4, 0.2, 0]),
             run_time=1.5,
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # --------------------------------------------------
         # 3. Arrow from y to Linear Graph on the Right
@@ -1111,7 +1111,7 @@ class scene15_non_linearity(Scene):
             Create(linear_line),
             run_time=1.2,
         )
-        self.wait(2.0)
+        self.wait(2)
 
         # --------------------------------------------------
         # 4. Linear Graph morphs into Sigmoid Activation Box
@@ -1150,7 +1150,7 @@ class scene15_non_linearity(Scene):
             ReplacementTransform(linear_graph_group, sigmoid_group),
             run_time=1.6,
         )
-        self.wait(1.2)
+        self.wait(2)
 
         # Move Sigmoid box + formula right next to y_node, with arrow adjusting automatically
         target_sigmoid_group = sigmoid_group.copy().scale(0.82).next_to(
@@ -1160,7 +1160,7 @@ class scene15_non_linearity(Scene):
             Transform(sigmoid_group, target_sigmoid_group),
             run_time=1.2,
         )
-        self.wait(0.8)
+        self.wait(2)
 
         # --------------------------------------------------
         # 5. Sigmoid Box points to Non-linear S-Curve Graph
@@ -1226,7 +1226,7 @@ class scene15_non_linearity(Scene):
             Indicate(sigmoid_curve, color=YELLOW, scale_factor=1.08),
             run_time=1.2,
         )
-        self.wait(3.0)
+        self.wait(2)
 
 
 
@@ -1315,7 +1315,7 @@ class scene14_connection(Scene):
             single_rule_box,
             beta_new_eq
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # ==================================================
         # SCENE 14 ANIMATIONS
@@ -1345,7 +1345,7 @@ class scene14_connection(Scene):
             ReplacementTransform(sum_eq, top_model_full),
             run_time=1.5,
         )
-        self.wait(1.2)
+        self.wait(2)
 
         # --------------------------------------------------
         # 2. x_i flies down into 3 Input Nodes (x1, x2, x3)
@@ -1385,7 +1385,7 @@ class scene14_connection(Scene):
             ReplacementTransform(top_model_full, top_model_step2),
             run_time=1.6,
         )
-        self.wait(1.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # 3. β_i flies down into Weight Arrows (β1, β2, β3)
@@ -1425,7 +1425,7 @@ class scene14_connection(Scene):
             ReplacementTransform(top_model_step2, top_model_step3),
             run_time=1.6,
         )
-        self.wait(1.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # 4. Summation symbol (∑) flies into the Summation Block
@@ -1462,7 +1462,7 @@ class scene14_connection(Scene):
             ReplacementTransform(top_model_step3, top_model_step4),
             run_time=1.5,
         )
-        self.wait(1.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # 5. +β0 flies down into the Bias Node
@@ -1504,7 +1504,7 @@ class scene14_connection(Scene):
             ReplacementTransform(top_model_step4, top_model_step5),
             run_time=1.5,
         )
-        self.wait(1.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # 6. y flies down into the Output Node
@@ -1539,7 +1539,7 @@ class scene14_connection(Scene):
             FadeOut(top_model_step5, shift=UP * 0.2),
             run_time=1.5,
         )
-        self.wait(1.2)
+        self.wait(2)
 
         # --------------------------------------------------
         # 7. Architecture Subtitle & Final Connection Highlight
@@ -1575,20 +1575,20 @@ class scene14_connection(Scene):
             run_time=1.5,
         )
 
-        self.wait(1.5)
+        self.wait(2)
 
         self.play(
             Indicate(beta_new_eq, color=YELLOW, scale_factor=1.08),
         )
 
-        self.wait(1)
+        self.wait(2)
 
         self.play(
             Indicate(weights_group, color=YELLOW, scale_factor=1.05),
             Indicate(bias_node, color=CORAL, scale_factor=1.08),
             run_time=1.6,
         )
-        self.wait(3.0)
+        self.wait(2)
 
 
 
@@ -1671,7 +1671,7 @@ class scene13_expansion(Scene):
             beta_eq,
             right_group
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # ==================================================
         # SCENE 13 ANIMATIONS
@@ -1685,7 +1685,7 @@ class scene13_expansion(Scene):
             Indicate(beta_eq[5], color=CORAL, scale_factor=1.25),
             run_time=1.3,
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # --------------------------------------------------
         # 2. Input and Output Labels with Pointers
@@ -1719,7 +1719,7 @@ class scene13_expansion(Scene):
             GrowArrow(arrow_input),
             run_time=1.3,
         )
-        self.wait(2.0)
+        self.wait(2)
 
         # --------------------------------------------------
         # 3. Fade Out Labels & Start Multivariate Extension
@@ -1748,7 +1748,7 @@ class scene13_expansion(Scene):
             ReplacementTransform(beta_eq, multi_eq_1),
             run_time=1.4,
         )
-        self.wait(1.2)
+        self.wait(2)
 
         # Step 3B: y = β₁x₁ + β₂x₂ + β₃x₃ + β₀
         multi_eq_2 = MathTex(
@@ -1772,7 +1772,7 @@ class scene13_expansion(Scene):
             ReplacementTransform(multi_eq_1, multi_eq_2),
             run_time=1.4,
         )
-        self.wait(1.2)
+        self.wait(2)
 
         # Step 3C: y = β₁x₁ + β₂x₂ + ... + βₙxₙ + β₀
         multi_eq_3 = MathTex(
@@ -1798,7 +1798,7 @@ class scene13_expansion(Scene):
             ReplacementTransform(multi_eq_2, multi_eq_3),
             run_time=1.5,
         )
-        self.wait(1.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # 4. Collapse into Summation Form: y = ∑ βᵢxᵢ + β₀
@@ -1826,7 +1826,7 @@ class scene13_expansion(Scene):
             FadeIn(model_subtitle, shift=UP * 0.15),
             run_time=1.6,
         )
-        self.wait(1.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # 5. Universality: Highlight the Gradient Descent Rule
@@ -1843,7 +1843,7 @@ class scene13_expansion(Scene):
             # FadeIn(universal_note, shift=UP * 0.15),
             run_time=1.6,
         )
-        self.wait(3.0)
+        self.wait(2)
 
         
 
@@ -1985,7 +1985,7 @@ class scene12_generalization(Scene):
             left_side_group,
             right_side_group
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # ==================================================
         # SCENE 12 ANIMATIONS
@@ -1999,7 +1999,7 @@ class scene12_generalization(Scene):
             Indicate(m_new_partial[5], color=SOFT_RED, scale_factor=1.18),
             run_time=1.5,
         )
-        self.wait(1.2)
+        self.wait(2)
 
         # --------------------------------------------------
         # 2. Learning Rate (eta) Pulse in Neon Pink
@@ -2009,7 +2009,7 @@ class scene12_generalization(Scene):
             Indicate(m_new_partial[4], color=PINK, scale_factor=1.35),
             run_time=1.3,
         )
-        self.wait(1.4)
+        self.wait(2)
 
         # --------------------------------------------------
         # 3. Clean Left Side & Rename m -> beta_1, c -> beta_0
@@ -2038,7 +2038,7 @@ class scene12_generalization(Scene):
             ReplacementTransform(gen_eq, beta_eq),
             run_time=1.4,
         )
-        self.wait(1.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # 4. Generalize Both Equations into Master Beta Update Rule
@@ -2069,7 +2069,7 @@ class scene12_generalization(Scene):
             ReplacementTransform(m_new_partial, beta_new_eq),
             run_time=1.8,
         )
-        self.wait(1.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # 5. Grand Finale: "Linear Regression" Title at Top Middle
@@ -2099,7 +2099,7 @@ class scene12_generalization(Scene):
             Indicate(final_title, color=YELLOW, scale_factor=1.05),
             run_time=1.2,
         )
-        self.wait(3.0)
+        self.wait(2)
 
 
 class scene11_gradient_descent(Scene):
@@ -2189,7 +2189,7 @@ class scene11_gradient_descent(Scene):
             c_new_eq,
             rule_box
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # ==================================================
         # SCENE 11 ANIMATIONS
@@ -2208,7 +2208,7 @@ class scene11_gradient_descent(Scene):
             FadeIn(rule_title, shift=DOWN * 0.15),
             run_time=1.0,
         )
-        self.wait(1.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # 2. Recall the True Pattern in Lower Left: y = 2x + 1
@@ -2246,7 +2246,7 @@ class scene11_gradient_descent(Scene):
             FadeIn(target_group, shift=UP * 0.3),
             run_time=1.3,
         )
-        self.wait(1.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # 3. Discrepancy Highlight: c = 3.97 vs c = 1
@@ -2256,7 +2256,7 @@ class scene11_gradient_descent(Scene):
             Indicate(target_eq[5], color=CORAL, scale_factor=1.25),
             run_time=1.4,
         )
-        self.wait(1.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # 4. Highlight m = 0 as the reason (Pulse Animation)
@@ -2271,7 +2271,7 @@ class scene11_gradient_descent(Scene):
             arrow_m.animate.set_color(YELLOW),
             run_time=0.6,
         )
-        self.wait(1.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # 5. Expand & Introduce Update Equation for m
@@ -2307,7 +2307,7 @@ class scene11_gradient_descent(Scene):
             FadeIn(m_new_eq, shift=UP * 0.3),
             run_time=1.6,
         )
-        self.wait(1.8)
+        self.wait(2)
 
         # --------------------------------------------------
         # 6. Transform to Partial Derivatives (d -> ∂)
@@ -2339,7 +2339,7 @@ class scene11_gradient_descent(Scene):
             ReplacementTransform(m_new_eq, m_new_partial),
             run_time=1.6,
         )
-        self.wait(2.5)
+        self.wait(2)
 
 
 
@@ -2556,7 +2556,7 @@ class scene10_found(Scene):
             step_calc_iter3,
             lower_graph
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # ==================================================
         # SCENE 10 ANIMATIONS
@@ -2580,7 +2580,7 @@ class scene10_found(Scene):
             ReplacementTransform(step_calc_iter3, c_new_eq1),
             run_time=1.8,
         )
-        self.wait(1.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # 2. Step becomes Step Size * (Negative Slope) & absorbs top formula
@@ -2602,7 +2602,7 @@ class scene10_found(Scene):
             ReplacementTransform(c_new_eq1, c_new_eq2),
             run_time=1.5,
         )
-        self.wait(1.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # 3. Step Size becomes Learning Rate
@@ -2623,7 +2623,7 @@ class scene10_found(Scene):
             ReplacementTransform(c_new_eq2, c_new_eq3),
             run_time=1.3,
         )
-        self.wait(1.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # 4. Learning Rate becomes Greek Symbol eta (η)
@@ -2644,7 +2644,7 @@ class scene10_found(Scene):
             ReplacementTransform(c_new_eq3, c_new_eq4),
             run_time=1.3,
         )
-        self.wait(1.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # 5. Negative Slope becomes (-dRSS/dc) & lower-left slope disappears
@@ -2666,7 +2666,7 @@ class scene10_found(Scene):
             ReplacementTransform(c_new_eq4, c_new_eq5),
             run_time=1.6,
         )
-        self.wait(1.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # 6. Final Canonical Gradient Descent Formula: c_new = c_old - η (dRSS/dc)
@@ -2707,7 +2707,7 @@ class scene10_found(Scene):
             Create(rule_box),
             run_time=1.2,
         )
-        self.wait(2.5)
+        self.wait(2)
 
 
 class scene9_way(Scene):
@@ -2879,7 +2879,7 @@ class scene9_way(Scene):
             rethink_text,
             lower_graph
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # ==================================================
         # SCENE 9: PROPORTIONAL STEPPING & GRADIENT DESCENT
@@ -2892,7 +2892,7 @@ class scene9_way(Scene):
             Indicate(neg_diff_val_text, color=YELLOW, scale_factor=1.15),
             run_time=0.9,
         )
-        self.wait(0.4)
+        self.wait(2)
 
         # --------------------------------------------------
         # 2. Introduce the Mathematical Formulation: Step = Step Size * (-dRSS/dc)
@@ -2907,7 +2907,7 @@ class scene9_way(Scene):
             ReplacementTransform(rethink_text, step_formula),
             run_time=0.8,
         )
-        self.wait(0.6)
+        self.wait(2)
 
         
 
@@ -2936,7 +2936,7 @@ class scene9_way(Scene):
             FadeIn(step_calc_1, shift=DOWN * 0.1),
             run_time=0.8,
         )
-        self.wait(1.0)
+        self.wait(2)
 
         step_calc_01 = MathTex(
             r"\text{Step} = 0.1 \times 28 = 2.8 \quad",
@@ -2950,7 +2950,7 @@ class scene9_way(Scene):
             ReplacementTransform(step_calc_1, step_calc_01),
             run_time=0.8,
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # Transform into active step execution readout   
         active_step_calc = MathTex(
@@ -2963,7 +2963,7 @@ class scene9_way(Scene):
             ReplacementTransform(step_calc_01, active_step_calc),
             run_time=0.6,
         )
-        self.wait(0.4)
+        self.wait(2)
 
         # --------------------------------------------------
         # 4. ITERATION 1: c = 0.5 -> c = 3.3 (Step = +2.8)
@@ -3021,7 +3021,7 @@ class scene9_way(Scene):
         arrow_active = arrow_1
         current_c_text = c_text_1
         current_diff_text = diff_text_1
-        self.wait(0.8)
+        self.wait(2)
 
         # --------------------------------------------------
         # 5. ITERATION 2: c = 3.3 -> c = 3.86 (Step = 0.1 * 5.6 = +0.56)
@@ -3092,7 +3092,7 @@ class scene9_way(Scene):
         current_c_text = c_text_2
         current_diff_text = diff_text_2
         active_step_calc = step_calc_iter2
-        self.wait(0.8)
+        self.wait(2)
 
         # --------------------------------------------------
         # 6. ITERATION 3: c = 3.86 -> c = 3.97 (Step = 0.1 * 1.12 = +0.11)
@@ -3176,7 +3176,7 @@ class scene9_way(Scene):
             run_time=0.8,
         )
 
-        self.wait(3.0)
+        self.wait(2)
 
 
         
@@ -3335,7 +3335,7 @@ class scene8_jump(Scene):
             linear_title, eq_group, slope_title, diff_val_text,
             lower_graph
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # ==================================================
         # SCENE 8: NEGATIVE SLOPE & DISCRETE JUMP EXPERIMENT
@@ -3377,7 +3377,7 @@ class scene8_jump(Scene):
         arrow_active = arrow_descent_05
         current_diff_text = neg_diff_val_text
         current_c_text = c_val_text
-        self.wait(0.8)
+        self.wait(2)
 
         # --------------------------------------------------
         # Helper function to generate tangent arrow at any c
@@ -3477,7 +3477,7 @@ class scene8_jump(Scene):
             arrow_active = new_arrow
             current_c_text = new_c_text
             current_diff_text = new_diff_text
-            self.wait(0.5)
+            self.wait(2)
 
         # --------------------------------------------------
         # 3. The Seesaw: Overshoot at c = 4.5 forces step backward to c = 3.5
@@ -3529,7 +3529,7 @@ class scene8_jump(Scene):
         arrow_active = arrow_35
         current_c_text = c_text_35
         current_diff_text = diff_text_35
-        self.wait(0.4)
+        self.wait(2)
 
         # Jump Forward Again: 3.5 -> 4.5 (Seesaw oscillation)
         arc_fwd_again = CurvedArrow(
@@ -3576,7 +3576,7 @@ class scene8_jump(Scene):
         arrow_active = arrow_45
         current_c_text = c_text_45
         current_diff_text = diff_text_45
-        self.wait(0.6)
+        self.wait(2)
 
         # --------------------------------------------------
         # 4. Narrative Callout: "We might never reach the minimum RSS point"
@@ -3591,7 +3591,7 @@ class scene8_jump(Scene):
             FadeIn(never_reach_text, shift=UP * 0.2),
             run_time=0.8,
         )
-        self.wait(1.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # 5. Reset & Rethink: Transform text & return point to c = 0.5 (Clean Handover)
@@ -3640,12 +3640,12 @@ class scene8_jump(Scene):
         current_c_text = c_text_05_final
         current_diff_text = diff_text_05_final
 
-        self.wait(3.0)
+        self.wait(2)
 
 
 
 
-class scene_7_lost(Scene):
+class scene7_lost(Scene):
     def construct(self):
         # ==================================================
         # RECONSTRUCT SCENE 6 FINAL STATE (c = 4.0, m = 0)
@@ -3889,7 +3889,7 @@ class scene_7_lost(Scene):
             top_group_static, test_line, error_bars, error_squares,
             lower_graph
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # ==================================================
         # SCENE 7: REALITY OF OPTIMIZATION — WE ARE "LOST"
@@ -3912,7 +3912,7 @@ class scene_7_lost(Scene):
             FadeOut(error_squares),
         )
 
-        self.wait(1)
+        self.wait(2)
 
         self.play(
             FadeOut(diff_zero_label),
@@ -3921,14 +3921,14 @@ class scene_7_lost(Scene):
             FadeOut(ball),
         )
 
-        self.wait(0.6)
+        self.wait(2)
 
         self.play(
             FadeOut(drop_line),
             ReplacementTransform(loss_curve, dashed_loss_curve),
         )
 
-        self.wait(0.6)
+        self.wait(2)
 
         # --------------------------------------------------
         # STEP 2: We only control 'c' (exploration on the c-axis)
@@ -3951,7 +3951,7 @@ class scene_7_lost(Scene):
             run_time=0.8,
         )
 
-        self.wait(0.6)
+        self.wait(2)
 
         # Exploration sweep along the c-axis (sliding left and right)
         c_sweep_arrow = Arrow(
@@ -3983,7 +3983,7 @@ class scene_7_lost(Scene):
             rate_func=rate_functions.ease_in_out_sine,
         )
 
-        self.wait(0.5)
+        self.wait(2)
 
         self.play(
             c_axis_dot.animate.move_to(error_axes.c2p(7.0, 0)),
@@ -3991,7 +3991,7 @@ class scene_7_lost(Scene):
             rate_func=rate_functions.ease_in_out_sine,
         )
 
-        self.wait(0.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # STEP 3: Where do we start? Let's pick c = 0.5
@@ -4008,7 +4008,7 @@ class scene_7_lost(Scene):
             run_time=1.0,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        self.wait(0.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # STEP 4: Calculate RSS at c = 0.5 (Line shoots up to curve)
@@ -4031,7 +4031,7 @@ class scene_7_lost(Scene):
             run_time=0.8,
         )
 
-        self.wait(0.6)
+        self.wait(2)
         self.play(
             FadeIn(eval_ball, scale=0.5),
             Flash(
@@ -4043,7 +4043,7 @@ class scene_7_lost(Scene):
             ),
             run_time=0.6,
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # --------------------------------------------------
         # STEP 5: Calculate Slope at c = 0.5 -> dRSS/dc = -28
@@ -4077,7 +4077,7 @@ class scene_7_lost(Scene):
             run_time=1.0,
         )
 
-        self.wait(3.0)
+        self.wait(2)
 
 
 
@@ -4326,7 +4326,7 @@ class scene6_intro_to_diff(Scene):
             top_group_static, test_line, error_bars, error_squares,
             lower_graph
         )
-        self.wait(0.8)
+        self.wait(2)
 
         # ==================================================
         # SCENE 6: TRANSITION SLOPE TO DERIVATIVE & TANGENT ARROW
@@ -4361,14 +4361,14 @@ class scene6_intro_to_diff(Scene):
             TransformMatchingShapes(slope_val_text, diff_val_initial),
             run_time=0.8,
         )
-        self.wait(0.4)
+        self.wait(2)
 
         self.play(
             ReplacementTransform(tangent_line, initial_arrow),
             run_time=0.8,
         )
 
-        self.wait(0.4)
+        self.wait(2)
         # --------------------------------------------------
         # DYNAMIC SYSTEM SETUP (c_tracker & always_redraw)
         # --------------------------------------------------
@@ -4500,7 +4500,7 @@ class scene6_intro_to_diff(Scene):
             dyn_ball, dyn_drop_line, dyn_tangent_arrow, dyn_diff_val
         )
 
-        self.wait(0.6)
+        self.wait(2)
 
         # --------------------------------------------------
         # OSCILLATION SEQUENCE WITH DERIVATIVE ARROW
@@ -4511,7 +4511,7 @@ class scene6_intro_to_diff(Scene):
             run_time=2.0,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        self.wait(0.6)
+        self.wait(2)
 
         # 2. Roll to c = 6.0 (Positive Derivative: dRSS/dc = +16, Arrow points Up-Right)
         self.play(
@@ -4519,7 +4519,7 @@ class scene6_intro_to_diff(Scene):
             run_time=2.4,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        self.wait(0.5)
+        self.wait(2)
 
         # 3. Roll back to c = 3.0 (Negative Derivative: dRSS/dc = -8, Arrow points Up-Left)
         self.play(
@@ -4527,7 +4527,7 @@ class scene6_intro_to_diff(Scene):
             run_time=1.8,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        self.wait(0.4)
+        self.wait(2)
 
         # 4. Roll to c = 5.0 (Positive Derivative: dRSS/dc = +8, Arrow points Up-Right)
         self.play(
@@ -4535,7 +4535,7 @@ class scene6_intro_to_diff(Scene):
             run_time=1.5,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        self.wait(0.3)
+        self.wait(2)
 
         # 5. Settle smoothly at c = 4.0 (Global Minimum: dRSS/dc = 0, Arrow horizontal/flat)
         self.play(
@@ -4577,7 +4577,7 @@ class scene6_intro_to_diff(Scene):
             run_time=1.0,
         )
 
-        self.wait(3.0)
+        self.wait(2)
 
 
 
@@ -4798,7 +4798,7 @@ class scene5_slope(Scene):
             top_group_static, test_line, error_bars, error_squares,
             lower_graph
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # ==================================================
         # SCENE 5 TRANSITIONS: Introducing Slope
@@ -4936,7 +4936,7 @@ class scene5_slope(Scene):
             Write(dyn_slope_val),
             run_time=1.0,
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # --------------------------------------------------
         # OSCILLATION SEQUENCE WITH TANGENT SLOPE
@@ -4947,7 +4947,7 @@ class scene5_slope(Scene):
             run_time=2.2,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        # self.wait(0.8)
+        # self.wait(2)
 
         # 2. Roll back to c = 3.0 (Negative Slope)
         self.play(
@@ -4955,7 +4955,7 @@ class scene5_slope(Scene):
             run_time=1.8,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        # self.wait(0.8)
+        # self.wait(2)
 
         # 3. Roll to c = 5.0 (Positive Slope)
         self.play(
@@ -4963,7 +4963,7 @@ class scene5_slope(Scene):
             run_time=1.5,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        # self.wait(0.8)
+        # self.wait(2)
 
         # 4. Settle at c = 4.0 (Minimum, Flat Tangent: Slope = 0)
         self.play(
@@ -4971,7 +4971,7 @@ class scene5_slope(Scene):
             run_time=1.4,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        # self.wait(0.8)
+        # self.wait(2)
 
         # --------------------------------------------------
         # HIGHLIGHT FINAL MINIMUM: Slope = 0
@@ -5006,7 +5006,7 @@ class scene5_slope(Scene):
             run_time=1.0,
         )
 
-        self.wait(3.0)
+        self.wait(2)
 
 class scene4_predictibility(Scene):
     def construct(self):
@@ -5222,7 +5222,7 @@ class scene4_predictibility(Scene):
             top_group_static, test_line, error_bars, error_squares,
             lower_graph
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # ==================================================
         # SCENE 4 TRANSITIONS
@@ -5233,13 +5233,13 @@ class scene4_predictibility(Scene):
             error_axes.y_axis.get_end(), UP, buff=0.12
         )
         self.play(ReplacementTransform(error_y_label, RSS))
-        self.wait(1.0)
+        self.wait(2)
 
         RSS2 = MathTex(r"\text{RSS}", font_size=22, color=YELLOW).next_to(
             error_axes.y_axis.get_end(), UP, buff=0.12
         )
         self.play(ReplacementTransform(RSS, RSS2))
-        self.wait(1.0)
+        self.wait(2)
 
         # --------------------------------------------------
         # CLEANUP LOWER GRAPH (Keep only axes & parabola curve)
@@ -5251,7 +5251,7 @@ class scene4_predictibility(Scene):
             FadeOut(min_label),
             run_time=0.8,
         )
-        self.wait(0.5)
+        self.wait(2)
 
         # --------------------------------------------------
         # SETUP DYNAMIC SYSTEM AT c = 0.5
@@ -5349,7 +5349,7 @@ class scene4_predictibility(Scene):
             Create(drop_line),
             run_time=1.0,
         )
-        self.wait(1.0)
+        self.wait(2)
 
         # --------------------------------------------------
         # OSCILLATION & ROLLING SEQUENCE: 0.5 -> 6 -> 3 -> 5 -> 4
@@ -5360,7 +5360,7 @@ class scene4_predictibility(Scene):
             run_time=2.2,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        self.wait(0.8)
+        self.wait(2)
 
         # Roll 2: c = 6.0 -> 3.0
         self.play(
@@ -5368,7 +5368,7 @@ class scene4_predictibility(Scene):
             run_time=1.8,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        self.wait(0.8)
+        self.wait(2)
 
         # Roll 3: c = 3.0 -> 5.0
         self.play(
@@ -5376,7 +5376,7 @@ class scene4_predictibility(Scene):
             run_time=1.5,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        self.wait(0.8)
+        self.wait(2)
 
         # Roll 4: c = 5.0 -> 4.0 (Settle at the minimum)
         self.play(
@@ -5384,7 +5384,7 @@ class scene4_predictibility(Scene):
             run_time=1.4,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        self.wait(0.6)
+        self.wait(2)
 
         # --------------------------------------------------
         # HIGHLIGHT OPTIMAL SETTLED POINT (c = 4)
@@ -5406,7 +5406,7 @@ class scene4_predictibility(Scene):
             run_time=1.0,
         )
 
-        self.wait(3.0)
+        self.wait(2)
 
 
 class scene3_intuition(Scene):
@@ -5545,7 +5545,7 @@ class scene3_intuition(Scene):
             arrow_c, c_val_text
         )
 
-        self.wait(1)
+        self.wait(2)
 
         # ==================================================
         # STEP 2 (Panel 2): Replace parameters with "?"
@@ -5558,7 +5558,7 @@ class scene3_intuition(Scene):
             ReplacementTransform(c_val_text, c_q),
             run_time=0.8,
         )
-        self.wait(1)
+        self.wait(2)
 
         # ==================================================
         # STEP 3 (Panel 3): Clear line & Set m=0, c=0
@@ -5573,7 +5573,7 @@ class scene3_intuition(Scene):
             ReplacementTransform(c_q, c_0),
             run_time=1.0,
         )
-        self.wait(1)
+        self.wait(2)
 
         # ==================================================
         # STEP 4 (Panel 4): Draw Candidate Line y = 0
@@ -5592,7 +5592,7 @@ class scene3_intuition(Scene):
         )
 
         self.play(Create(test_line), run_time=0.9)
-        self.wait(1)
+        self.wait(2)
 
         # ==================================================
         # STEP 5 & 6 (Panels 5 & 6): Residual Bars & "Error" Label
@@ -5633,7 +5633,7 @@ class scene3_intuition(Scene):
             Create(error_arrow),
             run_time=0.8,
         )
-        self.wait(1)
+        self.wait(2)
 
         # ==================================================
         # STEP 7 & 8 (Panels 7 & 8): Total Absolute Error = 16
@@ -5657,13 +5657,13 @@ class scene3_intuition(Scene):
             Write(err_calc_full),
             run_time=1.0,
         )
-        self.wait(1)
+        self.wait(2)
 
         self.play(
             ReplacementTransform(err_calc_full, err_res_16),
             run_time=0.8,
         )
-        self.wait(1)
+        self.wait(2)
 
         # ==================================================
         # STEP 9 & 10 (Panels 9 & 10): Continuous c sweep with Absolute Error
@@ -5693,16 +5693,16 @@ class scene3_intuition(Scene):
 
         # Sweep c: 0 -> 1 -> 3 -> 6 -> 0
         self.play(c_tracker.animate.set_value(1.0), run_time=1.4, rate_func=smooth)
-        self.wait(1)
+        self.wait(2)
 
         self.play(c_tracker.animate.set_value(3.0), run_time=1.6, rate_func=smooth)
-        self.wait(1)
+        self.wait(2)
 
         self.play(c_tracker.animate.set_value(8.0), run_time=1.8, rate_func=smooth)
-        self.wait(1)
+        self.wait(2)
 
         self.play(c_tracker.animate.set_value(0.0), run_time=1.6, rate_func=smooth)
-        self.wait(1)
+        self.wait(2)
 
         # ==================================================
         # NEW STATE (Between 10 & 11): Error Squared (Squares + Sweep)
@@ -5761,7 +5761,7 @@ class scene3_intuition(Scene):
             run_time=3.0,
         )
 
-        self.wait(1)
+        self.wait(2)
 
         self.play(
             
@@ -5769,7 +5769,7 @@ class scene3_intuition(Scene):
             Create(err_sq_arrow),
             run_time=1.0,
         )
-        self.wait(1)
+        self.wait(2)
 
 
         # 2) Mirror Steps 7 & 8: Show expanded Total Error^2 = 84
@@ -5791,13 +5791,13 @@ class scene3_intuition(Scene):
             Write(err_sq_calc_full),
             run_time=1.0,
         )
-        self.wait(1)
+        self.wait(2)
 
         self.play(
             ReplacementTransform(err_sq_calc_full, err_sq_res_84),
             run_time=0.8,
         )
-        self.wait(1)
+        self.wait(2)
 
         # 3) Mirror Steps 9 & 10: Dynamic squares + Total Error^2 sweep (0 -> 1 -> 3 -> 6 -> 0)
         self.remove(initial_squares, err_sq_res_84)
@@ -5821,16 +5821,16 @@ class scene3_intuition(Scene):
 
         # Sweep c: 0 -> 1 -> 3 -> 6 -> 0
         self.play(c_tracker.animate.set_value(1.0), run_time=1.4, rate_func=smooth)
-        self.wait(1)
+        self.wait(2)
 
         self.play(c_tracker.animate.set_value(3.0), run_time=1.6, rate_func=smooth)
-        self.wait(1)
+        self.wait(2)
 
         self.play(c_tracker.animate.set_value(8.0), run_time=1.8, rate_func=smooth)
-        self.wait(1)
+        self.wait(2)
 
         self.play(c_tracker.animate.set_value(0.0), run_time=1.6, rate_func=smooth)
-        self.wait(1)
+        self.wait(2)
 
         # Clean up bottom readout before scaling into dual layout
         self.play(FadeOut(err_sq_text_dynamic), run_time=0.5)
@@ -5927,7 +5927,7 @@ class scene3_intuition(Scene):
 
         lower_graph_group = VGroup(error_axes, error_c_label, error_y_label, origin_0)
         self.play(Create(lower_graph_group), run_time=1.0)
-        self.wait(1)
+        self.wait(2)
 
         # Dynamic Tracer dot on Lower Error graph
         err_dot = always_redraw(
@@ -5973,7 +5973,7 @@ class scene3_intuition(Scene):
             rate_func=linear
         )
         err_dot.remove_updater(drop_milestone_dots)
-        self.wait(1)
+        self.wait(2)
 
         # Highlight optimal minimum at c = 4 (Error^2 = 20)
         min_point = error_axes.c2p(4, 20)
@@ -5995,7 +5995,7 @@ class scene3_intuition(Scene):
             run_time=0.8,
         )
 
-        self.wait(1)
+        self.wait(2)
 
 
 class scene2_pattern_visual(Scene):
@@ -6073,7 +6073,7 @@ class scene2_pattern_visual(Scene):
         ).move_to([1.6, -2.0, 0])
 
         self.add(table, equation, substitution_3, repeat_note)
-        self.wait(1)
+        self.wait(2)
 
         # ==================================================
         # STEP 2 (Panel 2): Clear intermediate notes, reposition equation
@@ -6086,7 +6086,7 @@ class scene2_pattern_visual(Scene):
             equation.animate.scale(0.9).move_to(eq_header_pos),
             run_time=1.0,
         )
-        self.wait(1)
+        self.wait(2)
 
         # ==================================================
         # STEP 3 (Panel 3): Create Coordinate Axes
@@ -6119,7 +6119,7 @@ class scene2_pattern_visual(Scene):
             Write(y_axis_label),
             run_time=1.2,
         )
-        self.wait(1)
+        self.wait(2)
 
         # ==================================================
         # STEP 4 (Panel 4): Draw the Line y = 2x + 1
@@ -6132,7 +6132,7 @@ class scene2_pattern_visual(Scene):
         )
 
         self.play(Create(line), run_time=1.2)
-        self.wait(1)
+        self.wait(2)
 
         # ==================================================
         # STEP 5 - 7 (Panels 5, 6, 7): Plot Points & Projections
@@ -6190,7 +6190,7 @@ class scene2_pattern_visual(Scene):
             Write(tick_labels[3]),  # x=1
             run_time=0.9,
         )
-        self.wait(1)
+        self.wait(2)
 
         # Panel 6: Point (2,5)
         self.play(
@@ -6201,7 +6201,7 @@ class scene2_pattern_visual(Scene):
             Write(tick_labels[5]),  # x=2
             run_time=0.9,
         )
-        self.wait(1)
+        self.wait(2)
 
         # Panel 7: Point (3,7)
         self.play(
@@ -6212,7 +6212,7 @@ class scene2_pattern_visual(Scene):
             Write(tick_labels[7]),  # x=3
             run_time=0.9,
         )
-        self.wait(1)
+        self.wait(2)
 
         # ==================================================
         # STEP 8 (Panel 8): Replace Table with "Linear Relationship"
@@ -6228,7 +6228,7 @@ class scene2_pattern_visual(Scene):
             Write(linear_title),
             run_time=1.2,
         )
-        self.wait(1)
+        self.wait(2)
 
         # ==================================================
         # STEP 9 (Panel 9): Introduce y = mx + c
@@ -6246,7 +6246,7 @@ class scene2_pattern_visual(Scene):
         gen_eq[5].set_color(CORAL)   # c
 
         self.play(Write(gen_eq), run_time=1.0)
-        self.wait(1)
+        self.wait(2)
 
         # ==================================================
         # STEP 10 (Panel 10): Animate Slope (m)
@@ -6295,7 +6295,7 @@ class scene2_pattern_visual(Scene):
 
         self.play(Create(arrow_m), run_time=0.5)
         self.play(Write(m_val_text), run_time=0.6)
-        self.wait(1)
+        self.wait(2)
 
         # ==================================================
         # STEP 11 (Panel 11): Animate Intercept (c)
@@ -6328,7 +6328,7 @@ class scene2_pattern_visual(Scene):
 
         self.play(Create(arrow_c), run_time=0.5)
         self.play(Write(c_val_text), run_time=0.6)
-        self.wait(1)
+        self.wait(2)
 
         # ==================================================
         # STEP 12 (Panel 12): Final Visual Emphasis
@@ -6348,7 +6348,7 @@ class scene2_pattern_visual(Scene):
         )
         self.play(FadeOut(intercept_flash_dot), run_time=0.4)
 
-        self.wait(1)
+        self.wait(2)
 
 
 class scene1_intro(Scene):
@@ -6439,7 +6439,7 @@ class scene1_intro(Scene):
             run_time=0.8
         )
 
-        self.wait(1)
+        self.wait(2)
 
         # ==================================
         # STEP 2
@@ -6476,7 +6476,7 @@ class scene1_intro(Scene):
             run_time=1.0
         )
 
-        self.wait(1)
+        self.wait(2)
 
         # ==================================
         # STEP 3
@@ -6487,7 +6487,7 @@ class scene1_intro(Scene):
 
         reveal_row(row_1)
 
-        self.wait(1)
+        self.wait(2)
 
         # ==================================
         # STEP 4
@@ -6498,14 +6498,14 @@ class scene1_intro(Scene):
 
         reveal_row(row_2)
 
-        self.wait(1)
+        self.wait(2)
 
         # ==================================
         # STEP 5
         # Hold the completed table
         # ==================================
 
-        self.wait(1)
+        self.wait(2)
 
         # ==================================
         # STEP 6
@@ -6521,7 +6521,7 @@ class scene1_intro(Scene):
             run_time=1.2
         )
 
-        self.wait(1)
+        self.wait(2)
 
         # ==================================
         # STEP 7
@@ -6542,7 +6542,7 @@ class scene1_intro(Scene):
             run_time=1.0
         )
 
-        self.wait(1)
+        self.wait(2)
 
         self.play(
             Flash(
@@ -6555,7 +6555,7 @@ class scene1_intro(Scene):
             run_time=0.5,
         )
 
-        self.wait(1)
+        self.wait(2)
 
 
         
@@ -6602,7 +6602,7 @@ class scene1_intro(Scene):
             run_time=1.2
         )
 
-        self.wait(1)
+        self.wait(2)
 
         # ==================================
         # STEP 10
@@ -6622,7 +6622,7 @@ class scene1_intro(Scene):
             run_time=1.3
         )
 
-        self.wait(1)
+        self.wait(2)
 
         # ==================================
         # STEP 11
@@ -6643,7 +6643,7 @@ class scene1_intro(Scene):
             run_time=1.2
         )
 
-        self.wait(1)
+        self.wait(2)
 
         # ==================================
         # STEP 12
@@ -6681,7 +6681,7 @@ class scene1_intro(Scene):
             run_time=1.2
         )
 
-        self.wait(1)
+        self.wait(2)
 
         self.play(
             ReplacementTransform(
@@ -6691,7 +6691,7 @@ class scene1_intro(Scene):
             run_time=1
         )
 
-        self.wait(1)
+        self.wait(2)
 
         self.play(
             ReplacementTransform(
@@ -6701,7 +6701,7 @@ class scene1_intro(Scene):
             run_time=1
         )
 
-        self.wait(1)
+        self.wait(2)
 
         # ==================================
         # STEP 13
@@ -6721,7 +6721,7 @@ class scene1_intro(Scene):
             run_time=1
         )
 
-        self.wait(1)
+        self.wait(2)
 
 
 class NeonLabDemo(Scene):
@@ -6751,7 +6751,7 @@ class NeonLabDemo(Scene):
             run_time=1
         )
         self.play(FadeIn(subtitle), run_time=0.7)
-        self.wait(1)
+        self.wait(2)
 
         self.play(
             FadeOut(title),
@@ -6844,7 +6844,7 @@ class NeonLabDemo(Scene):
             run_time=2
         )
 
-        self.wait(1)
+        self.wait(2)
 
         # ----------------------------------
         # 4. REGRESSION LINE
@@ -6919,5 +6919,5 @@ class NeonLabDemo(Scene):
             FadeIn(annotation, shift=UP)
         )
 
-        self.wait(1)
+        self.wait(2)
 
