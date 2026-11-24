@@ -19,6 +19,216 @@ LAVENDER = "#A99BCB"
 SOFT_RED = "#F75353"
 
 
+from manim import *
+import numpy as np
+
+# ==========================================
+# IT VAYA — NEON LAB PALETTE
+# ==========================================
+
+config.background_color = "#262335"
+
+BG = "#262335"
+PANEL = "#34294F"
+WHITE = "#FDEBFF"
+PINK = "#FF7EDB"
+CYAN = "#36F9F6"
+GREEN = "#72F1B8"
+YELLOW = "#FDEB5D"
+CORAL = "#F97E72"
+LAVENDER = "#A99BCB"
+SOFT_RED = "#FF2C2C"
+
+
+class scene16_neural_network(Scene):
+    def construct(self):
+        # ==================================================
+        # RECONSTRUCT SCENE 15 FINAL STATE
+        # ==================================================
+
+        # --------------------------------------------------
+        # 1. Base Left Model (Constructed then scaled & positioned)
+        # --------------------------------------------------
+        linear_title = Text("Linear Function", font_size=32, color=CYAN).move_to([-0.75, 1.0, 0])
+
+        # Input Nodes
+        node_x1 = Circle(radius=0.36, color=CYAN, fill_color=PANEL, fill_opacity=0.9, stroke_width=2.4).move_to([-4.4, -0.4, 0])
+        lbl_x1 = MathTex("x_1", font_size=26, color=CYAN).move_to(node_x1)
+        group_x1 = VGroup(node_x1, lbl_x1)
+
+        node_x2 = Circle(radius=0.36, color=CYAN, fill_color=PANEL, fill_opacity=0.9, stroke_width=2.4).move_to([-4.4, -1.4, 0])
+        lbl_x2 = MathTex("x_2", font_size=26, color=CYAN).move_to(node_x2)
+        group_x2 = VGroup(node_x2, lbl_x2)
+
+        node_x3 = Circle(radius=0.36, color=CYAN, fill_color=PANEL, fill_opacity=0.9, stroke_width=2.4).move_to([-4.4, -2.4, 0])
+        lbl_x3 = MathTex("x_3", font_size=26, color=CYAN).move_to(node_x3)
+        group_x3 = VGroup(node_x3, lbl_x3)
+        input_nodes = VGroup(group_x1, group_x2, group_x3)
+
+        # Weight Connections
+        sum_box_left_pt1 = np.array([-2.0, -1.05, 0])
+        sum_box_left_pt2 = np.array([-2.0, -1.4, 0])
+        sum_box_left_pt3 = np.array([-2.0, -1.75, 0])
+
+        arrow_1 = Arrow(node_x1.get_right(), sum_box_left_pt1, color=WHITE, stroke_width=2.4, buff=0.08, max_tip_length_to_length_ratio=0.10)
+        lbl_b1 = MathTex("\\beta_1", font_size=23, color=YELLOW).next_to(arrow_1.get_center(), UP, buff=0.1)
+
+        arrow_2 = Arrow(node_x2.get_right(), sum_box_left_pt2, color=WHITE, stroke_width=2.4, buff=0.08, max_tip_length_to_length_ratio=0.10)
+        lbl_b2 = MathTex("\\beta_2", font_size=23, color=YELLOW).next_to(arrow_2.get_center(), UP, buff=0.1)
+
+        arrow_3 = Arrow(node_x3.get_right(), sum_box_left_pt3, color=WHITE, stroke_width=2.4, buff=0.08, max_tip_length_to_length_ratio=0.10)
+        lbl_b3 = MathTex("\\beta_3", font_size=23, color=YELLOW).next_to(arrow_3.get_center(), DOWN, buff=0.1)
+        weights_group = VGroup(arrow_1, lbl_b1, arrow_2, lbl_b2, arrow_3, lbl_b3)
+
+        # Summation Block
+        sum_box = RoundedRectangle(
+            corner_radius=0.14,
+            width=1.3,
+            height=1.3,
+            color=GREEN,
+            stroke_width=2.4,
+            fill_color=PANEL,
+            fill_opacity=0.1
+        ).move_to([-1.35, -1.4, 0])
+        sum_symbol = MathTex("\\sum", font_size=44, color=GREEN).move_to(sum_box)
+        sum_block = VGroup(sum_box, sum_symbol)
+
+        # Bias Node
+        arrow_to_bias = Arrow(
+            sum_box.get_right(),
+            np.array([0.42, -1.4, 0]),
+            color=WHITE,
+            stroke_width=2.4,
+            buff=0.08,
+            max_tip_length_to_length_ratio=0.22
+        )
+        bias_node = Circle(
+            radius=0.46,
+            color=CORAL,
+            fill_color=PANEL,
+            fill_opacity=0.1,
+            stroke_width=2.4
+        ).move_to([0.95, -1.4, 0])
+        bias_lbl = MathTex("+\\beta_0", font_size=25, color=CORAL).move_to(bias_node)
+        bias_group = VGroup(arrow_to_bias, bias_node, bias_lbl)
+
+        # Output Node
+        arrow_to_out = Arrow(
+            bias_node.get_right(),
+            np.array([2.35, -1.4, 0]),
+            color=WHITE,
+            stroke_width=2.4,
+            buff=0.08,
+            max_tip_length_to_length_ratio=0.22
+        )
+        y_node = Circle(
+            radius=0.38,
+            color=PINK,
+            fill_color=PANEL,
+            fill_opacity=0.1,
+            stroke_width=2.4
+        ).move_to([2.85, -1.4, 0])
+        y_lbl = MathTex("y", font_size=28, color=PINK).move_to(y_node)
+        out_group = VGroup(arrow_to_out, y_node, y_lbl)
+
+        # Scale and position left model
+        model_elements = VGroup(input_nodes, weights_group, sum_block, bias_group, out_group)
+        full_left_model = VGroup(linear_title, model_elements).scale(0.70).move_to([-4, 0.2, 0])
+
+        # --------------------------------------------------
+        # 2. Sigmoid Box & Arrow
+        # --------------------------------------------------
+        sigmoid_box = Rectangle(
+            width=1.65,
+            height=0.85,
+            color=CYAN,
+            stroke_width=2.2,
+            fill_color=PANEL,
+            fill_opacity=0.6,
+        )
+        sigmoid_formula = MathTex(
+            r"\sigma(z) = \frac{1}{1 + e^{-z}}",
+            font_size=20,
+            color=WHITE,
+        ).move_to(sigmoid_box.get_center())
+        sigmoid_group = VGroup(sigmoid_box, sigmoid_formula).scale(0.82).next_to(
+            y_node, RIGHT, buff=0.55
+        )
+
+        arrow_to_sigmoid = Arrow(
+            start=y_node.get_right(),
+            end=sigmoid_box.get_left(),
+            color=WHITE,
+            stroke_width=2.2,
+            max_tip_length_to_length_ratio=0.20,
+            buff=0.05,
+        )
+
+        # --------------------------------------------------
+        # 3. Non-Linear Curve Graph & Arrow
+        # --------------------------------------------------
+        sigmoid_axes = Axes(
+            x_range=[-4, 4, 2],
+            y_range=[0, 1.15, 0.5],
+            x_length=2.8,
+            y_length=2.1,
+            axis_config={
+                "color": LAVENDER,
+                "stroke_width": 2.0,
+                "include_tip": True,
+                "tip_width": 0.12,
+                "tip_height": 0.12,
+            },
+        ).move_to(sigmoid_box.get_center() + RIGHT * 3.5)
+
+        arrow_to_curve = Arrow(
+            start=sigmoid_box.get_right(),
+            end=sigmoid_axes.get_left(),
+            color=WHITE,
+            stroke_width=2.2,
+            max_tip_length_to_length_ratio=0.22,
+            buff=0.08,
+        )
+
+        curve_label_1 = MathTex("1", font_size=18, color=LAVENDER).next_to(
+            sigmoid_axes.c2p(0, 1.0), LEFT, buff=0.08
+        )
+        curve_label_0 = MathTex("0", font_size=18, color=LAVENDER).next_to(
+            sigmoid_axes.c2p(0, 0.0), DOWN + LEFT, buff=0.06
+        )
+
+        sigmoid_curve = sigmoid_axes.plot(
+            lambda x: 1.0 / (1.0 + np.exp(-x)),
+            x_range=[-3.8, 3.8],
+            color=GREEN,
+            stroke_width=3.4,
+        )
+
+        curve_title = Text(
+            "Non-linear Pattern",
+            font_size=20,
+            color=GREEN,
+        ).next_to(sigmoid_axes, UP, buff=0.18)
+
+        curve_graph_group = VGroup(sigmoid_axes, curve_label_1, curve_label_0, sigmoid_curve, curve_title)
+
+        # --------------------------------------------------
+        # Display Scene 15 Ending State
+        # --------------------------------------------------
+        self.add(
+            full_left_model,
+            arrow_to_sigmoid,
+            sigmoid_group,
+            arrow_to_curve,
+            curve_graph_group
+        )
+        self.wait(1.0)
+
+        # ==================================================
+        # SCENE 16 ANIMATIONS (Awaiting Instructions)
+        # ================================================== 
+
+
 
 class scene15_non_linearity(Scene):
     def construct(self):
