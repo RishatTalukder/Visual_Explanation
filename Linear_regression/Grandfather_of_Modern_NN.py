@@ -19,25 +19,6 @@ LAVENDER = "#A99BCB"
 SOFT_RED = "#F75353"
 
 
-from manim import *
-import numpy as np
-
-# ==========================================
-# IT VAYA — NEON LAB PALETTE
-# ==========================================
-
-config.background_color = "#262335"
-
-BG = "#262335"
-PANEL = "#34294F"
-WHITE = "#FDEBFF"
-PINK = "#FF7EDB"
-CYAN = "#36F9F6"
-GREEN = "#72F1B8"
-YELLOW = "#FDEB5D"
-CORAL = "#F97E72"
-LAVENDER = "#A99BCB"
-SOFT_RED = "#FF2C2C"
 
 
 class scene13_connection(Scene):
