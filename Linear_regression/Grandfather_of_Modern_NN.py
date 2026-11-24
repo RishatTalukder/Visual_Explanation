@@ -66,8 +66,6 @@ class scene14_connection(Scene):
             color=LAVENDER
         ).next_to(sum_eq, DOWN, buff=0.45)
 
-        left_side_group = VGroup(sum_eq, model_subtitle)
-
         # --------------------------------------------------
         # 3. Right Side: Generalized Gradient Descent Update Rule
         # --------------------------------------------------
@@ -96,21 +94,291 @@ class scene14_connection(Scene):
             stroke_width=2.2,
         ).move_to(beta_new_eq)
 
-        right_side_group = VGroup(rule_title, single_rule_box, beta_new_eq)
-
         # --------------------------------------------------
         # Display Scene 13 Ending State
         # --------------------------------------------------
         self.add(
             top_title_group,
-            left_side_group,
-            right_side_group
+            sum_eq,
+            model_subtitle,
+            rule_title,
+            single_rule_box,
+            beta_new_eq
         )
         self.wait(1.0)
 
         # ==================================================
-        # SCENE 14 ANIMATIONS (Awaiting Instructions)
+        # SCENE 14 ANIMATIONS
         # ==================================================
+
+        # --------------------------------------------------
+        # 1. Clean UI & Setup Top Reference Equations
+        # --------------------------------------------------
+        top_model_full = MathTex(
+            "y", "=", "\\sum", "\\beta_i", "x_i", "+", "\\beta_0",
+            font_size=34
+        ).move_to([-3.8, 2.2, 0])
+        top_model_full[0].set_color(WHITE)
+        top_model_full[1].set_color(WHITE)
+        top_model_full[2].set_color(GREEN)
+        top_model_full[3].set_color(YELLOW)
+        top_model_full[4].set_color(CYAN)
+        top_model_full[5].set_color(WHITE)
+        top_model_full[6].set_color(CORAL)
+
+        self.play(
+            FadeOut(top_title_group, shift=UP * 0.3),
+            FadeOut(model_subtitle, shift=DOWN * 0.2),
+            FadeOut(rule_title, shift=UP * 0.2),
+            FadeOut(single_rule_box),
+            beta_new_eq.animate.scale(0.85).move_to([3.4, 2.2, 0]),
+            ReplacementTransform(sum_eq, top_model_full),
+            run_time=1.5,
+        )
+        self.wait(1.2)
+
+        # --------------------------------------------------
+        # 2. x_i flies down into 3 Input Nodes (x1, x2, x3)
+        # --------------------------------------------------
+        self.play(
+            Indicate(top_model_full[4], color=CYAN, scale_factor=1.35),
+            run_time=1.0,
+        )
+
+        node_x1 = Circle(radius=0.36, color=CYAN, fill_color=PANEL, fill_opacity=0.9, stroke_width=2.4).move_to([-4.4, -0.4, 0])
+        lbl_x1 = MathTex("x_1", font_size=26, color=CYAN).move_to(node_x1)
+        group_x1 = VGroup(node_x1, lbl_x1)
+
+        node_x2 = Circle(radius=0.36, color=CYAN, fill_color=PANEL, fill_opacity=0.9, stroke_width=2.4).move_to([-4.4, -1.4, 0])
+        lbl_x2 = MathTex("x_2", font_size=26, color=CYAN).move_to(node_x2)
+        group_x2 = VGroup(node_x2, lbl_x2)
+
+        node_x3 = Circle(radius=0.36, color=CYAN, fill_color=PANEL, fill_opacity=0.9, stroke_width=2.4).move_to([-4.4, -2.4, 0])
+        lbl_x3 = MathTex("x_3", font_size=26, color=CYAN).move_to(node_x3)
+        group_x3 = VGroup(node_x3, lbl_x3)
+
+        top_model_step2 = MathTex(
+            "y", "=", "\\sum", "\\beta_i", "+", "\\beta_0",
+            font_size=34
+        ).move_to([-3.8, 2.2, 0])
+        top_model_step2[0].set_color(WHITE)
+        top_model_step2[1].set_color(WHITE)
+        top_model_step2[2].set_color(GREEN)
+        top_model_step2[3].set_color(YELLOW)
+        top_model_step2[4].set_color(WHITE)
+        top_model_step2[5].set_color(CORAL)
+
+        self.play(
+            TransformFromCopy(top_model_full[4], group_x1),
+            TransformFromCopy(top_model_full[4], group_x2),
+            TransformFromCopy(top_model_full[4], group_x3),
+            ReplacementTransform(top_model_full, top_model_step2),
+            run_time=1.6,
+        )
+        self.wait(1.5)
+
+        # --------------------------------------------------
+        # 3. β_i flies down into Weight Arrows (β1, β2, β3)
+        # --------------------------------------------------
+        self.play(
+            Indicate(top_model_step2[3], color=YELLOW, scale_factor=1.35),
+            run_time=1.0,
+        )
+
+        sum_box_left_pt1 = np.array([-2.0, -1.05, 0])
+        sum_box_left_pt2 = np.array([-2.0, -1.4, 0])
+        sum_box_left_pt3 = np.array([-2.0, -1.75, 0])
+
+        arrow_1 = Arrow(node_x1.get_right(), sum_box_left_pt1, color=WHITE, stroke_width=2.4, buff=0.08, max_tip_length_to_length_ratio=0.10)
+        lbl_b1 = MathTex("\\beta_1", font_size=23, color=YELLOW).next_to(arrow_1.get_center(), UP, buff=0.1)
+
+        arrow_2 = Arrow(node_x2.get_right(), sum_box_left_pt2, color=WHITE, stroke_width=2.4, buff=0.08, max_tip_length_to_length_ratio=0.10)
+        lbl_b2 = MathTex("\\beta_2", font_size=23, color=YELLOW).next_to(arrow_2.get_center(), UP, buff=0.1)
+
+        arrow_3 = Arrow(node_x3.get_right(), sum_box_left_pt3, color=WHITE, stroke_width=2.4, buff=0.08, max_tip_length_to_length_ratio=0.10)
+        lbl_b3 = MathTex("\\beta_3", font_size=23, color=YELLOW).next_to(arrow_3.get_center(), DOWN, buff=0.1)
+
+        weights_group = VGroup(arrow_1, lbl_b1, arrow_2, lbl_b2, arrow_3, lbl_b3)
+
+        top_model_step3 = MathTex(
+            "y", "=", "\\sum", "+", "\\beta_0",
+            font_size=34
+        ).move_to([-3.8, 2.2, 0])
+        top_model_step3[0].set_color(WHITE)
+        top_model_step3[1].set_color(WHITE)
+        top_model_step3[2].set_color(GREEN)
+        top_model_step3[3].set_color(WHITE)
+        top_model_step3[4].set_color(CORAL)
+
+        self.play(
+            TransformFromCopy(top_model_step2[3], weights_group),
+            ReplacementTransform(top_model_step2, top_model_step3),
+            run_time=1.6,
+        )
+        self.wait(1.5)
+
+        # --------------------------------------------------
+        # 4. Summation symbol (∑) flies into the Summation Block
+        # --------------------------------------------------
+        self.play(
+            Indicate(top_model_step3[2], color=GREEN, scale_factor=1.35),
+            run_time=1.0,
+        )
+
+        sum_box = RoundedRectangle(
+            corner_radius=0.14,
+            width=1.3,
+            height=1.3,
+            color=GREEN,
+            stroke_width=2.4,
+            fill_color=PANEL,
+            fill_opacity=0.1
+        ).move_to([-1.35, -1.4, 0])
+
+        sum_symbol = MathTex("\\sum", font_size=44, color=GREEN).move_to(sum_box)
+
+        top_model_step4 = MathTex(
+            "y", "=", "+", "\\beta_0",
+            font_size=34
+        ).move_to([-3.8, 2.2, 0])
+        top_model_step4[0].set_color(WHITE)
+        top_model_step4[1].set_color(WHITE)
+        top_model_step4[2].set_color(WHITE)
+        top_model_step4[3].set_color(CORAL)
+
+        self.play(
+            Create(sum_box),
+            TransformFromCopy(top_model_step3[2], sum_symbol),
+            ReplacementTransform(top_model_step3, top_model_step4),
+            run_time=1.5,
+        )
+        self.wait(1.5)
+
+        # --------------------------------------------------
+        # 5. +β0 flies down into the Bias Node
+        # --------------------------------------------------
+        self.play(
+            Indicate(top_model_step4[2:], color=CORAL, scale_factor=1.35),
+            run_time=1.0,
+        )
+
+        arrow_to_bias = Arrow(
+            sum_box.get_right(),
+            np.array([0.42, -1.4, 0]),
+            color=WHITE,
+            stroke_width=2.4,
+            buff=0.08,
+            max_tip_length_to_length_ratio=0.22
+        )
+
+        bias_node = Circle(
+            radius=0.46,
+            color=CORAL,
+            fill_color=PANEL,
+            fill_opacity=0.1,
+            stroke_width=2.4
+        ).move_to([0.95, -1.4, 0])
+
+        bias_lbl = MathTex("+\\beta_0", font_size=25, color=CORAL).move_to(bias_node)
+        bias_group = VGroup(arrow_to_bias, bias_node, bias_lbl)
+
+        top_model_step5 = MathTex(
+            "y", "=",
+            font_size=34
+        ).move_to([-3.8, 2.2, 0])
+        top_model_step5[0].set_color(WHITE)
+        top_model_step5[1].set_color(WHITE)
+
+        self.play(
+            TransformFromCopy(top_model_step4[2:], bias_group),
+            ReplacementTransform(top_model_step4, top_model_step5),
+            run_time=1.5,
+        )
+        self.wait(1.5)
+
+        # --------------------------------------------------
+        # 6. y flies down into the Output Node
+        # --------------------------------------------------
+        self.play(
+            Indicate(top_model_step5[0], color=PINK, scale_factor=1.35),
+            run_time=1.0,
+        )
+
+        arrow_to_out = Arrow(
+            bias_node.get_right(),
+            np.array([2.35, -1.4, 0]),
+            color=WHITE,
+            stroke_width=2.4,
+            buff=0.08,
+            max_tip_length_to_length_ratio=0.22
+        )
+
+        y_node = Circle(
+            radius=0.38,
+            color=PINK,
+            fill_color=PANEL,
+            fill_opacity=0.1,
+            stroke_width=2.4
+        ).move_to([2.85, -1.4, 0])
+
+        y_lbl = MathTex("y", font_size=28, color=PINK).move_to(y_node)
+        out_group = VGroup(arrow_to_out, y_node, y_lbl)
+
+        self.play(
+            TransformFromCopy(top_model_step5[0], out_group),
+            FadeOut(top_model_step5, shift=UP * 0.2),
+            run_time=1.5,
+        )
+        self.wait(1.2)
+
+        # --------------------------------------------------
+        # 7. Architecture Subtitle & Final Connection Highlight
+        # --------------------------------------------------
+        
+
+        perceptron_box = RoundedRectangle(
+            corner_radius=0.2,
+            width=8.6,
+            height=3.6,
+            color=LAVENDER,
+            stroke_width=1.8,
+            fill_color=PANEL,
+            fill_opacity=0.2
+        ).move_to([-0.75, -1.4, 0])
+ 
+        neuron_title = MathTex(
+            "y", "=", "\\sum_{i=1}^n", "\\beta_i", "x_i", "+", "\\beta_0",
+            font_size=36 
+        ).move_to(perceptron_box.get_top() + UP * 0.6)
+
+        neuron_title[0].set_color(WHITE)
+        neuron_title[1].set_color(WHITE)
+        neuron_title[2].set_color(GREEN)   # summation
+        neuron_title[3].set_color(YELLOW)  # beta_i
+        neuron_title[4].set_color(CYAN)    # x_i
+        neuron_title[5].set_color(WHITE)
+        neuron_title[6].set_color(CORAL)   # beta_0
+
+        self.play(
+            Create(perceptron_box),
+            FadeIn(neuron_title, shift=UP * 0.15),
+            run_time=1.5,
+        )
+
+        self.wait(1.5)
+
+        self.play(
+            Indicate(beta_new_eq, color=YELLOW, scale_factor=1.08),
+        )
+
+        self.wait(1)
+
+        self.play(
+            Indicate(weights_group, color=YELLOW, scale_factor=1.05),
+            Indicate(bias_node, color=CORAL, scale_factor=1.08),
+            run_time=1.6,
+        )
+        self.wait(3.0)
 
 
 
