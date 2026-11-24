@@ -20,6 +20,192 @@ SOFT_RED = "#F75353"
 
 
 
+class scene17_finale(Scene):
+    def construct(self):
+        # ==================================================
+        # RECONSTRUCT SCENE 16 FINAL STATE
+        # ==================================================
+
+        # --------------------------------------------------
+        # 1. Top Title
+        # --------------------------------------------------
+        perceptron_title = Text(
+            "Perceptron Model",
+            font_size=36,
+            color=WHITE
+        ).move_to([0, 2.7, 0])
+
+        # --------------------------------------------------
+        # 2. Generalized Input Nodes (x1, x2, ..., xn)
+        # --------------------------------------------------
+        gen_node_x1 = Circle(
+            radius=0.42,
+            color=PINK,
+            fill_color=PANEL,
+            fill_opacity=0.85,
+            stroke_width=2.5
+        ).move_to([-4.5, 1.1, 0])
+        gen_lbl_x1 = MathTex("x_1", font_size=28, color=WHITE).move_to(gen_node_x1)
+        gen_group_x1 = VGroup(gen_node_x1, gen_lbl_x1)
+
+        gen_node_x2 = Circle(
+            radius=0.42,
+            color=PINK,
+            fill_color=PANEL,
+            fill_opacity=0.85,
+            stroke_width=2.5
+        ).move_to([-4.5, 0.0, 0])
+        gen_lbl_x2 = MathTex("x_2", font_size=28, color=WHITE).move_to(gen_node_x2)
+        gen_group_x2 = VGroup(gen_node_x2, gen_lbl_x2)
+
+        gen_dots = MathTex(r"\vdots", font_size=36, color=WHITE).move_to([-4.5, -0.85, 0])
+
+        gen_node_xn = Circle(
+            radius=0.42,
+            color=PINK,
+            fill_color=PANEL,
+            fill_opacity=0.85,
+            stroke_width=2.5
+        ).move_to([-4.5, -1.8, 0])
+        gen_lbl_xn = MathTex("x_n", font_size=28, color=WHITE).move_to(gen_node_xn)
+        gen_group_xn = VGroup(gen_node_xn, gen_lbl_xn)
+
+        gen_inputs = VGroup(gen_group_x1, gen_group_x2, gen_dots, gen_group_xn)
+
+        # --------------------------------------------------
+        # 3. Summation Box
+        # --------------------------------------------------
+        gen_sum_box = Rectangle(
+            width=2.2,
+            height=1.5,
+            color=LAVENDER,
+            stroke_width=2.2,
+            fill_color=PANEL,
+            fill_opacity=0.85
+        ).move_to([-1.5, -0.4, 0])
+        gen_sum_text = Text("summation", font_size=21, color=WHITE).move_to(gen_sum_box)
+        gen_sum_group = VGroup(gen_sum_box, gen_sum_text)
+
+        # --------------------------------------------------
+        # 4. Weight Arrows & Labels (w1, w2, wn)
+        # --------------------------------------------------
+        arr_in_1 = Arrow(
+            gen_node_x1.get_right(),
+            gen_sum_box.get_left() + UP * 0.45,
+            color=CYAN,
+            stroke_width=2.6,
+            buff=0.08,
+            max_tip_length_to_length_ratio=0.14
+        )
+        arr_in_2 = Arrow(
+            gen_node_x2.get_right(),
+            gen_sum_box.get_left(),
+            color=CYAN,
+            stroke_width=2.6,
+            buff=0.08,
+            max_tip_length_to_length_ratio=0.14
+        )
+        arr_in_n = Arrow(
+            gen_node_xn.get_right(),
+            gen_sum_box.get_left() + DOWN * 0.45,
+            color=CYAN,
+            stroke_width=2.6,
+            buff=0.08,
+            max_tip_length_to_length_ratio=0.14
+        )
+        gen_arrows = VGroup(arr_in_1, arr_in_2, arr_in_n)
+
+        w_lbl_1 = MathTex("w_1", font_size=26, color=YELLOW).next_to(arr_in_1.get_center(), UP, buff=0.12)
+        w_lbl_2 = MathTex("w_2", font_size=26, color=YELLOW).next_to(arr_in_2.get_center(), UP, buff=0.12)
+        w_lbl_n = MathTex("w_n", font_size=26, color=YELLOW).next_to(arr_in_n.get_center(), DOWN, buff=0.12)
+        w_labels = VGroup(w_lbl_1, w_lbl_2, w_lbl_n)
+
+        # --------------------------------------------------
+        # 5. Bias Node & Pointer Callout
+        # --------------------------------------------------
+        arr_sum_to_bias = Arrow(
+            gen_sum_box.get_right(),
+            np.array([0.3, -0.4, 0]),
+            color=WHITE,
+            stroke_width=2.4,
+            buff=0.08,
+            max_tip_length_to_length_ratio=0.20
+        )
+        gen_bias_node = Circle(
+            radius=0.48,
+            color=PINK,
+            fill_color=PANEL,
+            fill_opacity=0.85,
+            stroke_width=2.5
+        ).move_to([0.85, -0.4, 0])
+        gen_bias_lbl = MathTex("+b", font_size=28, color=WHITE).move_to(gen_bias_node)
+        gen_bias_group = VGroup(arr_sum_to_bias, gen_bias_node, gen_bias_lbl)
+
+        bias_label_title = Text("Bias", font_size=23, color=CORAL).next_to(gen_bias_node, UP, buff=0.75)
+        arrow_to_bias_node = Arrow(
+            start=bias_label_title.get_bottom(),
+            end=gen_bias_node.get_top(),
+            color=CORAL,
+            stroke_width=2.4,
+            buff=0.08,
+            max_tip_length_to_length_ratio=0.24
+        )
+        bias_callout = VGroup(bias_label_title, arrow_to_bias_node)
+
+        # --------------------------------------------------
+        # 6. Activation Box & Output Arrow
+        # --------------------------------------------------
+        arr_bias_to_act = Arrow(
+            gen_bias_node.get_right(),
+            np.array([1.75, -0.4, 0]),
+            color=CYAN,
+            stroke_width=2.4,
+            buff=0.08,
+            max_tip_length_to_length_ratio=0.20
+        )
+        gen_act_box = RoundedRectangle(
+            corner_radius=0.22,
+            width=2.2,
+            height=1.2,
+            color=GREEN,
+            stroke_width=2.5,
+            fill_color=PANEL,
+            fill_opacity=0.85
+        ).move_to([2.9, -0.4, 0])
+        gen_act_text = Text("activation", font_size=21, color=GREEN).move_to(gen_act_box)
+        gen_act_group = VGroup(arr_bias_to_act, gen_act_box, gen_act_text)
+
+        gen_out_arrow = Arrow(
+            gen_act_box.get_right(),
+            np.array([4.8, -0.4, 0]),
+            color=WHITE,
+            stroke_width=2.6,
+            buff=0.08,
+            max_tip_length_to_length_ratio=0.16
+        )
+
+        # --------------------------------------------------
+        # Display Scene 16 Ending State
+        # --------------------------------------------------
+        self.add(
+            perceptron_title,
+            gen_inputs,
+            gen_arrows,
+            w_labels,
+            gen_sum_group,
+            gen_bias_group,
+            bias_callout,
+            gen_act_group,
+            gen_out_arrow
+        )
+        self.wait(1.0)
+
+        # ==================================================
+        # SCENE 17 FINALE ANIMATIONS (Awaiting Instructions)
+        # ==================================================
+
+
+
 class scene16_neural_network(Scene):
     def construct(self):
         # ==================================================
