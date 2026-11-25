@@ -4947,7 +4947,7 @@ class scene5_slope(Scene):
             run_time=2.2,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        # self.wait(2)
+        self.wait(.3)
 
         # 2. Roll back to c = 3.0 (Negative Slope)
         self.play(
@@ -4955,7 +4955,7 @@ class scene5_slope(Scene):
             run_time=1.8,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        # self.wait(2)
+        self.wait(.3)
 
         # 3. Roll to c = 5.0 (Positive Slope)
         self.play(
@@ -4963,7 +4963,7 @@ class scene5_slope(Scene):
             run_time=1.5,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        # self.wait(2)
+        self.wait(.3)
 
         # 4. Settle at c = 4.0 (Minimum, Flat Tangent: Slope = 0)
         self.play(
@@ -4971,7 +4971,7 @@ class scene5_slope(Scene):
             run_time=1.4,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        # self.wait(2)
+        self.wait(2)
 
         # --------------------------------------------------
         # HIGHLIGHT FINAL MINIMUM: Slope = 0
