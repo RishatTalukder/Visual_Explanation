@@ -6086,7 +6086,7 @@ class scene2_pattern_visual(Scene):
             equation.animate.scale(0.9).move_to(eq_header_pos),
             run_time=1.0,
         )
-        self.wait(2)
+        self.wait()
 
         # ==================================================
         # STEP 3 (Panel 3): Create Coordinate Axes
@@ -6119,7 +6119,7 @@ class scene2_pattern_visual(Scene):
             Write(y_axis_label),
             run_time=1.2,
         )
-        self.wait(2)
+        # self.wait(2)
 
         # ==================================================
         # STEP 4 (Panel 4): Draw the Line y = 2x + 1
@@ -6183,7 +6183,7 @@ class scene2_pattern_visual(Scene):
             run_time=0.7,
         )
 
-        self.wait(2)
+        self.wait(.5)
         
         self.play(
             Create(projections[0]),  # v_line 1
@@ -6193,7 +6193,7 @@ class scene2_pattern_visual(Scene):
             Write(tick_labels[3]),  # x=1
             run_time=0.9,
         )
-        self.wait(2)
+        self.wait(.5)
 
         # Panel 6: Point (2,5)
         self.play(
@@ -6204,7 +6204,7 @@ class scene2_pattern_visual(Scene):
             Write(tick_labels[5]),  # x=2
             run_time=0.9,
         )
-        self.wait(2)
+        self.wait(.5)
 
         # Panel 7: Point (3,7)
         self.play(
