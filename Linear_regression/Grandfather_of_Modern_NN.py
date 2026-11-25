@@ -3014,6 +3014,8 @@ class scene9_way(Scene):
             rate_func=rate_functions.ease_in_out_sine,
         )
 
+        self.wait(2)
+
         self.play(
             ReplacementTransform(neg_diff_val_text, diff_text_1),
         )
