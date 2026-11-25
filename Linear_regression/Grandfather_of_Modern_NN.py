@@ -2921,6 +2921,7 @@ class scene9_way(Scene):
             run_time=0.8
         )
 
+        self.wait(2)
         # --------------------------------------------------
         # 3. Test Step Size = 1.0 (Overshoot Warning) vs Step Size = 0.1 (Tolerable)
         # --------------------------------------------------
@@ -3477,7 +3478,7 @@ class scene8_jump(Scene):
             arrow_active = new_arrow
             current_c_text = new_c_text
             current_diff_text = new_diff_text
-            self.wait(2)
+            self.wait(.5)
 
         # --------------------------------------------------
         # 3. The Seesaw: Overshoot at c = 4.5 forces step backward to c = 3.5
@@ -3529,7 +3530,7 @@ class scene8_jump(Scene):
         arrow_active = arrow_35
         current_c_text = c_text_35
         current_diff_text = diff_text_35
-        self.wait(2)
+        self.wait(.5)
 
         # Jump Forward Again: 3.5 -> 4.5 (Seesaw oscillation)
         arc_fwd_again = CurvedArrow(
@@ -3983,7 +3984,7 @@ class scene7_lost(Scene):
             rate_func=rate_functions.ease_in_out_sine,
         )
 
-        self.wait(2)
+        # self.wait(2)
 
         self.play(
             c_axis_dot.animate.move_to(error_axes.c2p(7.0, 0)),
@@ -4726,7 +4727,7 @@ class scene5_slope(Scene):
             max_tip_length_to_length_ratio=0.22,
             buff=0,
         )
-        c_val_text = MathTex("c = 4", font_size=38, color=CORAL).next_to(
+        c_val_text = MathTex("c = 4", font_size=32, color=CORAL).next_to(
             arrow_c.get_end(), DOWN, buff=0.3
         )
 
