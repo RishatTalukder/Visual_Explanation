@@ -6442,7 +6442,7 @@ class scene1_intro(Scene):
             run_time=0.8
         )
 
-        self.wait(2)
+        self.wait(.7)
 
         # ==================================
         # STEP 2
@@ -6479,7 +6479,7 @@ class scene1_intro(Scene):
             run_time=1.0
         )
 
-        self.wait(2)
+        self.wait(.7)
 
         # ==================================
         # STEP 3
@@ -6490,7 +6490,7 @@ class scene1_intro(Scene):
 
         reveal_row(row_1)
 
-        self.wait(2)
+        self.wait(.7)
 
         # ==================================
         # STEP 4
@@ -6501,14 +6501,14 @@ class scene1_intro(Scene):
 
         reveal_row(row_2)
 
-        self.wait(2)
+        self.wait(.7)
 
         # ==================================
         # STEP 5
         # Hold the completed table
         # ==================================
 
-        self.wait(2)
+        self.wait(.7)
 
         # ==================================
         # STEP 6
