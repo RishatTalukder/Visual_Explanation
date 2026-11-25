@@ -5360,7 +5360,7 @@ class scene4_predictibility(Scene):
             run_time=2.2,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        self.wait(2)
+        self.wait(.5)
 
         # Roll 2: c = 6.0 -> 3.0
         self.play(
@@ -5368,7 +5368,7 @@ class scene4_predictibility(Scene):
             run_time=1.8,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        self.wait(2)
+        self.wait(.5)
 
         # Roll 3: c = 3.0 -> 5.0
         self.play(
@@ -5376,7 +5376,7 @@ class scene4_predictibility(Scene):
             run_time=1.5,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        self.wait(2)
+        self.wait(.5)
 
         # Roll 4: c = 5.0 -> 4.0 (Settle at the minimum)
         self.play(
