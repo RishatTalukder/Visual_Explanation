@@ -4511,7 +4511,7 @@ class scene6_intro_to_diff(Scene):
             run_time=2.0,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        self.wait(2)
+        self.wait(.2)
 
         # 2. Roll to c = 6.0 (Positive Derivative: dRSS/dc = +16, Arrow points Up-Right)
         self.play(
@@ -4519,7 +4519,7 @@ class scene6_intro_to_diff(Scene):
             run_time=2.4,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        self.wait(2)
+        self.wait(.2)
 
         # 3. Roll back to c = 3.0 (Negative Derivative: dRSS/dc = -8, Arrow points Up-Left)
         self.play(
@@ -4527,7 +4527,7 @@ class scene6_intro_to_diff(Scene):
             run_time=1.8,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        self.wait(2)
+        self.wait(.2)
 
         # 4. Roll to c = 5.0 (Positive Derivative: dRSS/dc = +8, Arrow points Up-Right)
         self.play(
@@ -4535,7 +4535,7 @@ class scene6_intro_to_diff(Scene):
             run_time=1.5,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        self.wait(2)
+        self.wait(.2)
 
         # 5. Settle smoothly at c = 4.0 (Global Minimum: dRSS/dc = 0, Arrow horizontal/flat)
         self.play(
